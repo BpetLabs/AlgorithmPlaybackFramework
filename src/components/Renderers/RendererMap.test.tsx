@@ -43,9 +43,11 @@ describe("renderers", () => {
         divWidth={100}
         divHeight={100}
         disableAnimations
+        renderContent={(item) => <span data-stack-item>{item.value}</span>}
       />
     );
 
+    expect(markup).toContain("data-stack-item");
     expect(markup).not.toContain("NaN");
   });
 
@@ -130,32 +132,17 @@ describe("renderers", () => {
         cols={2}
         rowDescription="items"
         columnDescription="capacity"
-        rowLabels={["A", "B"]}
-        columnLabels={["1", "2"]}
+        rowLabels={["Row Alpha", "Row Beta"]}
+        columnLabels={["Column One", "Column Two"]}
       />
     );
 
     expect(markup).toContain("left:-44px");
     expect(markup).toContain("margin-top:30px");
-  });
-
-  it("renders labels beside each grid row and beneath each grid column", () => {
-    const markup = renderToStaticMarkup(
-      <GridRenderer
-        snapshot={snapshot}
-        divWidth={100}
-        divHeight={100}
-        rows={2}
-        cols={2}
-        rowLabels={["C", "D"]}
-        columnLabels={["A", "B"]}
-      />
-    );
-
-    expect(markup).toContain("C");
-    expect(markup).toContain("D");
-    expect(markup).toContain("A");
-    expect(markup).toContain("B");
+    expect(markup).toContain("Row Alpha");
+    expect(markup).toContain("Row Beta");
+    expect(markup).toContain("Column One");
+    expect(markup).toContain("Column Two");
     expect(markup).toContain("translate(-100%, -50%)");
   });
 

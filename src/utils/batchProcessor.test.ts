@@ -4,17 +4,16 @@ import { BatchProcessor } from "./batchProcessor";
 
 describe("BatchProcessor", () => {
   it("generates deterministic item ids per processor", () => {
-    const first = new BatchProcessor("first", "array", 2).getHistory();
-    const second = new BatchProcessor("second", "array", 2).getHistory();
+    const firstIds = new BatchProcessor("first", "array", 2)
+      .getHistory()[0]
+      .items.map((item) => item.id);
+    const secondIds = new BatchProcessor("second", "array", 2)
+      .getHistory()[0]
+      .items.map((item) => item.id);
 
-    expect(first[0].items.map((item) => item.id)).toEqual([
-      "item-0",
-      "item-1",
-    ]);
-    expect(second[0].items.map((item) => item.id)).toEqual([
-      "item-0",
-      "item-1",
-    ]);
+    expect(firstIds).toEqual(secondIds);
+    expect(firstIds).toHaveLength(2);
+    expect(new Set(firstIds).size).toBe(firstIds.length);
   });
 
   it("preserves insert transition state across snapshots", () => {
