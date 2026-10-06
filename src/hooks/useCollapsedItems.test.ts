@@ -9,6 +9,23 @@ afterEach(() => {
 });
 
 describe("useCollapsedItems", () => {
+  it("starts with no collapsed ids", () => {
+    const { result } = renderHook(() => useCollapsedItems(false));
+
+    expect(result.current.collapsedIds.size).toBe(0);
+  });
+
+  it("tracks multiple collapsed ids in insertion order", () => {
+    const { result } = renderHook(() => useCollapsedItems(false));
+
+    act(() => {
+      result.current.collapse("item-b");
+      result.current.collapse("item-a");
+    });
+
+    expect([...result.current.collapsedIds]).toEqual(["item-b", "item-a"]);
+  });
+
   it("deduplicates collapsed ids", () => {
     const { result } = renderHook(() => useCollapsedItems(false));
 
@@ -18,6 +35,43 @@ describe("useCollapsedItems", () => {
     });
 
     expect([...result.current.collapsedIds]).toEqual(["item-a"]);
+  });
+
+  it("keeps the collapse callback stable across rerenders", () => {
+    const { result, rerender } = renderHook(
+      ({ disabled }) => useCollapsedItems(disabled),
+      { initialProps: { disabled: false } }
+    );
+    const collapse = result.current.collapse;
+
+    rerender({ disabled: true });
+
+    expect(result.current.collapse).toBe(collapse);
+  });
+
+  it("does not schedule cleanup while animations are enabled", () => {
+    const requestAnimationFrame = vi.fn();
+    vi.stubGlobal("requestAnimationFrame", requestAnimationFrame);
+    const { result } = renderHook(() => useCollapsedItems(false));
+
+    act(() => result.current.collapse("item-a"));
+
+    expect(requestAnimationFrame).not.toHaveBeenCalled();
+    expect([...result.current.collapsedIds]).toEqual(["item-a"]);
+  });
+
+  it("returns no collapsed ids immediately when animations are disabled", () => {
+    vi.stubGlobal("requestAnimationFrame", vi.fn(() => 9));
+    vi.stubGlobal("cancelAnimationFrame", vi.fn());
+    const { result, rerender } = renderHook(
+      ({ disabled }) => useCollapsedItems(disabled),
+      { initialProps: { disabled: false } }
+    );
+    act(() => result.current.collapse("item-a"));
+
+    rerender({ disabled: true });
+
+    expect(result.current.collapsedIds.size).toBe(0);
   });
 
   it("clears collapsed state when animations become disabled", () => {
