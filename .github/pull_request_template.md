@@ -15,7 +15,7 @@
 
 ### Breaking change
 
-- [ ] This change breaks compatibility.
+- [ ] This change breaks compatibility
 
 <!-- If checked, describe why we need a new version and what will happen if the users dont upgrade -->
 
