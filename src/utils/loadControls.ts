@@ -12,6 +12,7 @@ import {
 import { BatchProcessor } from "./batchProcessor";
 import type { Batch } from "../common/models/batch";
 import { GridRendererOptions } from "../common/models/gridControl";
+import { resolveHighlightAliases } from "./resolveHighlightAliases";
 
 function mergeRenderConfig(
   base: ControlRenderConfig | undefined,
@@ -157,12 +158,14 @@ function buildJaggedChildDefinition<T extends ControlItem>(
 export function loadControls<T extends ControlItem = ControlItem>(
   controlsFromJson: ControlDefinition<T>[]
 ): LoadedControl<T>[] {
-  if (!Array.isArray(controlsFromJson)) {
+  const resolvedControls = resolveHighlightAliases(controlsFromJson);
+
+  if (!Array.isArray(resolvedControls)) {
     throw new Error("Controls must be provided as an array.");
   }
 
   const controlIds = new Set<string>();
-  controlsFromJson.forEach((control, index) => {
+  resolvedControls.forEach((control, index) => {
     if (!control || typeof control !== "object") {
       throw new Error(`Control at index ${index} must be an object.`);
     }
@@ -181,11 +184,11 @@ export function loadControls<T extends ControlItem = ControlItem>(
     { index: number; definition: ControlDefinition<T> }[]
   >();
 
-  controlsFromJson
+  resolvedControls
     .filter((control) => control.type === "jaggedArray")
     .forEach((parent) => {
       const prefix = `${parent.id}-`;
-      const children = controlsFromJson
+      const children = resolvedControls
         .filter((candidate) => candidate.id.startsWith(prefix))
         .flatMap((candidate) => {
           const suffix = candidate.id.slice(prefix.length);
@@ -212,7 +215,7 @@ export function loadControls<T extends ControlItem = ControlItem>(
       jaggedChildrenByParent.set(parent.id, children);
     });
 
-  return controlsFromJson
+  return resolvedControls
     .filter((control) => !attachedChildIds.has(control.id))
     .map((control) => {
       const type = control.type ?? "array";

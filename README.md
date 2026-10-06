@@ -19,23 +19,15 @@ React, React DOM, and Framer Motion are peer dependencies and remain external to
 
 ### Styling
 
-The framework stylesheet provides usable defaults. Set `--apf-*` variables on any ancestor of the playback to customize them:
+Import the framework stylesheet once. It contains the structural styles and the default theme required by the controls:
 
-```css
-.my-playback {
-  --apf-text-color: #111827;
-  --apf-secondary-text-color: #374151;
-  --apf-muted-text-color: #6b7280;
-  --apf-control-background: #fff;
-  --apf-border-color: #d1d5db;
-  --apf-grid-border-color: #d1d5db;
-  --apf-divider-color: #e5e7eb;
-  --apf-button-background: #2563eb;
-  --apf-border-radius: 0.5rem;
-}
+```tsx
+import "algorithm-playback-framework/styles.css";
 ```
 
-Additional sizing variables are `--apf-border-width`, `--apf-font-mono`, `--apf-font-size-xs`, `--apf-line-height-xs`, `--apf-font-size-sm`, `--apf-line-height-sm`, `--apf-slider-gap`, `--apf-slider-width`, and `--apf-slider-max-width`.
+No additional CSS is required. Every supported theme variable begins with `--apf-`. Their defaults are declared in the themed sections near the top of `algorithm-playback-framework/styles.css`, which is the source of truth for the customization API. Other selectors in that file are framework implementation details.
+
+Playback JSON may use semantic aliases such as `"Highlight.Pause"`. `loadControls` resolves those aliases to the corresponding theme variables automatically.
 
 ## Starter
 

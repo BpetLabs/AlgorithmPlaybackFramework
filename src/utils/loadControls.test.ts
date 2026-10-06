@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { Highlight } from "../common/models/highlightLine";
 import { loadControls } from "./loadControls";
 
 describe("loadControls", () => {
@@ -124,5 +125,27 @@ describe("loadControls", () => {
     expect(() => loadControls([{ id: " " }])).toThrow(
       "must have a non-empty id"
     );
+  });
+
+  it("resolves semantic highlight aliases before processing batches", () => {
+    const [control] = loadControls([
+      {
+        id: "code",
+        type: "staticText",
+        batches: [
+          {
+            step: 0,
+            highlightLines: [
+              { range: "1", backgroundColor: "Highlight.Pause" },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    expect(control.snapshots.at(-1)?.highlightLines?.[0]).toMatchObject({
+      range: "1",
+      backgroundColor: Highlight.Pause,
+    });
   });
 });

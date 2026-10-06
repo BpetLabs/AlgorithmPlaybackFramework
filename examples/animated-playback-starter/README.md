@@ -23,18 +23,11 @@ Copy `src/AnimatedPlaybackPage.tsx` and `src/playback.json` into the application
 npm install algorithm-playback-framework framer-motion
 ```
 
-Import `algorithm-playback-framework/styles.css` once in the application entry point. The starter does this in `src/main.tsx`.
+`src/main.tsx` imports two stylesheets:
 
-Framework defaults can be customized from a page or application stylesheet:
+- `algorithm-playback-framework/styles.css` provides required control structure and the default framework theme.
+- `./styles.css` styles only this example page and can be replaced or removed.
 
-```css
-.playback-page {
-  --apf-control-background: #fff;
-  --apf-text-color: #111827;
-  --apf-border-color: #d1d5db;
-  --apf-button-background: #2563eb;
-  --apf-border-radius: 0.5rem;
-}
-```
+Every supported framework theme variable and its default are declared in the themed sections near the top of `algorithm-playback-framework/styles.css`.
 
 The sample stores control layout in `playback.json`. Change each control's `render.layout` values to position it on the canvas.

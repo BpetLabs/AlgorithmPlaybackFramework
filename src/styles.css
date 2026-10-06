@@ -1,3 +1,36 @@
+/* Public theme defaults. Override these on any ancestor of a playback. */
+:root {
+  --apf-text-color: #fff;
+  --apf-secondary-text-color: #d1d5db;
+  --apf-muted-text-color: #6b7280;
+  --apf-control-background: transparent;
+  --apf-border-color: currentColor;
+  --apf-grid-border-color: #4b5563;
+  --apf-divider-color: #374151;
+  --apf-button-background: #6b7280;
+  --apf-border-radius: 0.25rem;
+  --apf-border-width: 1px;
+  --apf-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+  --apf-font-size-xs: 0.75rem;
+  --apf-line-height-xs: 1rem;
+  --apf-font-size-sm: 0.875rem;
+  --apf-line-height-sm: 1.25rem;
+  --apf-slider-gap: 1rem;
+  --apf-slider-width: 24rem;
+  --apf-slider-max-width: 60vw;
+}
+
+/* Static-text code highlight defaults. Public overrides inherit from ancestors. */
+[data-apf-renderer="static-text"] {
+  --_apf-highlight-return: var(--apf-highlight-return, rgba(90, 160, 90, 0.3));
+  --_apf-highlight-unused: var(--apf-highlight-unused, rgba(128, 128, 128, 0.1));
+  --_apf-highlight-return-location: var(--apf-highlight-return-location, rgba(200, 200, 200, 0.35));
+  --_apf-highlight-false: var(--apf-highlight-false, rgba(175, 0, 0, 0.1));
+  --_apf-highlight-branch: var(--apf-highlight-branch, rgba(255, 220, 0, 0.25));
+  --_apf-highlight-pause: var(--apf-highlight-pause, rgba(255, 165, 0, 0.6));
+}
+
 /* Framework utilities are scoped so they do not alter the host application. */
 [data-apf-control],
 [data-apf-control] *,
@@ -6,6 +39,7 @@
   box-sizing: border-box;
 }
 
+/* Positioning */
 [data-apf-control] .absolute { position: absolute; }
 [data-apf-control] .relative { position: relative; }
 [data-apf-control] .inset-0 { inset: 0; }
@@ -13,6 +47,8 @@
 [data-apf-control] .right-0 { right: 0; }
 [data-apf-control] .bottom-0 { bottom: 0; }
 [data-apf-control] .left-0 { left: 0; }
+
+/* Flex layout */
 [data-apf-control] .flex,
 [data-apf-slider].flex { display: flex; }
 [data-apf-control] .flex-row { flex-direction: row; }
@@ -23,11 +59,15 @@
 [data-apf-slider].items-center { align-items: center; }
 [data-apf-control] .justify-start { justify-content: flex-start; }
 [data-apf-control] .justify-center { justify-content: center; }
+
+/* Sizing, overflow, and interaction */
 [data-apf-control] .w-full { width: 100%; }
 [data-apf-control] .h-full { height: 100%; }
 [data-apf-control] .pointer-events-none { pointer-events: none; }
 [data-apf-control] .select-none { user-select: none; }
 [data-apf-control] .overflow-auto { overflow: auto; }
+
+/* Text layout and typography */
 [data-apf-control] .whitespace-pre { white-space: pre; }
 [data-apf-control] .whitespace-pre-wrap { white-space: pre-wrap; }
 [data-apf-control] .text-start { text-align: start; }
@@ -49,12 +89,16 @@
   font-size: var(--apf-font-size-sm, 0.875rem);
   line-height: var(--apf-line-height-sm, 1.25rem);
 }
+
+/* Theme colors */
 [data-apf-control] .text-white,
 [data-apf-slider] .text-white { color: var(--apf-text-color, #fff); }
 [data-apf-control] .text-gray-300 { color: var(--apf-secondary-text-color, #d1d5db); }
 [data-apf-control] .text-gray-500 { color: var(--apf-muted-text-color, #6b7280); }
 [data-apf-control] .bg-transparent { background-color: var(--apf-control-background, transparent); }
 [data-apf-slider] .bg-gray-500 { background-color: var(--apf-button-background, #6b7280); }
+
+/* Borders and corners */
 [data-apf-control] .rounded,
 [data-apf-slider] .rounded { border-radius: var(--apf-border-radius, 0.25rem); }
 [data-apf-control] .border { border: var(--apf-border-width, 1px) solid var(--apf-border-color, currentColor); }
@@ -64,15 +108,19 @@
 [data-apf-control] .border-l { border-left: var(--apf-border-width, 1px) solid currentColor; }
 [data-apf-control] .border-gray-600 { border-color: var(--apf-grid-border-color, #4b5563); }
 [data-apf-control] .border-gray-700 { border-color: var(--apf-divider-color, #374151); }
+
+/* Spacing */
 [data-apf-control] .ml-1 { margin-left: 0.25rem; }
 [data-apf-control] .mr-1 { margin-right: 0.25rem; }
 [data-apf-control] .mr-2 { margin-right: 0.5rem; }
 [data-apf-control] .p-2 { padding: 0.5rem; }
 [data-apf-control] .px-2,
-[data-apf-slider] .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
-[data-apf-control] .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+[data-apf-slider] .px-2 { padding-right: 0.5rem; padding-left: 0.5rem; }
+[data-apf-control] .px-3 { padding-right: 0.75rem; padding-left: 0.75rem; }
 [data-apf-control] .py-1,
 [data-apf-slider] .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+
+/* Playback slider layout */
 [data-apf-slider].gap-4 { gap: var(--apf-slider-gap, 1rem); }
 [data-apf-slider] .w-96 {
   width: var(--apf-slider-width, 24rem);

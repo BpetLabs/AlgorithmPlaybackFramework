@@ -179,6 +179,7 @@ export function StaticTextRenderer({
 
   return (
     <div
+      data-apf-renderer="static-text"
       className={resolveContainerClassName(
         "rounded",
         DEFAULT_RENDERER_CONTAINER_CLASS_NAME,
