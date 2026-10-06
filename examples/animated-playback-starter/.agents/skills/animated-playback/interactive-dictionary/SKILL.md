@@ -1,6 +1,6 @@
 ---
 name: interactive-dictionary
-description: "Use when editing local-variable dictionary JSON for the interactive debugger."
+description: "Use when editing local-variable dictionary controls in AnimatedPlayback JSON."
 user-invocable: true
 ---
 

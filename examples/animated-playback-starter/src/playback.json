@@ -1,0 +1,20 @@
+{
+  "controls": [
+        {
+        "id": "code",
+        "type": "staticText",
+        "staticValue": "",
+        "batches": []
+        },
+        {
+        "id": "text",
+        "type": "text",
+        "batches": []
+        },
+        {
+        "id": "locals",
+        "type": "dictionary",
+        "batches": []
+        }
+    ]
+}

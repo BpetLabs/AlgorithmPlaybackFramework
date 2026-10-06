@@ -1,6 +1,6 @@
 ---
 name: interactive-array
-description: "Create or edit array and jagged-array/matrix controls in interactive debugger JSON, including initialization, mutations, node colors, and affected-index borders. Use for array or matrix control batches, not dictionaries, text, code highlights, or graph layouts."
+description: "Create or edit array and jagged-array/matrix controls in AnimatedPlayback JSON, including initialization, mutations, node colors, and affected-index borders. Use for array or matrix control batches, not dictionaries, text, code highlights, or graph layouts."
 user-invocable: true
 ---
 

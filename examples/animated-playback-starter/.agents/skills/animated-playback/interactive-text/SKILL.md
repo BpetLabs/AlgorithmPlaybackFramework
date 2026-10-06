@@ -1,11 +1,11 @@
 ---
 name: interactive-text
-description: Create, edit, audit, or synchronize Play by Play narration, console output, and other text-control batches with pause steps in interactive debugger JSON.
+description: Create, edit, audit, or synchronize Play by Play narration, console output, and other text-control batches with pause steps in AnimatedPlayback JSON.
 ---
 
 # Interactive Text
 
-Apply these rules to text controls in interactive animation JSON unless the user requests different wording.
+Apply these rules to text controls in AnimatedPlayback JSON unless the user requests different wording.
 
 Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for Play by Play, console output, and other text controls.
 

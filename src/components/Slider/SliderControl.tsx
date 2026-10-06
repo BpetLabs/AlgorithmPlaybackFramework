@@ -14,7 +14,7 @@ export function SliderControl({ historyLength, currentIndex, onChange }: SliderC
   const goForward = () => onChange(Math.min(maxIndex, resolvedIndex + 1));
 
   return (
-    <div className="flex items-center gap-4">
+    <div data-apf-slider="" className="flex items-center gap-4">
       <button
         type="button"
         onClick={goBack}

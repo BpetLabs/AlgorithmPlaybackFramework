@@ -12,9 +12,34 @@ import {
   loadControls,
   useControlManager,
 } from "algorithm-playback-framework";
+import "algorithm-playback-framework/styles.css";
 ```
 
 React, React DOM, and Framer Motion are peer dependencies and remain external to the distributed bundle.
+
+### Styling
+
+The framework stylesheet provides usable defaults. Set `--apf-*` variables on any ancestor of the playback to customize them:
+
+```css
+.my-playback {
+  --apf-text-color: #111827;
+  --apf-secondary-text-color: #374151;
+  --apf-muted-text-color: #6b7280;
+  --apf-control-background: #fff;
+  --apf-border-color: #d1d5db;
+  --apf-grid-border-color: #d1d5db;
+  --apf-divider-color: #e5e7eb;
+  --apf-button-background: #2563eb;
+  --apf-border-radius: 0.5rem;
+}
+```
+
+Additional sizing variables are `--apf-border-width`, `--apf-font-mono`, `--apf-font-size-xs`, `--apf-line-height-xs`, `--apf-font-size-sm`, `--apf-line-height-sm`, `--apf-slider-gap`, `--apf-slider-width`, and `--apf-slider-max-width`.
+
+## Starter
+
+The [Animated Playback starter](examples/animated-playback-starter) is a copyable React application containing a sample playback and agent skills for authoring playback JSON.
 
 ## Development
 

@@ -124,6 +124,7 @@ export function InteractiveControlRenderer({
 
   return (
     <div
+      data-apf-control=""
       style={{
         position: "absolute",
         top,

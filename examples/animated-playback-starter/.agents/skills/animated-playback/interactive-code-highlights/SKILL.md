@@ -1,11 +1,11 @@
 ---
 name: interactive-code-highlights
-description: "Create or edit code-highlight batches in interactive debugger JSON, including pause-to-pause execution, conditionals, loops, calls, returns, method borders, and cleanup."
+description: "Create or edit code-highlight batches in AnimatedPlayback JSON, including pause-to-pause execution, conditionals, loops, calls, returns, method borders, and cleanup."
 ---
 
 # Interactive Code Highlights
 
-Use this skill when updating the code-highlight section of interactive debugger JSON.
+Use this skill when updating the code-highlight section of AnimatedPlayback JSON.
 
 Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for code highlights.
 
@@ -143,6 +143,3 @@ Compare this complete destination frame with the prior frame only after all four
 - Verify explicit returns alone use Return.
 - Verify every loop back edge and nested-loop exit is replayed independently.
 - Verify Orange and Pink borders, backgrounds inside bordered scopes, pause-aware scroll targets, final cleanup, compact ranges, valid JSON, formatting, and absence of no-op actions.
-
-## Reference example
-- Use [dfspermutationsswap.json](../../../app/interactivecode/data/csharp/dfs/dfspermutationsswap.json),[khansort.json](../../../app/interactivecode/data/csharp/queue/khansort.json) and [calculator.json](../../../app/interactivecode/data/csharp/stack/calculator.json) as an illustrative reference for stateful batches, recursion, represented calls, and method borders. Recompute every highlight range from the generic rules above; the example never overrides them and its ranges must not be copied mechanically.

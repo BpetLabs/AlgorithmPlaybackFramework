@@ -11,20 +11,24 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./styles.css": "./dist/styles.css"
   },
   "files": [
     "dist",
     "README.md"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "build": "tsup --config tsup.config.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "check": "npm run typecheck && npm run test:coverage && npm run build",
+    "test:package": "node scripts/validate-package.mjs",
+    "check": "npm run typecheck && npm run test:coverage && npm run build && npm run test:package",
     "prepublishOnly": "npm run check"
   },
   "repository": {

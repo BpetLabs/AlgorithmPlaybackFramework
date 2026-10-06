@@ -1,12 +1,12 @@
 ---
 name: interactive-generic
-description: "Base rules for all interactive debugger JSON, including animation timing, target selection, cleanup, statefulness, and formatting. Use alongside every specialized interactive skill."
+description: "Base rules for all AnimatedPlayback JSON, including animation timing, target selection, cleanup, statefulness, and formatting. Use alongside every specialized interactive skill."
 user-invocable: true
 ---
 
 # Interactive Generic Control Rules
 
-This is the base skill for all interactive debugger JSON work. Always apply it alongside any specialized interactive skill. Specialized skills extend these rules and take precedence only for their scoped control-specific behavior; the user's explicit instructions take precedence over both.
+This is the base skill for all AnimatedPlayback JSON work. Always apply it alongside any specialized interactive skill. Specialized skills extend these rules and take precedence only for their scoped control-specific behavior; the user's explicit instructions take precedence over both.
 
 ## Primary objective
 - Keep control state consistent across steps, especially around pauses and transitions.
@@ -28,7 +28,7 @@ This is the base skill for all interactive debugger JSON work. Always apply it a
 - Use now: true only when the mutation completes during an unpaused transition and is not the paused statement.
 
 ## Pause semantics
-- Treat the paused line as a debugger stop before execution.
+- Treat the paused line as a playback stop before execution.
 - If a pre-animation step exists, it should signal what will happen after the pause.
 
 ## Step 0 and first execution step
