@@ -1,6 +1,5 @@
 ﻿"use client";
 import { motion } from "framer-motion";
-import { useLayoutEffect } from "react";
 import { ControlItem, ControlItemState } from "../../common/models/controlItem";
 import { useAnimatePreInsert } from "../../hooks/animations/useAnimatePreInsert";
 import { useAnimateMoveIntoPlace } from "../../hooks/animations/useAnimateMoveIntoPlace";
@@ -10,6 +9,7 @@ import { useAnimateShake } from "../../hooks/animations/useAnimateShake";
 import { buildHighlightOverlayStyle, buildItemBoxStyle } from "../Renderers/utils/itemBoxStyle";
 import { ArrayOrientation } from "../../common/models/arrayControl";
 import { useAnimationController } from "../../hooks/animations/useAnimationController";
+import { useIsomorphicLayoutEffect } from "../../hooks/useIsomorphicLayoutEffect";
 
 export interface ArrayItemProps {
   item: ControlItem;
@@ -64,7 +64,7 @@ export default function ArrayItem({
       item.state === ControlItemState.Inserted ||
       item.state === ControlItemState.Empty);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!shouldSnapInPlace) return;
 
     controls.stop();

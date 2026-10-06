@@ -1,8 +1,8 @@
 "use client";
 import type { AnimationController } from "../../common/models/animation";
-import { useLayoutEffect } from "react";
 import { ControlItem, ControlItemState, isPreRemovingState } from "../../common/models/controlItem";
 import { move, shake, reset } from "../../utils/animationEffects";
+import { useIsomorphicLayoutEffect } from "../useIsomorphicLayoutEffect";
 
 export function useAnimatePreRemove(
   item: ControlItem, 
@@ -37,7 +37,7 @@ export function useAnimatePreRemove(
     skippedInsertStartY = leftRight ? 0 : -itemHeight;
   }
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     let cancelled = false;
     const shouldPreRemove = isPreRemovingState(item.state);
 

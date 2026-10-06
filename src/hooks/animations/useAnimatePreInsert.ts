@@ -1,8 +1,8 @@
 "use client";
 import type { AnimationController } from "../../common/models/animation";
-import { useLayoutEffect } from "react";
 import { ControlItem, ControlItemState } from "../../common/models/controlItem";
 import { warpIn } from "../../utils/animationEffects";
+import { useIsomorphicLayoutEffect } from "../useIsomorphicLayoutEffect";
 
 export function useAnimatePreInsert(
   item: ControlItem,
@@ -47,7 +47,7 @@ export function useAnimatePreInsert(
 
   const zIndex = collapsedIndex * itemHeight + 1;
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     let cancelled = false;
 
     if (isPreInsert || isPreUpdate || isPreHead || isPreTail) {

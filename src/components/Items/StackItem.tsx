@@ -1,6 +1,5 @@
 ﻿"use client";
 import { motion } from "framer-motion";
-import { useLayoutEffect } from "react";
 import { ControlItem, ControlItemState } from "../../common/models/controlItem";
 import { useAnimatePreInsert } from "../../hooks/animations/useAnimatePreInsert";
 import { useAnimateMoveIntoPlace } from "../../hooks/animations/useAnimateMoveIntoPlace";
@@ -9,6 +8,7 @@ import { useAnimateRemoving } from "../../hooks/animations/useAnimateRemoving";
 import { useAnimateShake } from "../../hooks/animations/useAnimateShake";
 import { buildHighlightOverlayStyle, buildItemBoxStyle } from "../Renderers/utils/itemBoxStyle";
 import { useAnimationController } from "../../hooks/animations/useAnimationController";
+import { useIsomorphicLayoutEffect } from "../../hooks/useIsomorphicLayoutEffect";
 
 export interface StackItemProps {
   item: ControlItem;
@@ -60,7 +60,7 @@ export default function StackItem({
       item.state === ControlItemState.Inserted ||
       item.state === ControlItemState.Empty);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!shouldSnapInPlace) return;
 
     controls.stop();

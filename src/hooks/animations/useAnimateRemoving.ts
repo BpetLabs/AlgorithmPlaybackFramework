@@ -1,8 +1,9 @@
 "use client";
 import type { AnimationController } from "../../common/models/animation";
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
 import { ControlItem, ControlItemState, isRemovingState } from "../../common/models/controlItem";
 import { move, moveThenFallRotateAndDisappear, disappear, setZIndex } from "../../utils/animationEffects";
+import { useIsomorphicLayoutEffect } from "../useIsomorphicLayoutEffect";
 
 export function useAnimateRemoving(item: ControlItem,
   collapsedIndex: number,
@@ -44,7 +45,7 @@ export function useAnimateRemoving(item: ControlItem,
       moveDuration = 0;
   }
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     let cancelled = false;
     const wasRemoving = wasRemovingRef.current;
     wasRemovingRef.current = isRemoving;

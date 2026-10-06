@@ -1,8 +1,8 @@
 "use client";
 import type { AnimationController } from "../../common/models/animation";
-import { useLayoutEffect } from "react";
 import { ControlItem, ControlItemState } from "../../common/models/controlItem";
 import { move } from "../../utils/animationEffects";
+import { useIsomorphicLayoutEffect } from "../useIsomorphicLayoutEffect";
 
 export function useAnimateMoveIntoPlace(
   item: ControlItem,
@@ -21,12 +21,12 @@ export function useAnimateMoveIntoPlace(
   const zIndex = collapsedIndex * itemHeight + 1;
 
   // Keep layering in sync when collapse changes offsets without replaying the move-in animation.
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!isInserted && !isInitial) return;
     controls.set({ zIndex });
   }, [controls, isInserted, isInitial, zIndex]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     let cancelled = false;
 
     if (isInserted || isInitial) {
