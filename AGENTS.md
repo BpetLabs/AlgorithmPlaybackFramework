@@ -6,6 +6,7 @@
 - Base conclusions on evidence rather than agreement with my framing.
 
 # Pull Requests
+- Dont Push changes to PR until asked
 - Open PRs as drafts.
 - Use a concise title describing the change.
 - Run the relevant tests before opening a PR.
