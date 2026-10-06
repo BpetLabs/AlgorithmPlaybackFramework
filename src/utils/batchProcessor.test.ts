@@ -3,6 +3,12 @@ import { ControlItemState } from "../common/models/controlItem";
 import { BatchProcessor } from "./batchProcessor";
 
 describe("BatchProcessor", () => {
+  it.each([-1, 1.5])("rejects invalid initial item count %s", (count) => {
+    expect(() => new BatchProcessor("items", "array", count)).toThrow(
+      "initialItemCount must be a non-negative integer"
+    );
+  });
+
   it("generates deterministic item ids per processor", () => {
     const firstIds = new BatchProcessor("first", "array", 2)
       .getHistory()[0]
@@ -332,5 +338,185 @@ describe("BatchProcessor", () => {
     firstRead[1].graphNodes![0].value = "Mutated";
 
     expect(processor.getHistory()[1].graphNodes![0].value).toBe("Original");
+  });
+
+  it("patches and selectively clears line highlight properties", () => {
+    const processor = new BatchProcessor("code", "staticText");
+    processor.applyBatch({
+      step: 1,
+      highlightLines: [
+        { range: "1-3", backgroundColor: "red", borderColor: "blue" },
+      ],
+      scrollBottom: 3,
+    });
+    processor.applyBatch({
+      step: 2,
+      clearHighlights: [{ range: "2", backgroundColor: true }],
+      highlightLines: [{ range: "3", borderColor: "" }],
+    });
+
+    expect(
+      processor.getHistory()[2].highlightLines?.map(({ range, backgroundColor, borderColor }) => ({
+        range,
+        backgroundColor,
+        borderColor,
+      }))
+    ).toEqual([
+      { range: "1", backgroundColor: "red", borderColor: "blue" },
+      { range: "2", backgroundColor: undefined, borderColor: "blue" },
+      { range: "3", backgroundColor: "red", borderColor: undefined },
+    ]);
+    expect(processor.getHistory()[2].scrollBottom).toBe(3);
+  });
+
+  it("merges grid items by generated or explicit id and rejects duplicate updates", () => {
+    const processor = new BatchProcessor("grid", "grid");
+    processor.applyBatch({ step: 1, gridItems: [{ row: 0, col: 0, value: "A" }] });
+    const generatedId = processor.getHistory()[1].gridItems?.[0].id;
+    expect(generatedId).toBeDefined();
+
+    processor.applyBatch({
+      step: 2,
+      gridItems: [
+        { id: generatedId, row: 0, col: 0, value: "Updated" },
+        { id: "second", row: 0, col: 1, value: "B" },
+      ],
+    });
+    expect(processor.getHistory()[2].gridItems?.map((entry) => entry.value)).toEqual([
+      "Updated",
+      "B",
+    ]);
+
+    expect(() => processor.applyBatch({
+      step: 3,
+      gridItems: [
+        { id: "duplicate", row: 0, col: 0 },
+        { id: "duplicate", row: 0, col: 1 },
+      ],
+    })).toThrow('Duplicate grid id "duplicate"');
+  });
+
+  it("advances animated graph deletion and removes orphaned edges", () => {
+    const processor = new BatchProcessor("graph", "nodeGraph");
+    processor.applyBatch({
+      step: 1,
+      graphNodes: [
+        { id: "a", row: 0, column: 0 },
+        { id: "b", row: 0, column: 1 },
+      ],
+      graphEdges: [{ id: "a-b", from: "a", to: "b" }],
+    });
+    processor.applyBatch({ step: 2, graphNodeDeletes: [{ id: "a" }] });
+    expect(processor.getHistory()[2].graphNodes?.find((node) => node.id === "a")?.state).toBe(
+      ControlItemState.PreRemoveInPlace
+    );
+
+    processor.applyBatch({ step: 3 });
+    expect(processor.getHistory()[3].graphNodes?.find((node) => node.id === "a")?.state).toBe(
+      ControlItemState.RemovingInPlace
+    );
+
+    processor.applyBatch({ step: 4 });
+    expect(processor.getHistory()[4].graphNodes?.map((node) => node.id)).toEqual(["b"]);
+    expect(processor.getHistory()[4].graphEdges).toEqual([]);
+  });
+
+  it("supports immediate and animate-now graph deletion", () => {
+    const immediate = new BatchProcessor("immediate", "nodeGraph");
+    immediate.applyBatch({ step: 1, graphNodes: [{ id: "a", row: 0, column: 0 }] });
+    immediate.applyBatch({ step: 2, graphNodeDeletes: [{ id: "a", now: true }] });
+    expect(immediate.getHistory()[2].graphNodes).toEqual([]);
+
+    const animated = new BatchProcessor("animated", "nodeGraph");
+    animated.applyBatch({ step: 1, graphNodes: [{ id: "a", row: 0, column: 0 }] });
+    animated.applyBatch({ step: 2, graphNodeDeletes: [{ id: "a", animateNow: true }] });
+    expect(animated.getHistory()[2].graphNodes?.[0]).toMatchObject({
+      state: ControlItemState.RemovingInPlace,
+      previousState: ControlItemState.PreRemoveInPlace,
+    });
+  });
+
+  it("applies head, indexed, and immediate tail insert timing in operation order", () => {
+    const processor = new BatchProcessor("items", "array");
+    processor.applyBatch({
+      step: 1,
+      headInserts: [{ input: { value: "head" } }],
+      tailInserts: [{ input: { value: "tail" }, now: true }],
+      inserts: [{ index: 1, input: { value: "middle" }, animateNow: true }],
+    });
+
+    expect(processor.getHistory()[1].items.map(({ value, state, previousState }) => ({
+      value,
+      state,
+      previousState,
+    }))).toEqual([
+      { value: "head", state: ControlItemState.PreHead, previousState: undefined },
+      { value: "middle", state: ControlItemState.Inserted, previousState: ControlItemState.PreInsert },
+      { value: "tail", state: ControlItemState.Initial, previousState: undefined },
+    ]);
+  });
+
+  it("replaces updates immediately or stages both sides with animateNow", () => {
+    const immediate = new BatchProcessor("immediate", "array", 1, { value: "old" });
+    immediate.applyBatch({
+      step: 1,
+      updates: [{ index: 0, input: { value: "new" }, now: true }],
+    });
+    expect(immediate.getHistory()[1].items).toEqual([
+      expect.objectContaining({ value: "new", state: ControlItemState.Initial }),
+    ]);
+
+    const animated = new BatchProcessor("animated", "array", 1, { value: "old" });
+    animated.applyBatch({
+      step: 1,
+      updates: [{ index: 0, input: { value: "new" }, animateNow: true }],
+    });
+    expect(animated.getHistory()[1].items.map(({ value, state, previousState }) => ({
+      value,
+      state,
+      previousState,
+    }))).toEqual([
+      { value: "old", state: ControlItemState.RemovingUpdate, previousState: ControlItemState.PreRemoveUpdate },
+      { value: "new", state: ControlItemState.Inserted, previousState: ControlItemState.PreUpdate },
+    ]);
+  });
+
+  it("removes now operations immediately and preserves non-collapsing slots as empty", () => {
+    const immediate = new BatchProcessor("immediate", "array", 2);
+    immediate.applyBatch({ step: 1, deletes: [{ index: 0, now: true }] });
+    expect(immediate.getHistory()[1].items).toHaveLength(1);
+
+    const persistent = new BatchProcessor("persistent", "array", 1);
+    persistent.applyBatch({ step: 1, deletes: [{ index: 0, collapse: false }] });
+    persistent.applyBatch({ step: 2 });
+    persistent.applyBatch({ step: 3 });
+    expect(persistent.getHistory()[3].items[0].state).toBe(ControlItemState.Empty);
+  });
+
+  it("rejects invalid indexed and end-removal inputs", () => {
+    const processor = new BatchProcessor("items", "array", 1);
+    expect(() => processor.applyBatch({ step: 1, deletes: [{ index: 1.5 }] })).toThrow(
+      "Invalid deletes index 1.5"
+    );
+    expect(() => processor.applyBatch({ step: 1, headTakes: { count: -1 } })).toThrow(
+      "Invalid headTakes count -1"
+    );
+    expect(() => processor.applyBatch({ step: 1, tailDeletes: { count: 2 } })).toThrow(
+      "Invalid tailDeletes index 1"
+    );
+  });
+
+  it("deletes graph edges explicitly", () => {
+    const processor = new BatchProcessor("graph", "nodeGraph");
+    processor.applyBatch({
+      step: 1,
+      graphNodes: [
+        { id: "a", row: 0, column: 0 },
+        { id: "b", row: 0, column: 1 },
+      ],
+      graphEdges: [{ id: "edge", from: "a", to: "b" }],
+    });
+    processor.applyBatch({ step: 2, graphEdgeDeletes: ["edge"] });
+    expect(processor.getHistory()[2].graphEdges).toEqual([]);
   });
 });

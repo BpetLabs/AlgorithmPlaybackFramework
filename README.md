@@ -23,6 +23,7 @@ Requires Node.js 20 or later.
 ```sh
 npm install
 npm run check
+npm run test:coverage
 ```
 
-`npm run check` runs strict TypeScript checking, the Vitest suite, and the ESM/CommonJS library build. Build artifacts and declarations are written to `dist`.
+`npm run check` runs strict TypeScript checking, the Vitest suite, and the ESM/CommonJS library build. `npm run test:coverage` writes an HTML coverage report to `coverage`. Build artifacts and declarations are written to `dist`.

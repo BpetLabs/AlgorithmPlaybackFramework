@@ -105,6 +105,12 @@ describe("loadControls", () => {
     );
   });
 
+  it("rejects non-object control entries", () => {
+    expect(() => loadControls([null as never])).toThrow(
+      "Control at index 0 must be an object"
+    );
+  });
+
   it("rejects duplicate control ids", () => {
     expect(() =>
       loadControls([
