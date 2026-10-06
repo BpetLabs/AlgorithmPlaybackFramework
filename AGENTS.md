@@ -5,9 +5,16 @@
 - Do not include conversational validation (e.g., "You're right," "Exactly," "Great question," "Good catch," "You're right to question that," or similar).
 - Base conclusions on evidence rather than agreement with my framing.
 
+## Commits
+- Preserve existing uncommitted changes. If they conflict with the requested work, ask before overwriting or discarding them.
+- Stage only files changed for the current task.
+- Do not commit unless explicitly asked.
+- When committing, use a concise, imperative subject describing the change.
+- Include a short commit body explaining what changed.
+- Do not push unless explicitly asked.
+
 # Pull Requests
-- Dont Push changes to PR until asked
 - Open PRs as drafts.
-- Use a concise title describing the change.
+- Use a concise title describing the overall PR change.
 - Run the relevant tests before opening a PR.
 - Follow .github/pull_request_template.md.
