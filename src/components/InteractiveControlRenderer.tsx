@@ -1,0 +1,157 @@
+"use client";
+
+import { ControlItem } from "../common/models/controlItem";
+import {
+  ControlRenderLayout,
+  LoadedControl,
+  Snapshot,
+} from "../common/models/snapshot";
+import {
+  getControlRendererProps,
+  ResolvedControlRendererProps,
+} from "../utils/getControlRendererProps";
+import {
+  BaseRendererProps,
+  RendererMap,
+} from "./Renderers/RendererMap";
+import { RendererType } from "./Renderers/rendererConfig";
+import { buildRenderItems } from "./Renderers/utils/buildRenderItems";
+
+export interface InteractiveControlRendererProps {
+  control: LoadedControl<ControlItem>;
+  latestSnapshots: Record<string, Snapshot<ControlItem>>;
+  currentStep: number;
+  disableAnimations: boolean;
+  layout?: ControlRenderLayout;
+  defaultHeaderTitle?: string;
+  configureProps?: (
+    id: string,
+    props: ResolvedControlRendererProps,
+    control: LoadedControl<ControlItem>
+  ) => void;
+}
+
+export function InteractiveControlRenderer({
+  control,
+  latestSnapshots,
+  currentStep,
+  disableAnimations,
+  layout,
+  defaultHeaderTitle,
+  configureProps,
+}: InteractiveControlRendererProps) {
+  const snapshot = latestSnapshots[control.id];
+  if (!snapshot) return null;
+
+  const type = snapshot.type as RendererType;
+  const Renderer = RendererMap[type] as React.ComponentType<
+    BaseRendererProps & Record<string, unknown>
+  >;
+  if (!Renderer) {
+    throw new Error(
+      `Control "${control.id}" uses unsupported renderer type "${snapshot.type}".`
+    );
+  }
+
+  const renderConfig =
+    control.renderByStep?.[snapshot.step] ?? control.render ?? {};
+  if (renderConfig.visible === false) return null;
+
+  const dimensions = {
+    ...layout,
+    ...(renderConfig.layout ?? {}),
+  };
+  const { top, left, width, height } = dimensions;
+  if (
+    top === undefined ||
+    left === undefined ||
+    width === undefined ||
+    height === undefined
+  ) {
+    return null;
+  }
+
+  const props = getControlRendererProps({
+    control,
+    snapshot,
+    latestSnapshots,
+    dimensions: { width, height },
+    renderConfig,
+    currentStep,
+    disableAnimations,
+  });
+  configureProps?.(control.id, props, control);
+
+  let resolvedWidth = width;
+  let resolvedHeight = height;
+
+  if (
+    props.fitContent === true &&
+    (type === RendererType.Array ||
+      type === RendererType.JaggedArray)
+  ) {
+    const defaultItemOffset =
+      typeof props.defaultItemOffset === "number"
+        ? props.defaultItemOffset
+        : 50;
+    const renderItems = buildRenderItems(
+      snapshot.items,
+      new Set(),
+      Boolean(props.disableAnimations),
+      defaultItemOffset
+    );
+    const mainAxisSize = Math.max(
+      renderItems.reduce(
+        (extent, item) =>
+          Math.max(extent, item.offset + item.itemOffset),
+        0
+      ),
+      defaultItemOffset
+    );
+
+    if (props.orientation === "vertical") {
+      resolvedHeight = mainAxisSize;
+      props.divHeight = mainAxisSize;
+    } else {
+      resolvedWidth = mainAxisSize;
+      props.divWidth = mainAxisSize;
+    }
+  }
+
+  const headerTitle = renderConfig.title ?? defaultHeaderTitle;
+  const shouldShowHeader =
+    renderConfig.showTitle ?? Boolean(headerTitle);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top,
+        left,
+        width: resolvedWidth,
+        height: resolvedHeight,
+      }}
+    >
+      {shouldShowHeader && headerTitle && (
+        <div
+          style={{
+            position: "absolute",
+            top: -30,
+            left: "50%",
+            width: "max-content",
+            transform: "translateX(-50%)",
+            textAlign: "center",
+            whiteSpace: "nowrap",
+            overflow: "visible",
+            fontSize: 16,
+            fontWeight: "bold",
+            color: "#ccc",
+          }}
+        >
+          {headerTitle}
+        </div>
+      )}
+      <Renderer {...props} />
+    </div>
+  );
+}
