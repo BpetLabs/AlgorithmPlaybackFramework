@@ -4,6 +4,8 @@ A copyable React application for authoring an AnimatedPlayback with AlgorithmPla
 
 This framework is designed for an AI to automatically create the controls and animations from a prompt given an Algorithm in any language. 
 
+Once created, fine tune the styling using AI or manually adjustment.
+
 See [CONTROLS.md](./CONTROLS.md) for the available control types, their behavior, and the conventions used by the authoring skills.
 
 ## Start
