@@ -17,7 +17,6 @@ const visualizationArea = {
   left: 400,
   width: 860,
   height: 380,
-  border: "1px solid red",
 };
 
 const controlLayouts: Record<string, ControlRenderLayout> = {
