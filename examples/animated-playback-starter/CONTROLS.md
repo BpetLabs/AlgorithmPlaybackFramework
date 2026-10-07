@@ -4,7 +4,7 @@ Controls are the visual panels in an AnimatedPlayback. Each control has a unique
 
 ## Contents
 
-- [Standard playback controls](#start-page)
+- [Starter page](#starter-page)
 - [Available types](#available-types)
   - [`staticText`](#statictext)
   - [`text`](#text)
@@ -24,39 +24,38 @@ Controls are the visual panels in an AnimatedPlayback. Each control has a unique
   - [Delete](#delete)
   - [Take](#take)
   - [Set values](#set-values)
-  - [`now`](#now)
-  - [`animateNow`](#animatenow)
-- [Render Overrides](#render-overrides)
+  - [`now` and `animateNow`](#now-and-animatenow)
+- [Render overrides](#render-overrides)
 
-## Starter Page
+## Starter page
 
-### General Design
+### General design
 
-Each page consists of a slider, and a set of controls, with Code, Play by Play, and Locals being standard, and the rest representing Arrays, Stacks, Queues, Grids, and Graphs. 
+Each page consists of a playback slider and a set of controls. Code, Play by Play, and Locals are included by default. Additional controls can represent arrays, stacks, queues, grids, graphs, and other algorithm-specific data.
 
-You do not need to use this solution for code playback and can use these controls anyway you choose, but it was designed to plug any code into Code text and produce a step by step playable animation while the Code provides a debugger like experience stopping on specified lines. 
+The controls can be used for any animation, but the starter is designed for source-code playback. Add source code to the Code control and coordinate its highlights with the other controls to create a step-by-step, debugger-like visualization.
 
-Each control will specify the steps 0, 1, 5... where they will take an action, whether that be an insert, update, delete, set value, or highlighting.
+Each control specifies the steps on which it changes. A change can insert, update, delete, or set an item; highlight source code; or update another control-specific state.
 
-One of the key differences with this Animation framework is that it supports PreStates,  to provide a debugger like experience at the Pause Line,  Values as blocks warp in off to the side to show you what will happen,  or shake to show you that an item will be removed and then animate in place at the next step.
+The framework supports pre-states that show a pending action at the current pause. A new value can appear beside its destination before moving into place, while an item that is about to be removed can shake before leaving the control on the next step.
 
-This is what allows you to understand what each line of code is doing,  without these Pre-Steps its very hard to visualize the changes.  
+These pre-states connect the highlighted line of code to the visual change it is about to cause.
 
-All of the steps are coordinated with a slider, that can instantly go forward or back and the AI Skills and Local Variables provide hopefully useful and relevent information on what happened between the steps,  since you can only pause a key parts of the code,  the summary can help you trace back what happened inbetween steps. 
+The slider coordinates every control and can move immediately forward or backward. Play by Play narration and Locals can explain what happened between pauses, which is useful when the playback stops only at important lines rather than every executed line.
 
 ### AI starter pack controls
 
-The following are a set of controls that have specific meaning to the custom AI skills.
+The following controls have specific meanings for the custom AI skills.
 
 The AI authoring skills use these conventional roles when they are relevant to the animation:
 
 | Role | Type | Conventional ID | Purpose |
 | --- | --- | --- | --- |
-| Code | `staticText` | `code` | Defaulted: Displays fixed source code and animates line highlights and scrolling. |
-| Play by Play | `text` | `playbyplay` | Defaulted: Explains the code actions leading to the current step. |
-| Locals | `dictionary` | `locals` | Defaulted: Displays local variable names and their current values. |
-| Call Stack | `stack`   | `callstack` | On request: Visual representation of a call stack. | 
-| Console Output | `text` | `consoleout` | On request: Displays console output that occured in between the last to current step |
+| Code | `staticText` | `code` | Included by default. Displays source code and animates line highlights and scrolling. |
+| Play by Play | `text` | `text` | Included by default. Explains the code actions leading to the current step. |
+| Locals | `dictionary` | `locals` | Included by default. Displays local variable names and their current values. |
+| Call Stack | `stack` | `callStack` | Optional. Visualizes the active call stack. |
+| Console Output | `text` | `console` | Optional. Displays output produced between the previous and current steps. |
 
 The starter gives these three controls fixed, initially empty regions. It also reserves an empty visualization area for algorithm-specific controls.
 
@@ -158,7 +157,7 @@ The `|` separates the displayed columns. Add `splitColumnWidths` to the item to 
 }
 ```
 
-This gives the first column 70% of the row width and the second column 30%. Provide one percentage for each `|`-separated segment. Every percentage must be greater than `0` and less than `100`, and the values must total `100`. If the configuration is invalid, the columns use equal widths.   You would use this if your keys are short but your values are long for example.
+This gives the first column 70% of the row width and the second column 30%. Provide one percentage for each `|`-separated segment. Every percentage must be greater than `0` and less than `100`, and the values must total `100`. If the configuration is invalid, the columns use equal widths. This is useful when, for example, keys are short but values are long.
 
 For three columns, use three percentages:
 
@@ -449,10 +448,11 @@ Dictionary, grid, and plain `text` controls render `value` but do not render the
 
 ## Item slots and grid lines
 
-Array and stack layout options:
+Set these layout options at the top level of a control in JSON or assign them in the page through `configureProps`. Array and stack-based controls use them to size items and their background slots.
 
 | Option | Effect |
 | --- | --- |
+| `orientation` | Uses `"horizontal"` or `"vertical"` layout. Arrays support both; stacks remain vertical. |
 | `defaultItemOffset` | Default slot size and distance between consecutive item positions. |
 | `itemWidth`, `itemHeight` | Default rendered size of each item box. |
 | `itemGap` | Inset on both sides of an item along the main axis. |
@@ -460,12 +460,14 @@ Array and stack layout options:
 | `preInsertGap` | Additional distance between an indexed insert/update pre-state and the control. |
 | `itemLabels` | Labels displayed beside array slots. |
 | `showCellBorders` | Shows or hides structural slot borders. |
-| `emptyItemText` | Value displayed in array slots without items yet. |
-| `fitContent` | Fits the control to the div size. |
+| `emptyItemText` | Configured value displayed in array slots without item text, such as `"0"`. |
+| `fitContent` | Sets an array's main-axis size to its occupied content size. |
 
-`itemLabels` and `fitContent` apply to arrays and jagged arrays. Stack-based controls ignore them. 
+`defaultItemOffset` controls both the spacing between item positions and the background grid. Its default is `50` pixels. A horizontal array divides its width into slots; a vertical array or stack divides its height into slots. Grid lines continue through unused space unless `showCellBorders` is `false`.
 
-An individual item's `itemOffset` overrides `defaultItemOffset` for that slot.
+`itemLabels` and `fitContent` apply to arrays and jagged arrays. Stack-based controls ignore them.
+
+An individual item's `itemOffset` overrides `defaultItemOffset` for that slot. `itemWidth` and `itemHeight` change the rendered box; they do not change the distance between consecutive positions unless `defaultItemOffset` or `itemOffset` also changes.
 
 
 ## Initial state and playback steps
@@ -525,7 +527,7 @@ Use `updates` when replacing an item with an animated value.
 2. On the control's next batch, the replacement moves over the existing item at the target index.
 3. The existing item fades away while the replacement takes its place. Other items do not move because the collection size does not change.
 
-* You cannot update an item index that doesnt exist.
+An indexed update can target a position beyond the current item count. The framework creates any missing slots before staging the replacement.
 
 ### Delete
 
@@ -537,7 +539,7 @@ Use `deletes`, `headDeletes`, or `tailDeletes`.
 
 Set `collapse: false` on the delete operation to leave an empty slot. A later removal with `collapse: true` can remove that empty slot and close the gap.
 
-* You cannot delete an item index that doesnt exist.
+The target index must exist. An invalid delete index throws an error while loading the playback.
 
 ### Take
 
@@ -547,7 +549,7 @@ Use `takes`, `headTakes`, or `tailTakes` when the removed value is being consume
 2. On the control's next batch, a vertical control moves the item to the left and then makes it disappear. A horizontal control currently fades the item in place.
 3. Remaining items close the gap by default. Set `collapse: false` to preserve the slot.
 
-* You cannot take an item index that doesnt exist.
+The target index must exist. An invalid take index throws an error while loading the playback.
 
 ### Set values
 
@@ -582,7 +584,11 @@ Use `outgoing` only during a replacement or removal transition—for example, to
 ]
 ```
 
-### Now and AnimateNow 
+### `now` and `animateNow`
+
+Set `now: true` on an insert, update, delete, or take to complete the operation immediately in the current batch. It skips both the pre-state and the transition animation.
+
+Set `animateNow: true` to skip the pre-state but run the transition animation in the current batch. Do not set both options on the same operation.
 
 | Setting | Pre-state | Transition | Completion |
 | --- | --- | --- | --- |
@@ -590,11 +596,20 @@ Use `outgoing` only during a replacement or removal transition—for example, to
 | `animateNow: true` | Skipped | Current batch | Current batch |
 | `now: true` | Skipped | Skipped | Current batch |
 
-## Render Overrides
+## Render overrides
 
-You can override Render properties of a control in Json.
+JSON render overrides can change a control's presentation without changing its items.
 
-You can use this to hide controls or make the controls grow bigger, or add a counter to the `Title` for each pass. 
+Keep each control's normal position and size in the page's `controlLayouts` map. Use JSON layout overrides only when a playback intentionally moves or resizes a control at a particular step. Other common uses include hiding a control until it is needed or changing its title to include a pass counter.
+
+| Option | Effect |
+| --- | --- |
+| `visible` | Shows or completely hides the control. |
+| `title` | Replaces the page-supplied control title. |
+| `showTitle` | Shows or hides the control title. |
+| `borderWidth` | Sets the default highlight-border thickness for the control's items. |
+| `layout.top`, `layout.left` | Overrides the control position. |
+| `layout.width`, `layout.height` | Overrides the control size. |
 
 ```json
 {
@@ -602,23 +617,25 @@ You can use this to hide controls or make the controls grow bigger, or add a cou
     "visible": true,
     "title": "Input Array",
     "showTitle": true,
-    "borderWidth": 2,
-    "layout": {
-      "top": 540,
-      "left": 500,
-      "width": 250,
-      "height": 200
-    }
+    "borderWidth": 2
   }
 }
 ```
 
-Exammple 
+Set step-specific overrides in `renderBatches`:
+
 ```json
 "renderBatches": [
-  { "step": 0, "render": { "visible": false } }
-  { "step": 3, "render": { "visible": true } }
+  { "step": 0, "render": { "visible": false } },
+  {
+    "step": 3,
+    "render": {
+      "visible": true,
+      "title": "Input Array — Pass 1",
+      "layout": { "width": 350 }
+    }
+  }
 ]
 ```
 
-Render settings are stateful. An override remains active until a later override changes it.
+Render settings are stateful: an override remains active until a later override changes it. Partial layout overrides merge with the page layout and previous render overrides.
