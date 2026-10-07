@@ -31,7 +31,7 @@ const controlTitles: Record<string, string> = {
   locals: "Local Variables",
 };
 
-const sliderLayout = { top: 60, left: 500, width: 400, height: 50 };
+const sliderLayout = { top: 70, left: 500, width: 400, height: 50 };
 
 export default function AnimatedPlaybackPage() {
   const controls = useMemo(
@@ -67,7 +67,7 @@ export default function AnimatedPlaybackPage() {
           <header className="playback-header">
             <h1>Animated Playback</h1>
             <p className="playback-description">
-              {/* Playback description */}
+              This is a cool project
             </p>
           </header>
 
