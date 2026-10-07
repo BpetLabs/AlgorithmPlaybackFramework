@@ -144,7 +144,7 @@ export function InteractiveControlRenderer({
             textAlign: "center",
             whiteSpace: "nowrap",
             overflow: "visible",
-            fontSize: 16,
+            fontSize: "var(--apf-control-title-font-size, 14px)",
             fontWeight: "bold",
             color: "#ccc",
           }}
