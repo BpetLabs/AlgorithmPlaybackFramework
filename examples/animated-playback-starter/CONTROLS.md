@@ -4,7 +4,7 @@ Controls are the visual panels in an AnimatedPlayback. Each control has a unique
 
 ## Contents
 
-- [Standard playback controls](#standard-playback-controls)
+- [Standard playback controls](#start-page)
 - [Available types](#available-types)
   - [`staticText`](#statictext)
   - [`text`](#text)
@@ -29,19 +29,37 @@ Controls are the visual panels in an AnimatedPlayback. Each control has a unique
 - [Visibility and render changes](#visibility-and-render-changes)
 - [Minimal control](#minimal-control)
 
-## Standard playback controls
+## Starter Page
 
-The authoring skills use these conventional roles when they are relevant to the animation:
+### General Design
+
+Each page consists of a slider, and a set of controls, with Code, Play by Play, and Locals being standard, and the rest representing Arrays, Stacks, Queues, Grids, and Graphs. 
+
+You do not need to use this solution for code playback and can use these controls anyway you choose, but it was designed to plug any code into Code text and produce a step by step playable animation while the Code provides a debugger like experience stopping on specified lines. 
+
+Each control will specify the steps 0, 1, 5... where they will take an action, whether that be an insert, update, delete, set value, or highlighting.
+
+One of the key differences with this Animation framework is that it supports PreStates,  to provide a debugger like experience at the Pause Line,  Values as blocks warp in off to the side to show you what will happen,  or shake to show you that an item will be removed and then animate in place at the next step.
+
+This is what allows you to understand what each line of code is doing,  without these Pre-Steps its very hard to visualize the changes.  
+
+All of the steps are coordinated with a slider, that can instantly go forward or back and the AI Skills and Local Variables provide hopefully useful and relevent information on what happened between the steps,  since you can only pause a key parts of the code,  the summary can help you trace back what happened inbetween steps. 
+
+### AI starter pack controls
+
+The following are a set of controls that have specific meaning to the custom AI skills.
+
+The AI authoring skills use these conventional roles when they are relevant to the animation:
 
 | Role | Type | Conventional ID | Purpose |
 | --- | --- | --- | --- |
-| Code | `staticText` | `code` | Displays fixed source code and animates line highlights and scrolling. |
-| Play by Play | `text` | `text` | Explains the code actions leading to the current step. |
-| Locals | `dictionary` | `locals` | Displays local variable names and their current values. |
+| Code | `staticText` | `code` | Defaulted: Displays fixed source code and animates line highlights and scrolling. |
+| Play by Play | `text` | `playbyplay` | Defaulted: Explains the code actions leading to the current step. |
+| Locals | `dictionary` | `locals` | Defaulted: Displays local variable names and their current values. |
+| Call Stack | `stack`   | `callstack` | On request: Visual representation of a call stack. | 
+| Console Output | `text` | `consoleout` | On request: Displays console output that occured in between the last to current step |
 
 The starter gives these three controls fixed, initially empty regions. It also reserves an empty visualization area for algorithm-specific controls.
-
-Optional conventional controls include `callStack` with type `stack` and `console` with type `text`. Place them in the visualization area when the playback needs them. The skills interpret `code` as source code, `text` as Play by Play narration, `locals` as local variables, `callStack` as the call stack, and `console` as console output.
 
 ## Available types
 
@@ -594,35 +612,15 @@ Use `outgoing` only during a replacement or removal transition—for example, to
 | `animateNow: true` | Skipped | Current batch | Current batch |
 | `now: true` | Skipped | Skipped | Current batch |
 
-## Visibility and render changes
+## Render Overrides
 
-`visible` controls whether an entire control is rendered:
+You can override or say the render layout of properties in Json,  but i would recommend doing it on the page itself.
 
-- `visible` omitted or `visible: true` shows the control.
-- `visible: false` hides the control completely.
-- Hiding a control does not clear its state. Its batches continue to be processed, so it returns with its current state when shown again.
 
-Set the initial value in `render`:
-
-```json
-"render": {
-  "visible": false
-}
-```
-
-Change it on a later step with either a batch-level `render` override:
-
-```json
-{
-  "step": 3,
-  "render": { "visible": true }
-}
-```
-
-or a separate `renderBatches` entry:
 
 ```json
 "renderBatches": [
+  { "step": 0, "render": { "visible": false } }
   { "step": 3, "render": { "visible": true } }
 ]
 ```
@@ -631,4 +629,4 @@ Render settings are stateful. An override remains active until a later override 
 
 Keep normal control sizes and positions in the page's `controlLayouts` map. JSON `render.layout` remains available when an animation intentionally moves or resizes a control at a particular step. A partial JSON layout override merges with the page layout and previous render overrides.
 
-Render overrides can also change `title`, `showTitle`, and `borderWidth`.
+Render overrides can also change `visibility`, `title`, `showTitle`, and `borderWidth`.
