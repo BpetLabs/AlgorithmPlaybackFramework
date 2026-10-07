@@ -20,9 +20,9 @@ const visualizationArea = {
 };
 
 const controlLayouts: Record<string, ControlRenderLayout> = {
-  code: { top: 90, left: 20, width: 350, height: 658 },
-  playbyplay: { top: 540, left: 390, width: 610, height: 208 },
-  locals: { top: 540, left: 1020, width: 240, height: 208 },
+  code: { top: 90, left: 20, width: 360, height: 658 },
+  playbyplay: { top: 550, left: 400, width: 600, height: 198 },
+  locals: { top: 550, left: 1020, width: 240, height: 198 },
 };
 
 const controlTitles: Record<string, string> = {
@@ -67,7 +67,7 @@ export default function AnimatedPlaybackPage() {
           <header className="playback-header">
             <h1>Animated Playback</h1>
             <p className="playback-description">
-              This is a cool project
+              Playback Description
             </p>
           </header>
 
