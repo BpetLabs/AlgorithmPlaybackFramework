@@ -469,7 +469,6 @@ Set these layout options at the top level of a control in JSON or assign them in
 
 An individual item's `itemOffset` overrides `defaultItemOffset` for that slot. `itemWidth` and `itemHeight` change the rendered box; they do not change the distance between consecutive positions unless `defaultItemOffset` or `itemOffset` also changes.
 
-
 ## Initial state and playback steps
 
 Every control starts with a snapshot at step `0`. If a control has no batch on a later global step, its most recent snapshot remains visible.
@@ -607,7 +606,7 @@ Keep each control's normal position and size in the page's `controlLayouts` map.
 | `visible` | Shows or completely hides the control. |
 | `title` | Replaces the page-supplied control title. |
 | `showTitle` | Shows or hides the control title. |
-| `borderWidth` | Sets the default highlight-border thickness for the control's items. |
+| `borderWidth` | Sets the control's default highlight-border thickness. |
 | `layout.top`, `layout.left` | Overrides the control position. |
 | `layout.width`, `layout.height` | Overrides the control size. |
 
@@ -638,4 +637,6 @@ Set step-specific overrides in `renderBatches`:
 ]
 ```
 
-Render settings are stateful: an override remains active until a later override changes it. Partial layout overrides merge with the page layout and previous render overrides.
+You can also place a `render` object directly in a normal control batch. A `renderBatches` entry takes effect at the first control snapshot on or after its step; add an empty normal batch at the same step when the override must appear there and the control has no item mutation.
+
+Render settings are stateful: an override remains active until a later override changes it. Partial layout overrides merge with the page layout and previous render overrides. Hiding a control does not clear its state; its batches continue to be processed while it is hidden.
