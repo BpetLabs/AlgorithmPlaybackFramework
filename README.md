@@ -27,11 +27,9 @@ import "algorithm-playback-framework/styles.css";
 
 No additional CSS is required. Every supported theme variable begins with `--apf-`. Their defaults are declared in the themed sections near the top of `algorithm-playback-framework/styles.css`, which is the source of truth for the customization API. Other selectors in that file are framework implementation details.
 
-Playback JSON may use semantic aliases such as `"Highlight.Pause"`. `loadControls` resolves those aliases to the corresponding theme variables automatically.
-
 ## Starter
 
-The [Animated Playback starter](examples/animated-playback-starter) is a copyable React application containing a sample playback and agent skills for authoring playback JSON.
+The [Animated Playback starter](examples/animated-playback-starter) is a copyable React application.
 
 ## Development
 
