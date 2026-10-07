@@ -26,8 +26,7 @@ Controls are the visual panels in an AnimatedPlayback. Each control has a unique
   - [Set values](#set-values)
   - [`now`](#now)
   - [`animateNow`](#animatenow)
-- [Visibility and render changes](#visibility-and-render-changes)
-- [Minimal control](#minimal-control)
+- [Render Overrides](#render-overrides)
 
 ## Starter Page
 
@@ -159,7 +158,7 @@ The `|` separates the displayed columns. Add `splitColumnWidths` to the item to 
 }
 ```
 
-This gives the first column 70% of the row width and the second column 30%. Provide one percentage for each `|`-separated segment. Every percentage must be greater than `0` and less than `100`, and the values must total `100`. If the configuration is invalid, the columns use equal widths.
+This gives the first column 70% of the row width and the second column 30%. Provide one percentage for each `|`-separated segment. Every percentage must be greater than `0` and less than `100`, and the values must total `100`. If the configuration is invalid, the columns use equal widths.   You would use this if your keys are short but your values are long for example.
 
 For three columns, use three percentages:
 
@@ -450,17 +449,6 @@ Dictionary, grid, and plain `text` controls render `value` but do not render the
 
 ## Item slots and grid lines
 
-Array and stack renderers draw background grid lines for their item slots. The framework option is named `defaultItemOffset` rather than `defaultItemSize`.
-
-- `defaultItemOffset` sets the default distance between item positions and the size of each background slot. Its default is `50` pixels.
-- A horizontal array divides its width into slots.
-- A vertical array or stack divides its height into slots.
-- Grid lines continue through unused space in the control, so empty positions remain visible.
-- Set `showCellBorders: false` to hide the background grid lines.
-- Set `emptyItemText` to the value that should appear in an unoccupied array or grid cell, such as `"0"` for an initialized numeric array. Jagged arrays pass this setting to their array cells. Stack controls do not use it.
-
-`itemWidth` and `itemHeight` control the rendered item box. `defaultItemOffset` controls where consecutive items begin and how the background grid is divided. `itemGap` and `itemCrossAxisGap` add space inside those slots.
-
 Array and stack layout options:
 
 | Option | Effect |
@@ -472,23 +460,13 @@ Array and stack layout options:
 | `preInsertGap` | Additional distance between an indexed insert/update pre-state and the control. |
 | `itemLabels` | Labels displayed beside array slots. |
 | `showCellBorders` | Shows or hides structural slot borders. |
-| `emptyItemText` | Value displayed in array slots without item text. |
-| `fitContent` | Shrinks an array along its main axis to the occupied content size. |
+| `emptyItemText` | Value displayed in array slots without items yet. |
+| `fitContent` | Fits the control to the div size. |
 
-`itemLabels` and `fitContent` apply to arrays and jagged arrays. Stack-based controls ignore them. An individual item's `itemOffset` overrides `defaultItemOffset` for that slot.
+`itemLabels` and `fitContent` apply to arrays and jagged arrays. Stack-based controls ignore them. 
 
-```json
-{
-  "id": "values",
-  "type": "array",
-  "orientation": "horizontal",
-  "defaultItemOffset": 60,
-  "emptyItemText": "0",
-  "showCellBorders": true
-}
-```
+An individual item's `itemOffset` overrides `defaultItemOffset` for that slot.
 
-This creates 60-pixel slots across the array's main axis and displays `0` in slots without an item. The final slot is shortened when the control size is not evenly divisible by 60. A `grid` control works differently: its grid lines come from its explicit `rows` and `cols` values, but `emptyItemText` still supplies the configured value for unoccupied cells.
 
 ## Initial state and playback steps
 
@@ -543,7 +521,7 @@ Use `inserts`, `headInserts`, or `tailInserts`.
 
 Use `updates` when replacing an item with an animated value.
 
-1. The replacement warps into the same pre-state position used by an indexed insert: above a horizontal control or to the left of a vertical control.
+1. The replacement warps into the same pre-state position used by an indexed insert.
 2. On the control's next batch, the replacement moves over the existing item at the target index.
 3. The existing item fades away while the replacement takes its place. Other items do not move because the collection size does not change.
 
@@ -614,10 +592,28 @@ Use `outgoing` only during a replacement or removal transition—for example, to
 
 ## Render Overrides
 
-You can override or say the render layout of properties in Json,  but i would recommend doing it on the page itself.
+You can override Render properties of a control in Json.
 
+You can use this to hide controls or make the controls grow bigger, or add a counter to the `Title` for each pass. 
 
+```json
+{
+  "render": {
+    "visible": true,
+    "title": "Input Array",
+    "showTitle": true,
+    "borderWidth": 2,
+    "layout": {
+      "top": 540,
+      "left": 500,
+      "width": 250,
+      "height": 200
+    }
+  }
+}
+```
 
+Exammple 
 ```json
 "renderBatches": [
   { "step": 0, "render": { "visible": false } }
@@ -626,7 +622,3 @@ You can override or say the render layout of properties in Json,  but i would re
 ```
 
 Render settings are stateful. An override remains active until a later override changes it.
-
-Keep normal control sizes and positions in the page's `controlLayouts` map. JSON `render.layout` remains available when an animation intentionally moves or resizes a control at a particular step. A partial JSON layout override merges with the page layout and previous render overrides.
-
-Render overrides can also change `visibility`, `title`, `showTitle`, and `borderWidth`.
