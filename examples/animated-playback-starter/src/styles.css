@@ -13,6 +13,27 @@ body {
   min-width: 320px;
 }
 
+.playback-index a {
+  color: #93c5fd;
+}
+
+.playback-index {
+  width: min(720px, calc(100% - 32px));
+  margin: 48px auto;
+}
+
+.playback-index h1 {
+  margin-bottom: 24px;
+}
+
+.playback-index li + li {
+  margin-top: 10px;
+}
+
+.playback-index-error {
+  color: #fca5a5;
+}
+
 button,
 input {
   font: inherit;

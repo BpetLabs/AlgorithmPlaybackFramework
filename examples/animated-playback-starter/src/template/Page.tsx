@@ -7,6 +7,7 @@ import {
   type ControlDefinition,
   type ControlRenderLayout,
 } from "algorithm-playback-framework";
+
 import playback from "./playback.json";
 
 const canvasSize = { width: 1280, height: 768 };
@@ -35,7 +36,7 @@ const defaultControlIds = new Set(["code", "playbyplay", "locals"]);
 
 const sliderLayout = { top: 70, left: 500, width: 400, height: 50 };
 
-export default function AnimatedPlaybackPage() {
+export default function PlaybackPage() {
   const controls = useMemo(
     () => loadControls(playback.controls as ControlDefinition[]),
     []
