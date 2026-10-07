@@ -599,7 +599,9 @@ Set `animateNow: true` to skip the pre-state but run the transition animation in
 
 JSON render overrides can change a control's presentation without changing its items.
 
-Keep each control's normal position and size in the page's `controlLayouts` map. Use JSON layout overrides only when a playback intentionally moves or resizes a control at a particular step. Other common uses include hiding a control until it is needed or changing its title to include a pass counter.
+Keep each control's normal position and size in the page's `controlLayouts` map. Use JSON layout overrides only when a playback intentionally moves or resizes a control at a particular step. 
+
+Some common uses include hiding a control until it is needed or changing its title to include dynamic information.
 
 | Option | Effect |
 | --- | --- |
@@ -636,7 +638,3 @@ Set step-specific overrides in `renderBatches`:
   }
 ]
 ```
-
-You can also place a `render` object directly in a normal control batch. A `renderBatches` entry takes effect at the first control snapshot on or after its step; add an empty normal batch at the same step when the override must appear there and the control has no item mutation.
-
-Render settings are stateful: an override remains active until a later override changes it. Partial layout overrides merge with the page layout and previous render overrides. Hiding a control does not clear its state; its batches continue to be processed while it is hidden.
