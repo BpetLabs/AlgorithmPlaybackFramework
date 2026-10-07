@@ -13,10 +13,11 @@ const canvasSize = { width: 1280, height: 768 };
 
 // Reserved for algorithm-specific arrays, stacks, grids, graphs, and other controls.
 const visualizationArea = {
-  top: 90,
-  left: 390,
-  width: 870,
-  height: 390,
+  top: 135,
+  left: 400,
+  width: 860,
+  height: 380,
+  border: "1px solid red",
 };
 
 const controlLayouts: Record<string, ControlRenderLayout> = {
@@ -30,6 +31,8 @@ const controlTitles: Record<string, string> = {
   playbyplay: "Play by Play",
   locals: "Local Variables",
 };
+
+const defaultControlIds = new Set(["code", "playbyplay", "locals"]);
 
 const sliderLayout = { top: 70, left: 500, width: 400, height: 50 };
 
@@ -90,27 +93,43 @@ export default function AnimatedPlaybackPage() {
             className="playback-visualization-area"
             aria-label="Additional visualization controls"
             style={visualizationArea}
-          />
+          >
+            {controls
+              .filter((control) => !defaultControlIds.has(control.id))
+              .map((control) => (
+                <InteractiveControlRenderer
+                  key={control.id}
+                  control={control}
+                  latestSnapshots={latestSnapshots}
+                  currentStep={sliderValue}
+                  disableAnimations={disableAnimations}
+                  layout={controlLayouts[control.id]}
+                  defaultHeaderTitle={controlTitles[control.id]}
+                />
+              ))}
+          </div>
 
-          {controls.map((control) => (
-            <InteractiveControlRenderer
-              key={control.id}
-              control={control}
-              latestSnapshots={latestSnapshots}
-              currentStep={sliderValue}
-              disableAnimations={disableAnimations}
-              layout={controlLayouts[control.id]}
-              defaultHeaderTitle={controlTitles[control.id]}
-              configureProps={(id, props) => {
-                if (id === "playbyplay") {
-                  props.defaultItemOffset = 200;
-                  props.showCellBorders = false;
-                } else if (id === "locals") {
-                  props.defaultItemOffset = 25;
-                }
-              }}
-            />
-          ))}
+          {controls
+            .filter((control) => defaultControlIds.has(control.id))
+            .map((control) => (
+              <InteractiveControlRenderer
+                key={control.id}
+                control={control}
+                latestSnapshots={latestSnapshots}
+                currentStep={sliderValue}
+                disableAnimations={disableAnimations}
+                layout={controlLayouts[control.id]}
+                defaultHeaderTitle={controlTitles[control.id]}
+                configureProps={(id, props) => {
+                  if (id === "playbyplay") {
+                    props.defaultItemOffset = 200;
+                    props.showCellBorders = false;
+                  } else if (id === "locals") {
+                    props.defaultItemOffset = 25;
+                  }
+                }}
+              />
+            ))}
         </section>
       </div>
     </main>
