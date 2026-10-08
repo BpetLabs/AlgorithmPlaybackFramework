@@ -152,12 +152,30 @@ export function JaggedArrayRenderer({
       defaultItemOffset;
     const childGap =
       child.options.itemGap ?? childDefaults.itemGap ?? 0;
+    const resolvedItemGap = Math.max(itemGap, 0);
+    const resolvedCrossAxisGap = Math.max(itemCrossAxisGap, 0);
     const parentItemWidth =
       orientation === "horizontal"
-        ? itemWidth ?? defaultItemOffset
-        : itemWidth ?? divWidth;
+        ? Math.max(
+            (item.itemOffset ?? itemWidth ?? defaultItemOffset) -
+              resolvedItemGap * 2,
+            0
+          )
+        : Math.max(
+            (itemWidth ?? divWidth) - resolvedCrossAxisGap * 2,
+            0
+          );
     const parentItemHeight =
-      orientation === "horizontal" ? divHeight : defaultItemOffset;
+      orientation === "horizontal"
+        ? Math.max(
+            (itemHeight ?? divHeight) - resolvedCrossAxisGap * 2,
+            0
+          )
+        : Math.max(
+            (item.itemOffset ?? itemHeight ?? defaultItemOffset) -
+              resolvedItemGap * 2,
+            0
+          );
     const childDisableAnimations =
       navigationDisableAnimations ||
       (currentStep !== undefined && child.snapshot.step !== currentStep);

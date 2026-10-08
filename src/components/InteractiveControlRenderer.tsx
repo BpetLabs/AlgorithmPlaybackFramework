@@ -84,11 +84,13 @@ export function InteractiveControlRenderer({
 
   let resolvedWidth = width;
   let resolvedHeight = height;
+  let resolvedTop = top;
 
   if (
     props.fitContent === true &&
     (type === RendererType.Array ||
-      type === RendererType.JaggedArray)
+      type === RendererType.JaggedArray ||
+      type === RendererType.Stack)
   ) {
     const defaultItemOffset =
       typeof props.defaultItemOffset === "number"
@@ -109,7 +111,11 @@ export function InteractiveControlRenderer({
       defaultItemOffset
     );
 
-    if (props.orientation === "vertical") {
+    if (type === RendererType.Stack) {
+      resolvedHeight = mainAxisSize;
+      resolvedTop = top + height - mainAxisSize;
+      props.divHeight = mainAxisSize;
+    } else if (props.orientation === "vertical") {
       resolvedHeight = mainAxisSize;
       props.divHeight = mainAxisSize;
     } else {
@@ -127,7 +133,7 @@ export function InteractiveControlRenderer({
       data-apf-control=""
       style={{
         position: "absolute",
-        top,
+        top: resolvedTop,
         left,
         width: resolvedWidth,
         height: resolvedHeight,

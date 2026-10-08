@@ -23,7 +23,11 @@ const child = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const renderJagged = (children: any[], currentStep = 2) => renderToStaticMarkup(
+const renderJagged = (
+  children: any[],
+  currentStep = 2,
+  overrides: Record<string, unknown> = {}
+) => renderToStaticMarkup(
   <JaggedArrayRenderer
     snapshot={parentSnapshot}
     childArrays={children}
@@ -35,6 +39,7 @@ const renderJagged = (children: any[], currentStep = 2) => renderToStaticMarkup(
     divWidth={100}
     divHeight={80}
     renderContent={(item) => <span data-value={item.value}>{item.value}</span>}
+    {...overrides}
   />
 );
 
@@ -56,5 +61,28 @@ describe("JaggedArrayRenderer", () => {
   it("falls back to parent content for missing or hidden children", () => {
     expect(renderJagged([])).toContain('data-value="Parent"');
     expect(renderJagged([child({ render: { visible: false } })])).toContain('data-value="Parent"');
+  });
+
+  it("constrains vertical children to the parent's post-gap width", () => {
+    const markup = renderJagged(
+      [child({ options: { orientation: "vertical", defaultItemOffset: 30 } })],
+      2,
+      {
+        childDefaults: { orientation: "vertical" },
+        itemGap: 10,
+      }
+    );
+
+    expect(markup).toContain("width:80px;height:30px");
+  });
+
+  it("constrains horizontal children to the parent's post-gap height", () => {
+    const markup = renderJagged(
+      [child({ options: { orientation: "horizontal", defaultItemOffset: 30 } })],
+      2,
+      { itemCrossAxisGap: 10 }
+    );
+
+    expect(markup).toContain("width:30px;height:60px");
   });
 });
