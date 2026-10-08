@@ -463,7 +463,7 @@ Set these layout options at the top level of a control in JSON or assign them in
 | `emptyItemText` | Configured value displayed in array slots without item text, such as `"0"`. |
 | `fitContent` | Sets an array's main-axis size to its occupied content size. |
 
-`defaultItemOffset` controls both the spacing between item positions and the background grid. Its default is `50` pixels. A horizontal array divides its width into slots; a vertical array or stack divides its height into slots. Grid lines continue through unused space unless `showCellBorders` is `false`.
+`defaultItemOffset` controls both the spacing between item positions and the background grid. A horizontal array divides its width into slots; a vertical array or stack divides its height into slots. Grid lines continue through unused space unless `showCellBorders` is `false`.
 
 `itemLabels` and `fitContent` apply to arrays and jagged arrays. Stack-based controls ignore them.
 

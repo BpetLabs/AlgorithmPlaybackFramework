@@ -28,7 +28,7 @@ interface MemoryStackRendererProps extends RendererProps {
 export function MemoryStackRenderer({
   snapshot,
   disableAnimations,
-  defaultItemOffset = 50,
+  defaultItemOffset = 40,
   gridOffset = defaultItemOffset,
   divWidth,
   divHeight,

@@ -29,7 +29,7 @@ interface ArrayRendererProps extends RendererProps {
 export function ArrayRenderer({
   snapshot,
   disableAnimations,
-  defaultItemOffset = 50,
+  defaultItemOffset = 40,
   divWidth,
   divHeight,
   itemGap = 0,

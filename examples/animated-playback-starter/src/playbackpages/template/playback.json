@@ -1,0 +1,101 @@
+{
+  "controls": [
+    {
+      "id": "code",
+      "type": "staticText",
+      "staticValue": "",
+      "batches": []
+    },
+    {
+      "id": "playbyplay",
+      "type": "text",
+      "batches": []
+    },
+    {
+      "id": "locals",
+      "type": "dictionary",
+      "batches": []
+    },
+    {
+      "id": "array1",
+      "type": "array",
+      "batches": [
+        {
+          "step": 1,
+          "inserts": [
+            {
+              "index": 0,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "array2",
+      "type": "array",
+      "batches": [
+        {
+          "step": 1,
+          "inserts": [
+            {
+              "index": 0,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "array3",
+      "type": "array",
+      "batches": []
+    },
+    {
+      "id": "stack",
+      "type": "stack",
+      "batches": [
+        {
+          "step": 1,
+          "tailInserts": [
+            {
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2
+        },
+        {
+          "step": 3,
+          "tailDeletes": {
+            "count": 1
+          }
+        },
+        {
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "grid",
+      "type": "grid",
+      "batches": []
+    }
+  ]
+}

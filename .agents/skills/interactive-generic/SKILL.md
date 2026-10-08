@@ -47,6 +47,9 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 - Keep ordinary logical-state changes on `"current"`. Do not use `"outgoing"` merely because a node moved to a different logical position.
 - When a highlighted node becomes outgoing during an insert, delete, or replacement transition, use a set operation to put the destination node's border on `"current"` and clear the animated node's border with `"outgoing"` in the completion batch. This rule applies to every control type and addressing mode.
 
+## Values
+- If a control value will be set as a number Max value or number Min value, set the node value to the text `MAX` or `MIN` instead unless otherwise specified.
+
 ## Cleanup and minimization
 - Replay each control across steps and remove duplicate, stale, or no-op actions.
 - Stick to cleanup actions, if you find other changes that mismatch to the skills mention the issue and the step that they occurs on without changing.  

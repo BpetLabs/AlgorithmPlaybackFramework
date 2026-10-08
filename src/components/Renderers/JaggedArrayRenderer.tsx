@@ -93,7 +93,7 @@ export function JaggedArrayRenderer({
   childArrays = [],
   childDefaults = {},
   disableAnimations,
-  defaultItemOffset = 50,
+  defaultItemOffset = 40,
   divHeight,
   divWidth,
   itemGap = 0,

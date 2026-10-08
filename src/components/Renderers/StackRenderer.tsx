@@ -26,7 +26,7 @@ interface StackRendererProps extends RendererProps {
 export function StackRenderer({
   snapshot,
   disableAnimations,
-  defaultItemOffset = 50,
+  defaultItemOffset = 40,
   divWidth,
   divHeight,
   itemGap = 0,

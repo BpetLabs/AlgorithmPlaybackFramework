@@ -93,7 +93,7 @@ export function InteractiveControlRenderer({
     const defaultItemOffset =
       typeof props.defaultItemOffset === "number"
         ? props.defaultItemOffset
-        : 50;
+        : 40;
     const renderItems = buildRenderItems(
       snapshot.items,
       new Set(),
