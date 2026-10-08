@@ -64,6 +64,77 @@
       "batches": []
     },
     {
+      "id": "jaggedArray",
+      "type": "jaggedArray",
+      "batches": []
+    },
+    {
+      "id": "jaggedArray-0",
+      "type": "array",
+      "initialItemCount": 3,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "2",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "3",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jaggedArray-1",
+      "type": "array",
+      "initialItemCount": 3,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "4",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "5",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "6",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "stack",
       "type": "stack",
       "batches": [

@@ -14,10 +14,10 @@ const canvasSize = { width: 1280, height: 768 };
 
 // Reserved for algorithm-specific arrays, stacks, grids, graphs, and other controls.
 const visualizationArea = {
-  top: 175,
+  top: 130,
   left: 400,
   width: 860,
-  height: 335,
+  height: 380,
   border: "1px solid #374151"
 };
 
@@ -25,11 +25,11 @@ const controlLayouts: Record<string, ControlRenderLayout> = {
   code: { top: 90, left: 20, width: 360, height: 658 },
   playbyplay: { top: 550, left: 400, width: 600, height: 198 },
   locals: { top: 550, left: 1020, width: 240, height: 198 },
-  array1: { top: 0, left: 0, width: 200, height: 40 },
-  array2: { top: 80, left: 0, width: 200, height: 40 },
-  array3: { top: 160, left: 0, width: 200, height: 40 },
-  stack: { top: 0, left: 600, width: 160, height: 320 },
-  grid: { top: 0, left: 300, width: 200, height: 200 },
+  array1: { top: 30, left: 0, width: 200, height: 40 },
+  array2: { top: 50, left: 0, width: 100, height: 30 },
+  stack: { top: 30, left: 620, width: 120, height: 320 },
+  grid: { top: 30, left: 300, width: 250, height: 250 },
+  jaggedArray: { top: 125, left: 0, width: 140, height: 140 },
 };
 
 const controlTitles: Record<string, string> = {
@@ -38,9 +38,9 @@ const controlTitles: Record<string, string> = {
   locals: "Local Variables",
   array1: "Array 1",
   array2: "Array 2",
-  array3: "Array 3",
   stack: "Stack",
   grid: "Grid",
+  jaggedArray: "Jagged Array",
 };
 
 const defaultControlIds = new Set(["code", "playbyplay", "locals"]);
@@ -122,8 +122,18 @@ export default function PlaybackPage() {
                     } else if (id === "stack") {
                       props.defaultItemOffset = 40;
                     } else if (id === "grid") {
-                      props.rows = 5;
-                      props.cols = 5;
+                      props.rows = 10;
+                      props.cols = 10;
+                    } else if (id === "jaggedArray") {
+                      props.defaultItemOffset = 60;
+                      props.orientation = "horizontal";
+                      props.itemGap = 10,
+                      props.itemCrossAxisGap = 10,
+                      props.fitContent = true
+                      props.childDefaults = {
+                        defaultItemOffset: 40,
+                        orientation: "vertical",
+                      };
                     }
                   }}
                 />
