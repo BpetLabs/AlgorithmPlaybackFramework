@@ -1,120 +1,137 @@
 ---
 name: authoring
-description: "Authoring animated play back from the start kit. Use for creating the initial interactive controls on the page and the initial json framework and the interactive skills for control use."
+description: "Create or update Algorithm Playback starter pages, including Page.tsx layouts, playback.json scaffolding, source-code embedding, trace sizing, and routing to control-specific interactive skills."
 user-invocable: true
 ---
 
-# Algorithm Page and json Authoring Rules
+# Algorithm Playback Page Authoring
 
-Use this skill when you are being prompted to create or modify a playback page.  This skill provides a guideline on how to take the prompt create a new playback page or update an existing page to add or modify the playback controls. 
+Use this skill to create or modify a playback page and its initial control layout.
 
-* Use the `interactive-*` skills and `CONTROLS.md` to help.
+Read `CONTROLS.md` for the current control API. Before editing playback JSON, read `interactive-generic` and only the specialized skills needed for the requested controls:
 
-## Copy the template first
+- `interactive-array` for arrays and jagged arrays
+- `interactive-stack` for stacks, queues, and priority queues
+- `interactive-dictionary` for local-variable dictionaries
+- `interactive-text` for play-by-play and console text
+- `interactive-code-highlights` for code pauses and highlights
+- `interactive-graph` for parent-child tree layouts
 
-If not provided a page:
-* Copy the \examples\animated-playback-starter\src\template into \examples\animated-playback-starter\src\playbackpages or a provided location. Use a provided name or determine a best effort name from the contents of the page for the folder.
+## Validate the request before creating files
 
-If provided a code file and a Text `code` control exists.
-* Copy the code file into the new folder.
-* Use \examples\animated-playback-starter\src\tools\ConvertCode.ps1 to convert and paste the code into the `staticText` of the `code` Id in the playback.json file. 
+Identify or determine:
 
-## Verify prompt 
+- The existing page or the name and destination of a new page.
+- The non-default controls and their types. The starter's default controls are `code`, `locals`, and `playbyplay`.
+- At least one command or scenario, its input, and what each requested control represents.
 
-* You should be provided a set of Controls and Types to create, if no playback controls other than default controls (`code`, `locals`, or `playbyplay`) exist. Otherwise, complete the copy template, stop processing, respond with "What playback controls should I create?".
+If required controls cannot be inferred, stop and ask, "What playback controls should I create?" If the input cannot be inferred from its description, ask, "What input should I use?" If a control's purpose is unclear, ask, "What does this playback control represent?"
 
-* You should be provided with one or more Commands, inputs, and descriptions.  If not stop processing, respond with "What input should I use?" or if unsure "What does this playback control represent?"
+Not every input or runtime property needs a corresponding playback control.
 
-* You should be provided a set of Pause statements on the code pauses dont already exist,  do not add your own Pauses, stop processing, and ask for pause locations in code, you can provide recommendations; recommendations should be lines that return results, or add/remove/update items in the control that would be good candidates for `Pre` states; for example stack.push(x), stack.pop(x), array[1] = 10;
+## Trace the requested scenario
 
-* Pauses can be conditional,  such as Pause on the end for a loop if all pauses in the loop are skipped.
+Before creating or updating controls, run the supplied code with the selected command and input. A descriptive input is sufficient; choose a representative concrete value when the request permits it.
 
-* You do not have to be provided exact inputs, a description of the input works and you should determine appropriate input for the problem.  
+Use the executed pauses, including conditional and fallback pauses, to determine the playback step count and the maximum size of dynamic controls.
 
-* However; run the code with the input before creating anything to determine that input and commands do not generate over 50 steps, otherwise stop process, and respond with the number of steps that this command, input, and pauses would generate. Once approved you can you continue.
+- If the trace produces at most 50 steps, continue.
+- If it produces more than 50 steps, stop, report the count, and ask for approval before continuing.
+- If the code cannot be executed with the available project tooling, report the blocker instead of guessing the trace.
 
-* Not all properties or inputs of the code need corresponding playback controls.
+## Scaffold a new page
 
-## Create the controls in Json
+Skip this section when modifying an existing page.
 
-* Create the desired controls in the json empty.  
+Copy `examples/animated-playback-starter/src/template` to `examples/animated-playback-starter/src/playbackpages/<page-name>`, or to the destination provided by the user. Derive a concise folder name from the algorithm when none is provided.
 
-* If any of the items are not input and populated in code, hide the controls using 
-`{"render": {"visible": false}}` until you that code has been activated. 
+When a source-code file is provided and the `code` control exists:
 
-* Do not include non runtime rendering in the json, prefer rendering in the page file. 
+1. Copy the source file into the page folder.
+2. Run `examples/animated-playback-starter/src/tools/ConvertCode.ps1 -InputFile <source-path>`.
+3. Put the converted output in the `staticValue` property of the control whose ID is `code`.
 
-## Create the controls on the page
+## Create the controls in `playback.json`
 
-* Use the `interactive-*` skills and `CONTROLS.md` to help.
+Create requested controls with empty `batches` before authoring their state transitions.
 
-* Create the controls in Page.tsx,  use defaults unless requested or non defaults make sense. Include the `defaultItemOffset` in the page file for clarity.
+For a control created later by the running algorithm rather than supplied as input, initialize it with `"render": { "visible": false }` and make it visible in the batch where the runtime value becomes available.
 
-* If the page contains a `playback-visualization-area` put the controls in this relative area otherwise use the full area provided and use your best judgement.
+Keep these concerns in JSON:
 
-* Match the sizing to the prompt [1,2,3,4,5] create an array using default size that fits exactly 5 items. If the code initializes an array of a particular size use that sizing.  If its a dynamic array like a List, you can treat as an Array where the capacity is the largest array count for that input.
+- Control definitions and static values
+- Initial state and playback batches
+- Runtime content and visibility changes
 
-* If there is a growable class such a stack, queue, priority queue etc represented as playable control run the code and determine the max height to determine sizing for positioning.
+Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx`.
 
-## Control placement
+## Configure controls in `Page.tsx`
 
-* Avoid objects overlapping each other - including Titles and Labels including the boundaries.
+Add each control's layout and title. Pass renderer options through `configureProps`; include `defaultItemOffset` explicitly for applicable item-based controls.
 
-* This includes items removing on the right or bottom, or animating in from the top or left, a control which take one item size of space.  If an item has action that does this, this additional space can be ignored. 
+Place custom controls relative to `playback-visualization-area` when it exists. Otherwise, use the available page area.
 
-* Always include DefaultItemOffset for control, prefer controls default size. 
+Size controls from the executed trace:
 
-* Make items bigger if you need the space for text
-* Make items smaller if you need the space screenspace
-* If you go over the boundaries stop processing and make recommendations.
-* Controls representing input should be first
+- A fixed array should fit its initialized length exactly. For example, `[1, 2, 3, 4, 5]` should have five visible slots.
+- A dynamic array or list should fit the maximum count reached by the selected trace.
+- A stack, queue, priority queue, or other growable control should fit its maximum traced size.
 
+## Placement and clearance
 
-Minimum Gap between controls
-- 25 + itemsize
+- Prevent items, titles, labels, nodes, and arrows from overlapping or crossing the visualization boundary.
+- Keep at least 25 px between the occupied bounds of controls, including titles and any space reserved for pre-animation movement.
+- If the trace has no animation, the additional pre-animation clearance is unnecessary.
+- Make items larger when their text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums.
+- Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
+- If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
 
-Arrays:
+### Arrays
 
-Preferred location:  Top Left
-Preferred multiple controls:  Above and Below each other. If need more screen space can be single row on top or bottom.
-Minimum defaultItemOffset: 25 
+- Preferred location: top-left.
+- Prefer multiple arrays arranged vertically. Use one row at the top or bottom when vertical space is limited.
+- Minimum `defaultItemOffset`: 25 px.
 
-JaggedArrays:
+### Jagged arrays
 
-Parent:
-Preferred location: Top Left
-Default Orientation: horizontal
-DefaultItemSize: 60 
-ItemGap or CrossAxisItemGap: 10 
-Array should be sized so that the gap on all sizes of the child is 10.
-Minimum defaultItemOffset: 45 
-Child:
-defaultItemOffset: 40
-Default Orientation: vertical
-Minimum defaultItemOffset: 25 
+Parent preferences:
 
-Stack:
-Preferred location: Right Side - 1 width away, Attached to the play area floor
-Preferred multiple controls: Minimum Gap to the left
-Default Width: 120 
-Minimum defaultItemOffset: 25
+- Location: top-left.
+- `orientation`: `"horizontal"`. 
+- `defaultItemOffset`: 60 px; minimum 45 px.
+- `itemGap` or `itemCrossAxisGap`: 10 px where needed.
+- Size the parent so every child has 10 px of clearance on each side.
 
-Grid:
-Preferred location:  Center, Try to center align between controls
-Minimum calculated items height or width: 25
+Child preferences:
 
-GridNode:
-Preferred calculated item height and width: 40
-Minimum calculated items height or width: 25
-Preferred location: Center, Try to center align between controls
-* The size of the nodeGraph itself can overlap with other controls, only the nodes and arrows should not overlap.
-* Prefer graph row/column counts and sizing that create squares for numbers and rectangles that would fit largest text
-* Prefer graph row/column counts and sizing that can create visually appealing arrows.
+- `defaultItemOffset`: 40 px; minimum 25 px.
+- Preferred orientation: `"vertical"`. Set `childDefaults.orientation` explicitly because child orientation otherwise follows the configured jagged-array orientation.
 
+### Stacks
 
+- Preferred location: right side - one stack width away from the right wall.
+- Align the bottom edge with the visualization area's floor.
+- Preferred width: 120 px.
+- Minimum `defaultItemOffset`: 25 px.
 
+### Grids
 
+- Preferred location: centered, aligned with neighboring controls when practical.
+- Minimum calculated cell width and height: 25 px.
 
+### Node graphs
 
+- Preferred location: centered, aligned with neighboring controls when practical.
+- Preferred calculated node width and height: 40 px; minimum 25 px.
+- The nodeGraph control bounds may overlap another control's empty area, but rendered nodes, labels, and arrows must not overlap other rendered content.
+- Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text.
+- Choose track sizing and gaps that keep arrows readable. Apply `interactive-graph` for tree placement and edge rules.
 
+## Validate the completed page
 
+- Verify the embedded `staticValue` matches the source file.
+- Verify every pause and global step is synchronized across the relevant controls.
+- Replay every step and confirm state, visibility, and pre-animation completion.
+- Check titles, labels, animation clearance, and visualization boundaries at every step.
+- Confirm dynamic controls fit their maximum traced size and the final step count matches the trace.
+- Run the relevant typecheck, tests, and build for the starter page.
