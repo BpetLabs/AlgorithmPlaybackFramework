@@ -25,7 +25,7 @@ If provided a code file and a Text `code` control exists.
 
 * You should be provided with one or more Commands, inputs, and descriptions.  If not stop processing, respond with "What input should I use?" or if unsure "What does this playback control represent?"
 
-* You should be provided a set of Pause statements on the code,  do not guess Pauses, stop processing, and ask for pause locations in code, you can provide recommendations; recommendations should be lines that return results, or add/remove/update items in the control that would be good candidates for `Pre` states; for example stack.push(x), stack.pop(x), array[1] = 10;
+* You should be provided a set of Pause statements on the code,  do not add your own Pauses, stop processing, and ask for pause locations in code, you can provide recommendations; recommendations should be lines that return results, or add/remove/update items in the control that would be good candidates for `Pre` states; for example stack.push(x), stack.pop(x), array[1] = 10;
 
 * Pauses can be conditional,  such as Pause on the end for a loop if all pauses in the loop are skipped.
 
