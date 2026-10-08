@@ -14,10 +14,10 @@ const canvasSize = { width: 1280, height: 768 };
 
 // Reserved for algorithm-specific arrays, stacks, grids, graphs, and other controls.
 const visualizationArea = {
-  top: 135,
+  top: 165,
   left: 400,
   width: 860,
-  height: 380,
+  height: 335,
 };
 
 const controlLayouts: Record<string, ControlRenderLayout> = {
