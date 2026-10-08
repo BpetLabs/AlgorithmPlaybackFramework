@@ -491,9 +491,27 @@ Every control starts with a snapshot at step `0`. If a control has no batch on a
   "batches": [
     {
       "step": 1,
+      "inserts": [
+        {
+          "index": 1,
+          "input": {
+            "value": "3",
+            "backgroundColor": "Teal"
+          }
+        }
+      ],
       "setValues": [
-        { "index": 2, "input": { "value": "5" } }
+        {
+          "index": 2,
+          "input": {
+            "value": "5",
+            "backgroundColor": "Teal"
+          }
+        }
       ]
+    },
+    {
+      "step": 2
     }
   ]
 }
@@ -518,6 +536,33 @@ Use `inserts`, `headInserts`, or `tailInserts`.
 2. On the control's next batch, the item moves into place.
 3. The existing items move to make room: toward the right in a horizontal array, toward the bottom in a top-down vertical array, or toward the top in a bottom-up stack.
 
+Indexed insert:
+
+```json
+"inserts": [
+  {
+    "index": 1,
+    "input": {
+      "value": "7",
+      "backgroundColor": "Teal"
+    }
+  }
+]
+```
+
+Tail insert:
+
+```json
+"tailInserts": [
+  {
+    "input": {
+      "value": "9",
+      "backgroundColor": "Teal"
+    }
+  }
+]
+```
+
 ### Update
 
 Use `updates` when replacing an item with an animated value.
@@ -527,6 +572,18 @@ Use `updates` when replacing an item with an animated value.
 3. The existing item fades away while the replacement takes its place. Other items do not move because the collection size does not change.
 
 An indexed update can target a position beyond the current item count. The framework creates any missing slots before staging the replacement.
+
+```json
+"updates": [
+  {
+    "index": 2,
+    "input": {
+      "value": "42",
+      "backgroundColor": "RoyalBlue"
+    }
+  }
+]
+```
 
 ### Delete
 
@@ -540,6 +597,22 @@ Set `collapse: false` on the delete operation to leave an empty slot. A later re
 
 The target index must exist. An invalid delete index throws an error while loading the playback.
 
+Indexed delete:
+
+```json
+"deletes": [
+  { "index": 1 }
+]
+```
+
+Tail delete:
+
+```json
+"tailDeletes": {
+  "count": 1
+}
+```
+
 ### Take
 
 Use `takes`, `headTakes`, or `tailTakes` when the removed value is being consumed or transferred rather than discarded.
@@ -550,6 +623,22 @@ Use `takes`, `headTakes`, or `tailTakes` when the removed value is being consume
 
 The target index must exist. An invalid take index throws an error while loading the playback.
 
+Indexed take:
+
+```json
+"takes": [
+  { "index": 1 }
+]
+```
+
+Tail take:
+
+```json
+"tailTakes": {
+  "count": 1
+}
+```
+
 ### Set values
 
 Use `setValues`, `setHeadValues`, or `setTailValues` to update an existing item's values immediately.
@@ -557,6 +646,19 @@ Use `setValues`, `setHeadValues`, or `setTailValues` to update an existing item'
 1. The existing item changes in place.
 2. No replacement or transition animation runs.
 3. You do not need to specify `now`; set-value operations are already immediate.
+
+```json
+"setValues": [
+  {
+    "index": 2,
+    "input": {
+      "value": "42",
+      "backgroundColor": "ForestGreen",
+      "borderColor": "Orange"
+    }
+  }
+]
+```
 
 Set operations accept an optional `target`:
 
