@@ -51,6 +51,14 @@ describe("JaggedArrayRenderer", () => {
     expect(markup).toContain("width:30px");
   });
 
+  it("uses a child item offset independent of the parent default", () => {
+    const markup = renderJagged([
+      child({ options: { fitContent: true } }),
+    ]);
+
+    expect(markup).toContain("width:40px");
+  });
+
   it("hides stale removing children by disabling their animations", () => {
     const markup = renderJagged([child()], 3);
 

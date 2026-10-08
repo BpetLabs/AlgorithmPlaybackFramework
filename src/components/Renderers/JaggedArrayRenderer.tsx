@@ -37,6 +37,8 @@ interface JaggedArrayRendererProps
   navigationDisableAnimations?: boolean;
 }
 
+const DEFAULT_CHILD_ITEM_OFFSET = 40;
+
 function getChildDimensions(
   child: JaggedArrayChild,
   defaults: JaggedArrayChildDefaults,
@@ -93,7 +95,7 @@ export function JaggedArrayRenderer({
   childArrays = [],
   childDefaults = {},
   disableAnimations,
-  defaultItemOffset = 40,
+  defaultItemOffset = 60,
   divHeight,
   divWidth,
   itemGap = 0,
@@ -149,7 +151,7 @@ export function JaggedArrayRenderer({
     const childOffset =
       child.options.defaultItemOffset ??
       childDefaults.defaultItemOffset ??
-      defaultItemOffset;
+      DEFAULT_CHILD_ITEM_OFFSET;
     const childGap =
       child.options.itemGap ?? childDefaults.itemGap ?? 0;
     const resolvedItemGap = Math.max(itemGap, 0);
