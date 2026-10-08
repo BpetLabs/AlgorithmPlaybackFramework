@@ -1,5 +1,5 @@
 ---
-name: interactive-grid
+name: interactive-graph
 description: "Use when creating or editing parent-child tree layouts in nodeGraph grid JSON, including arrow direction, anchors, placement, and spacing."
 ---
 
@@ -40,8 +40,8 @@ Measure horizontal distance between node centers and compare it with one resolve
 
 ## Tree placement
 
-- Start at row 0.
-- Center the root horizontally within the graph container.
+- Start at row 0 with the root centered horizontally within the graph container.
+- Use large gaps between the root's children and progressively smaller gaps between children at deeper levels.
 - Center each parent over the horizontal extent of its direct children when practical.
 - Center the complete occupied tree bounds within the graph container, not merely the raw column grid.
 - Reserve balanced left and right margins.
