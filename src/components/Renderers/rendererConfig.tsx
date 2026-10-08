@@ -24,7 +24,8 @@ export function resolveContainerClassName(
   return `${chromeClassName} ${baseClassName}`.trim();
 }
 
-export const DEFAULT_RENDERER_CONTAINER_CLASS_NAME = "border bg-transparent";
+export const DEFAULT_RENDERER_CONTAINER_CLASS_NAME =
+  "apf-renderer-frame bg-transparent";
 
 export enum RendererType {
   Dictionary = "dictionary",

@@ -110,6 +110,12 @@
 [data-apf-control] .border-gray-600 { border-color: var(--apf-grid-border-color, #4b5563); }
 [data-apf-control] .border-gray-700 { border-color: var(--apf-divider-color, #374151); }
 
+/* Draw the frame outside the item area so full-size items cannot obscure it. */
+[data-apf-control] .apf-renderer-frame {
+  box-shadow: 0 0 0 var(--apf-border-width, 1px)
+    var(--apf-border-color, currentColor);
+}
+
 /* Spacing */
 [data-apf-control] .ml-1 { margin-left: 0.25rem; }
 [data-apf-control] .mr-1 { margin-right: 0.25rem; }
