@@ -31,15 +31,13 @@ If provided a code file and a Text `code` control exists.
 
 * You do not have to be provided exact inputs, a description of the input works and you should determine appropriate input for the problem.  
 
-* However; run the code with the input before creating anything to determine that input and commands do not generate over 50 steps, otherwise stop process, and respond with the number of steps that this command, input, and pauses would generate.
+* However; run the code with the input before creating anything to determine that input and commands do not generate over 50 steps, otherwise stop process, and respond with the number of steps that this command, input, and pauses would generate. Once approved you can you continue.
 
-* Not all properties or inputs of the code need corresponding playback controls, if there is no corresponding control the output can be ignored and only mentioned in the `Play By Play` or `Locals` as appropriate. 
+* Not all properties or inputs of the code need corresponding playback controls.
 
 ## Create the controls in Json
 
 * Create the desired controls in the json empty.  
-
-* If any of the controls are input, they are treated as external, populate the input on step 0 following the appropriate `interactive-*` skill. 
 
 * If any of the items are not input and populated in code, hide the controls using 
 `{"render": {"visible": false}}` until you that code has been activated. 
@@ -52,23 +50,13 @@ If provided a code file and a Text `code` control exists.
 
 * Create the controls in Page.tsx,  use defaults unless requested or non defaults make sense. Include the `defaultItemOffset` in the page file for clarity.
 
-* If the page contains a `playback-visualization-area` put the controls in this relative area.
+* If the page contains a `playback-visualization-area` put the controls in this relative area otherwise use the full area provided and use your best judgement.
 
-* Use the prompt to best guess sizing, for example if given an input prompt [1,2,3,4,5] create an array using default size that fits exactly 5 items.  
+* Match the sizing to the prompt [1,2,3,4,5] create an array using default size that fits exactly 5 items. If the code initializes an array of a particular size use that sizing.  If its a dynamic array like a List, you can treat as an Array where the capacity is the largest array count for that input.
 
-* Grids, Graph, and Stack Items should try to match the same defaultItemOffset.
-
-* If there is a growable class such a stack, queue, priority queue etc represented as playable control run the code and determine the max height to determine sizing.
-
-* If a particular nodes text cannot fit in a node you can increase the width and height for multi line.
-
+* If there is a growable class such a stack, queue, priority queue etc represented as playable control run the code and determine the max height to determine sizing for positioning.
 
 ## Control placement
-
-* Controls go in the `playback-visualization-area`.
-
-
-General Positioning:
 
 * Avoid objects overlapping each other - including Titles and Labels including the boundaries.
 
