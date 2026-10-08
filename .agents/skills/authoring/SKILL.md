@@ -60,7 +60,7 @@ If provided a code file and a Text `code` control exists.
 
 * If there is a growable class such a stack, queue, priority queue etc represented as playable control run the code and determine the max height to determine sizing.
 
-* note
+* If a particular nodes text cannot fit in a node you can increase the width and height for multi line.
 
 
 ## Control placement
