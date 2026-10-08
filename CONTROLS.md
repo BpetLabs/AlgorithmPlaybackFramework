@@ -324,11 +324,11 @@ Child controls use the parent ID followed by their zero-based parent index. They
     "id": "matrix",
     "type": "jaggedArray",
     "orientation": "vertical",
-    "defaultItemOffset": 70,
+    "defaultItemOffset": 60,
+    "itemGap": 10,
     "childDefaults": {
       "orientation": "horizontal",
-      "defaultItemOffset": 50,
-      "fitContent": true,
+      "defaultItemOffset": 40,
       "emptyItemText": "0"
     },
     "batches": []
@@ -349,6 +349,8 @@ Child controls use the parent ID followed by their zero-based parent index. They
 ```
 
 `childDefaults` supplies shared array options and optional render settings. An explicit child setting overrides the corresponding default. Child orientation is shared and cannot vary by row.
+
+The parent jagged array's `itemGap`, `itemCrossAxisGap`, `width`, and `height` determine the space available for each child array.
 
 ## Generic properties
 
