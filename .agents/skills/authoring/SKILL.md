@@ -65,14 +65,67 @@ If provided a code file and a Text `code` control exists.
 
 ## Control placement
 
-* Titles can go above the Top of the `playback-visualization-area` by design but within the `playback-visualization-area` dont overlap Titles with other controls. 
+* Controls go in the `playback-visualization-area`.
 
-* ReadOnly / or set value only items can go at Top: 0 but if there are Pre-state in the Json you need to account for 
 
-Array Controls:
-Jagged Array:
-Stack Controls:
-Grid and NodeGraph:
+General Positioning:
+
+* Avoid objects overlapping each other - including Titles and Labels including the boundaries.
+
+* This includes items removing on the right or bottom, or animating in from the top or left, a control which take one item size of space.  If an item has action that does this, this additional space can be ignored. 
+
+* Always include DefaultItemOffset for control, prefer controls default size. 
+
+* Make items bigger if you need the space for text
+* Make items smaller if you need the space screenspace
+* If you go over the boundaries stop processing and make recommendations.
+* Controls representing input should be first
+
+
+Minimum Gap between controls
+- 25 + itemsize
+
+Arrays:
+
+Preferred location:  Top Left
+Preferred multiple controls:  Above and Below each other. If need more screen space can be single row on top or bottom.
+Minimum defaultItemOffset: 25 
+
+JaggedArrays:
+
+Parent:
+Preferred location: Top Left
+Default Orientation: horizontal
+DefaultItemSize: 60 
+ItemGap or CrossAxisItemGap: 10 
+Array should be sized so that the gap on all sizes of the child is 10.
+Minimum defaultItemOffset: 45 
+Child:
+defaultItemOffset: 40
+Default Orientation: vertical
+Minimum defaultItemOffset: 25 
+
+Stack:
+Preferred location: Right Side - 1 width away, Attached to the play area floor
+Preferred multiple controls: Minimum Gap to the left
+Default Width: 120 
+Minimum defaultItemOffset: 25
+
+Grid:
+Preferred location:  Center, Try to center align between controls
+Minimum calculated items height or width: 25
+
+GridNode:
+Preferred calculated item height and width: 40
+Minimum calculated items height or width: 25
+Preferred location: Center, Try to center align between controls
+* The size of the nodeGraph itself can overlap with other controls, only the nodes and arrows should not overlap.
+* Prefer graph row/column counts and sizing that create squares for numbers and rectangles that would fit largest text
+* Prefer graph row/column counts and sizing that can create visually appealing arrows.
+
+
+
+
 
 
 

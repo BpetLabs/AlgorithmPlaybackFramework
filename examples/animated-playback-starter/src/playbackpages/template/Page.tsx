@@ -25,11 +25,11 @@ const controlLayouts: Record<string, ControlRenderLayout> = {
   code: { top: 90, left: 20, width: 360, height: 658 },
   playbyplay: { top: 550, left: 400, width: 600, height: 198 },
   locals: { top: 550, left: 1020, width: 240, height: 198 },
-  array1: { top: 30, left: 0, width: 200, height: 40 },
-  array2: { top: 50, left: 0, width: 100, height: 30 },
+  array1: { top: 30, left: 0, width: 800, height: 40 },
+  array2: { top: 300, left: 100, width: 100, height: 30 },
   stack: { top: 30, left: 620, width: 120, height: 320 },
   grid: { top: 30, left: 300, width: 250, height: 250 },
-  jaggedArray: { top: 125, left: 0, width: 140, height: 140 },
+  jaggedArray: { top: 125, left: 0, width: 800, height: 140 },
 };
 
 const controlTitles: Record<string, string> = {
@@ -118,20 +118,19 @@ export default function PlaybackPage() {
                   defaultHeaderTitle={controlTitles[control.id]}
                   configureProps={(id, props) => {
                     if (id === "array1" || id === "array2" || id === "array3") {
-                      props.defaultItemOffset = 40;
+                      props.defaultItemOffset = 25;
                     } else if (id === "stack") {
-                      props.defaultItemOffset = 40;
+                      props.defaultItemOffset = 25;
                     } else if (id === "grid") {
                       props.rows = 10;
                       props.cols = 10;
                     } else if (id === "jaggedArray") {
-                      props.defaultItemOffset = 60;
+                      props.defaultItemOffset = 45;
                       props.orientation = "horizontal";
                       props.itemGap = 10,
                       props.itemCrossAxisGap = 10,
-                      props.fitContent = true
                       props.childDefaults = {
-                        defaultItemOffset: 40,
+                        defaultItemOffset: 25,
                         orientation: "vertical",
                       };
                     }
