@@ -111,7 +111,7 @@ Size controls from the executed trace:
 Parent preferences:
 
 - Location: top-left.
-`itemGap` or `itemCrossAxisGap`: set to 10 px always
+`itemGap` or `itemCrossAxisGap`: Must be set to 10 px
 - `orientation`: `"horizontal"`. 
 - Minimum `defaultItemOffset`: 45 px.
 - Set `itemGap` or `itemCrossAxisGap` only when the default spacing cannot provide the required clearance.
