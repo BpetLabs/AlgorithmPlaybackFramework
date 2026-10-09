@@ -28,14 +28,17 @@ Announce the complete applicable skill list before editing. Do not proceed until
 
 Before completion, validate each control against the validation section of its matching interactive skill. Also apply the cross-control validation rules from `interactive-generic` to verify that every global step remains synchronized.
 
-DO NOT:
-- Change any of the default controls.
-- Do not place controls outside of `visualizationControlLayouts`
-- Do not add, change, remove, or update properties that change visualization without a valid reason.
-- Do not deviate from defaults or recommendations in this document without a valid reason.
-   - Output your reasoning for deviations from defaults or skill when doing so.
-   - Valid reasons include - fitting text into items, making space to fit controls
-   - For example - do not add `itemGap` or `itemCrossAxisGap` because it was in the example.
+## Default preservation and visualization boundaries
+
+Unless the user explicitly requests otherwise:
+
+- Do not modify, remove, hide, rename, reposition, resize, or reconfigure any default control or existing layout geometry. This includes the canvas size, `playback-visualization-area`, default layout maps, and existing control positions or dimensions.
+- Needing space for a requested control does not authorize resizing or repositioning the canvas, visualization area, default controls, or existing layouts.
+- Add and position non-default controls only through `visualizationControlLayouts`.
+- Keep every non-default control's complete effective boundary inside `playback-visualization-area`, including its base rectangle, decorations, and animation-state boundary.
+- Do not override renderer defaults or skill recommendations for preference, convenience, or because an option appears in documentation or an example.
+- Override a default only when a measured requirement makes it necessary, such as fitting traced content, preventing overlap, satisfying containment, or maintaining required clearance.
+- Use the smallest override that solves the measured requirement. Record the changed property and reason in the working notes, and report material deviations in the final response.
 
 ## Validate the request before creating files
 
