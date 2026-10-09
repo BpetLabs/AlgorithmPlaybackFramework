@@ -30,7 +30,7 @@ Before editing, read and apply [interactive-generic](../interactive-generic/SKIL
 - Color each relevant index by the role of its local variable, regardless of how many indices are highlighted in the control: use `Orange` for a looping index, `Pink` for a specific index, and `Yellow` for a trailing index. For another role, choose a distinct CSS named color and keep that role-color mapping consistent.
 - If multiple locals refer to the same index, render one border for that index. Resolve standard role-color collisions with this precedence: `Orange`, then `Pink`, then `Yellow`. If only custom role colors collide, choose one consistently.
 - Recompute local-to-index mappings at every step. Keep a border while the same in-scope local continues to refer to that index, including pauses where the local is not directly used. Clear or move it only when the local changes its referenced index or leaves scope. Also carry an access that occurred between pauses into the destination step as described above.
-- For a matrix, apply these rules to the affected row or cell controls at the corresponding indices.
+- For a matrix, apply these rules to the affected row or cell controls at the corresponding indices for the parent and the child.
 - If any array stores boolean values use `Red` for false and `Green` for true.
 
 ## Validation

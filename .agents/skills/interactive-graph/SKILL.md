@@ -38,6 +38,18 @@ Prefer the child's top-center so arrows remain as straight as possible:
 
 Measure horizontal distance between node centers and compare it with one resolved node width. In grid units, use the larger of the child and parent `columnSpan` values, defaulting each missing span to 1. Use a corner anchor only when the center distance is strictly greater than that width; equality still uses `top`.
 
+## Node colors and borders
+
+- Every action that assigns a node value must include a `backgroundColor` in the same input, whether the action initializes the node or changes it later. Use `Teal` by default unless the user requests another color or the value's state has a defined color.
+- An node is relevant when a distinct in-scope local variable refers to it. Preserve that highlight across pauses until the local moves to another index or leaves scope; a pause whose statement does not reference the local does not end the highlight. A local variable may identify at most one highlighted index in a control at a time.
+- If a node is accessed during unpaused execution between two pauses, show that access highlight on the destination step. Preserve it under the same scope rules, or clear it on the next step when it has no continuing in-scope owner.
+- Color each relevant index by the role of its local variable, regardless of how many indices are highlighted in the control: use `Orange` for the main specific node, and `Yellow` for additional specific index as needed. `Pink` for a previous node and path. For another role, choose a distinct CSS named color and keep that role-color mapping consistent.
+- If multiple locals refer to the same index, render one border for that index. Resolve standard role-color collisions with this precedence: `Orange`, then `Yellow`, then `Pink`. If only custom role colors collide, choose one consistently.
+- Recompute local-to-node mappings at every step. Keep a border while the same in-scope local continues to refer to that index, including pauses where the local is not directly used. Clear or move it only when the local changes its referenced index or leaves scope. Also carry an access that occurred between pauses into the destination step as described above.
+- When a the current node highlighted `orange` moves to another neighbor in another step, the now previous node should be updated to highlighted `pink` and its arrow highlighted `orange`. 
+- When that new neighbor moves to another neighbor in another step, the same process should repeat but the parents incoming arrow should change to highlight `pink`.  
+- `pink` nodes and arrows should stay highlighted as long as they represent the full path from the start to current node, when they no longer represent the path their arrows should go back to their default color. 
+
 ## Tree placement
 
 - Start at row 0 with the root centered horizontally within the graph container.
