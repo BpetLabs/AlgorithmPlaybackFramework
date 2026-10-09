@@ -19,10 +19,16 @@ const visualizationArea = {
   height: 380,
 };
 
-const controlLayouts: Record<string, ControlRenderLayout> = {
+// Coordinates are relative to the full playback canvas.
+const defaultControlLayouts: Record<string, ControlRenderLayout> = {
   code: { top: 90, left: 20, width: 460, height: 658 },
   playbyplay: { top: 550, left: 500, width: 600, height: 198 },
   locals: { top: 550, left: 1120, width: 240, height: 198 }
+};
+
+// Coordinates are relative to visualizationArea.
+const visualizationControlLayouts: Record<string, ControlRenderLayout> = {
+  // Add layouts for non-default controls here.
 };
 
 const controlTitles: Record<string, string> = {
@@ -102,7 +108,7 @@ export default function PlaybackPage() {
                   latestSnapshots={latestSnapshots}
                   currentStep={sliderValue}
                   disableAnimations={disableAnimations}
-                  layout={controlLayouts[control.id]}
+                  layout={visualizationControlLayouts[control.id]}
                   defaultHeaderTitle={controlTitles[control.id]}
                 />
               ))}
@@ -117,7 +123,7 @@ export default function PlaybackPage() {
                 latestSnapshots={latestSnapshots}
                 currentStep={sliderValue}
                 disableAnimations={disableAnimations}
-                layout={controlLayouts[control.id]}
+                layout={defaultControlLayouts[control.id]}
                 defaultHeaderTitle={controlTitles[control.id]}
                 configureProps={(id, props) => {
                   if (id === "playbyplay") {
