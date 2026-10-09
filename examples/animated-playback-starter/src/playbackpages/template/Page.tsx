@@ -10,22 +10,22 @@ import {
 
 import playback from "./playback.json";
 
-const canvasSize = { width: 1280, height: 768 };
+const canvasSize = { width: 1400, height: 800 };
 
 // Reserved for algorithm-specific arrays, stacks, grids, graphs, and other controls.
 const visualizationArea = {
   top: 130,
-  left: 400,
-  width: 860,
-  height: 380,
+  left: 500,
+  width: 880,
+  height: 400,
   border: "1px solid #374151"
 };
 
 const controlLayouts: Record<string, ControlRenderLayout> = {
-  code: { top: 90, left: 20, width: 360, height: 658 },
-  playbyplay: { top: 550, left: 400, width: 600, height: 198 },
-  locals: { top: 550, left: 1020, width: 240, height: 198 },
-  array1: { top: 375, left: 0, width: 800, height: 50 },
+  code: { top: 120, left: 20, width: 460, height: 660 },
+  playbyplay: { top: 580, left: 500, width: 620, height: 200 },
+  locals: { top: 580, left: 1140, width: 240, height: 200 },
+  array1: { top: 300, left: 0, width: 800, height: 50 },
   array2: { top: 300, left: 100, width: 100, height: 50 },
   stack: { top: 30, left: 620, width: 120, height: 320 },
   grid: { top: 30, left: 300, width: 250, height: 250 },
