@@ -73,7 +73,9 @@ Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx
 
 Add each control's layout and title. Pass renderer options through `configureProps`; include `defaultItemOffset` explicitly for applicable item-based controls.
 
-Unless the user explicitly requests dynamic sizing, give every control a stable rendered boundary sized for its maximum state in the executed trace. That full boundary must be present from the first visible frame and must not grow, shrink, or shift as playback content changes.
+Unless the user explicitly requests dynamic sizing, reserve a stable layout footprint for every control sized to its maximum state in the executed trace. Use that full footprint for placement and collision checks from the first visible frame, even when the currently rendered content occupies less space.
+
+Set `props.fitContent = true` in `configureProps` for every control whose renderer supports it. It resolves the main-axis extent to complete rendered items and prevents partial items at the boundary. The current supported renderer types are `array`, `jaggedArray`, and `stack`; do not set it on unsupported renderers.
 
 Set `props.borderWidth = 2` in `configureProps` for every `dictionary` control, including the default `locals` control.
 
@@ -86,11 +88,11 @@ Size controls from the executed trace:
 - A fixed array should fit its initialized length exactly. For example, `[1, 2, 3, 4, 5]` should have five visible slots.
 - A dynamic array or list should fit the maximum count reached by the selected trace.
 - A stack, queue, priority queue, or other growable control should fit its maximum traced size.
-- Under the default fixed-sizing rule, size titles, labels, borders, and content areas against the same maximum-state boundary. Do not rely on a later playback step to establish the control's full footprint.
+- Under the default fixed-footprint rule, reserve space for titles, labels, borders, and content areas against the same maximum-state boundary. Do not rely on a later playback step to establish the control's full footprint.
 
 ## Placement and clearance
 
-- Under the default fixed-sizing rule, treat each control's stable maximum-state rendered rectangle as occupied from its first visible frame, including empty space inside that boundary. If the user explicitly requests dynamic sizing, calculate the resolved boundary at every trace step instead. Expand the occupied bounds to include any title, label, rendered content, or traced animation phase that is subject to collision clearance. The downward-fall phase of a removal is explicitly exempt below.
+- Under the default fixed-footprint rule, treat each control's reserved maximum-state rectangle as occupied from its first visible frame, including space not used by its current `fitContent` extent. If the user explicitly requests dynamic sizing, calculate the resolved boundary at every trace step instead. Expand the occupied bounds to include any title, label, rendered content, or traced animation phase that is subject to collision clearance. The downward-fall phase of a removal is explicitly exempt below.
 - For every control, list the mutation operations that execute in the trace. For each current traced operation, determine whether it produces visible motion from its resulting item state, renderer, orientation, mutation family, and timing behavior. Reserve animation clearance only for paths that actually execute and animate.
 - For every animated item, read the current renderer and animation implementation to calculate its complete path and motion distances; do not rely on copied constants, documented formulas, or mutation names. For a removal, treat the initial left/right movement as the **removal transition** and any subsequent downward movement as the **fall phase**; they have different collision rules.
 - Keep animation envelopes inside `playback-visualization-area`, except that a removal's downward-fall phase may pass through controls and exit through the bottom boundary as the visualization floor. Its horizontal and rotated bounds must remain inside the area's left and right boundaries. No animation may exit through the top or either side.
@@ -146,13 +148,7 @@ Child preferences:
 
 - Verify the embedded `staticValue` matches the source file.
 - Verify every pause and global step is synchronized across the relevant controls.
-- Replay every step and confirm state, visibility, and pre-animation completion.
-- Check titles, labels, and static control bounds at every step.
-- Unless the user explicitly requested dynamic sizing, verify every control uses its maximum traced boundary from its first visible frame and that no playback step changes the control's position or outer dimensions. If `fitContent` is enabled under fixed sizing, verify its resolved extent is invariant across the trace.
-- Verify every `dictionary` control sets `props.borderWidth = 2` in `configureProps`.
-- Calculate and verify the edge-to-edge boundary gap for every pair of controls; each pair must have at least 25 px of separation on one axis.
 - For every traced mutation, check both its pending and completion animation phases against every other control's occupied bounds and the visualization boundaries. For a removal, verify inter-control clearance during its horizontal transition, then allow its downward fall to cross controls and the floor while still verifying its horizontal and rotated bounds against both side boundaries.
-- Confirm dynamic controls fit their maximum traced size from their first visible frame and never resize during playback unless the user explicitly requested dynamic sizing. Confirm the final step count matches the trace.
 - Before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
 - Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.
 - If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.
