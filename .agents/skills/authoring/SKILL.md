@@ -92,7 +92,7 @@ Size controls from the executed trace:
 - For effective boundaries `A` and `B`, at least one axis must satisfy `A.right + 25 <= B.left`, `B.right + 25 <= A.left`, `A.bottom + 25 <= B.top`, or `B.bottom + 25 <= A.top`.
 - Treat the complete effective boundary as occupied from the control's first visible frame through its last. Empty space inside a layout rectangle or between currently visible items is not available to another control.
 - Placement preferences never override animation containment or the additional 25 px clearance between controls.
-- Make items larger when their text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums.
+- Make items larger when their item text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums. The title length should not be used as justification to change the width of a control.
 - Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
 - If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
 
