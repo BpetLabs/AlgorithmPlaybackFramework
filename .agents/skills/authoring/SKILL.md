@@ -73,7 +73,7 @@ Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx
 
 Add each control's layout and title. Pass renderer options through `configureProps`; include `defaultItemOffset` explicitly for applicable item-based controls.
 
-Set `props.fitContent = true` in `configureProps` for every control whose renderer supports it. The current supported renderer types are `array`, `jaggedArray`, and `stack`; do not set it on unsupported renderers.
+Unless the user explicitly requests dynamic sizing, give every control a stable rendered boundary sized for its maximum state in the executed trace. That full boundary must be present from the first visible frame and must not grow, shrink, or shift as playback content changes.
 
 Set `props.borderWidth = 2` in `configureProps` for every `dictionary` control, including the default `locals` control.
 
@@ -86,13 +86,13 @@ Size controls from the executed trace:
 - A fixed array should fit its initialized length exactly. For example, `[1, 2, 3, 4, 5]` should have five visible slots.
 - A dynamic array or list should fit the maximum count reached by the selected trace.
 - A stack, queue, priority queue, or other growable control should fit its maximum traced size.
-- With `fitContent` enabled, calculate the resolved control boundary at every trace step. Horizontal arrays fit their width, vertical arrays fit their height, and stacks fit their height while keeping their bottom edge anchored to the layout's original bottom edge. Account for the title moving with the fitted stack's top edge.
+- Under the default fixed-sizing rule, size titles, labels, borders, and content areas against the same maximum-state boundary. Do not rely on a later playback step to establish the control's full footprint.
 
 ## Placement and clearance
 
-- Treat each control's resolved rendered rectangle as occupied, including empty space inside that boundary. For a control without `fitContent`, this is its full `top`, `left`, `width`, and `height` rectangle. For a control with `fitContent`, use its fitted boundary at the current step rather than unused space in the declared layout. Expand the occupied bounds to include any title, label, rendered content, or traced animation phase that is subject to collision clearance. The downward-fall phase of a removal is explicitly exempt below.
+- Under the default fixed-sizing rule, treat each control's stable maximum-state rendered rectangle as occupied from its first visible frame, including empty space inside that boundary. If the user explicitly requests dynamic sizing, calculate the resolved boundary at every trace step instead. Expand the occupied bounds to include any title, label, rendered content, or traced animation phase that is subject to collision clearance. The downward-fall phase of a removal is explicitly exempt below.
 - For every control, list the mutation operations that execute in the trace. For each current traced operation, determine whether it produces visible motion from its resulting item state, renderer, orientation, mutation family, and timing behavior. Reserve animation clearance only for paths that actually execute and animate.
-- Calculate each animated item's path from the renderer's current motion distances. For a removal, treat the initial left/right movement as the **removal transition** and any subsequent downward movement as the **fall phase**; they have different collision rules. Inspect the animation implementation when the path is not documented rather than inferring it from the mutation name.
+- For every animated item, read the current renderer and animation implementation to calculate its complete path and motion distances; do not rely on copied constants, documented formulas, or mutation names. For a removal, treat the initial left/right movement as the **removal transition** and any subsequent downward movement as the **fall phase**; they have different collision rules.
 - Keep animation envelopes inside `playback-visualization-area`, except that a removal's downward-fall phase may pass through controls and exit through the bottom boundary as the visualization floor. Its horizontal and rotated bounds must remain inside the area's left and right boundaries. No animation may exit through the top or either side.
 - Keep at least 25 px of edge-to-edge space between the expanded occupied bounds of every pair of controls. For controls `A` and `B`, at least one separating axis must satisfy `A.right + 25 <= B.left`, `B.right + 25 <= A.left`, `A.bottom + 25 <= B.top`, or `B.bottom + 25 <= A.top`. Empty space inside a control boundary is not available to another control or animation.
 - Apply the same 25 px rule to insertions, movements, and the removal transition. The rule applies to that initial left/right removal movement, not to the fall phase. Once the fall begins, it may pass through other controls and does not require 25 px inter-control clearance; only its left and right boundary containment still applies.
@@ -128,9 +128,6 @@ Child preferences:
 - Align the static stack's bottom edge with the visualization area's floor. A downward removal may fall through that bottom boundary, but it may not leave through either side.
 - Preferred width: 120 px.
 - Minimum `defaultItemOffset`: 25 px.
-- For the vertical stack renderer, indexed inserts and updates enter from the left. Their leftward distance is `itemWidth + preInsertGap` when `preInsertGap` is set, otherwise approximately `1.05 * itemWidth`. Keep that entire entry corridor clear, plus the required 25 px separation from other controls.
-- For the vertical stack renderer, animated removals first slide right by one `itemWidth`, then fall by one `itemWidth` while rotating up to 90 degrees. The rightward slide is the removal transition and must preserve 25 px clearance from other controls. The later fall phase may pass through controls and the floor, but its horizontal bounds must stay inside the visualization area's side boundaries. With resolved item width `W` and height `H`, a conservative right-side rotation extent is `W + (sqrt(W * W + H * H) - W) / 2` beyond the item's resting right edge.
-- When multiple stacks are present, validate each stack's animation phases independently. Do not place another stack in an indexed-insert entry corridor or a removal-transition corridor even when their static rectangles have more than 25 px between them. The subsequent fall-phase corridor may cross other controls.
 
 ### Grids
 
@@ -151,11 +148,11 @@ Child preferences:
 - Verify every pause and global step is synchronized across the relevant controls.
 - Replay every step and confirm state, visibility, and pre-animation completion.
 - Check titles, labels, and static control bounds at every step.
-- Verify every renderer that supports `fitContent` has it enabled, then use its resolved fitted boundary for that step's layout and clearance checks.
+- Unless the user explicitly requested dynamic sizing, verify every control uses its maximum traced boundary from its first visible frame and that no playback step changes the control's position or outer dimensions. If `fitContent` is enabled under fixed sizing, verify its resolved extent is invariant across the trace.
 - Verify every `dictionary` control sets `props.borderWidth = 2` in `configureProps`.
 - Calculate and verify the edge-to-edge boundary gap for every pair of controls; each pair must have at least 25 px of separation on one axis.
 - For every traced mutation, check both its pending and completion animation phases against every other control's occupied bounds and the visualization boundaries. For a removal, verify inter-control clearance during its horizontal transition, then allow its downward fall to cross controls and the floor while still verifying its horizontal and rotated bounds against both side boundaries.
-- Confirm dynamic controls fit their maximum traced size and the final step count matches the trace.
+- Confirm dynamic controls fit their maximum traced size from their first visible frame and never resize during playback unless the user explicitly requested dynamic sizing. Confirm the final step count matches the trace.
 - Before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
 - Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.
 - If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.
