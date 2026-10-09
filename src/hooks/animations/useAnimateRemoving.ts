@@ -2,7 +2,7 @@
 import type { AnimationController } from "../../common/models/animation";
 import { useRef } from "react";
 import { ControlItem, ControlItemState, isRemovingState } from "../../common/models/controlItem";
-import { move, moveThenFallRotateAndDisappear, disappear, setZIndex } from "../../utils/animationEffects";
+import { moveThenFallRotateAndDisappear, disappear, setZIndex } from "../../utils/animationEffects";
 import { useIsomorphicLayoutEffect } from "../useIsomorphicLayoutEffect";
 
 export function useAnimateRemoving(item: ControlItem,
@@ -34,14 +34,12 @@ export function useAnimateRemoving(item: ControlItem,
   // Stack
   let falldistance = itemWidth * 1;
   let xSlideRight = itemWidth;
-  let xSlideLeft = -itemWidth * 1.05;
   let moveDuration = 1;
 
   if(leftRight)
   {
       falldistance = itemHeight * 2;
       xSlideRight = 0;
-      xSlideLeft = 0;
       moveDuration = 0;
   }
 
@@ -115,11 +113,7 @@ export function useAnimateRemoving(item: ControlItem,
         }
         else if (isRemovingTake) {
           (async () => {
-            // If an item skipped a state transition it needs to move into place first before it should animate
             if (cancelled) return;
-            await move(controls, xSlideLeft, yInPlace, 1);
-            if (cancelled) return;
-
             await disappear(controls, 1);
             if (cancelled) return;
 

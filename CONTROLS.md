@@ -620,7 +620,7 @@ Tail delete:
 Use `takes`, `headTakes`, or `tailTakes` when the removed value is being consumed or transferred rather than discarded.
 
 1. The target item shakes in the pre-take state.
-2. On the control's next batch, a vertical control moves the item to the left and then makes it disappear. A horizontal control currently fades the item in place.
+2. On the control's next batch, the item fades away in place.
 3. Remaining items close the gap by default. Set `collapse: false` to preserve the slot.
 
 The target index must exist. An invalid take index throws an error while loading the playback.

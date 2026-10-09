@@ -146,7 +146,7 @@ describe("animation state hooks", () => {
     expect(effects.moveThenFallRotateAndDisappear).not.toHaveBeenCalled();
   });
 
-  it("uses update and take removal paths", async () => {
+  it("fades update and take removals in place", async () => {
     const { rerender } = renderHook(
       ({ state }) => useAnimateRemoving(item(state), 0, 20, 30, false, controls, false),
       { initialProps: { state: ControlItemState.RemovingUpdate } }
@@ -155,9 +155,10 @@ describe("animation state hooks", () => {
     await waitFor(() => expect(effects.disappear).toHaveBeenCalledWith(controls, 1));
 
     effects.disappear.mockClear();
+    effects.move.mockClear();
     rerender({ state: ControlItemState.RemovingTake });
-    expect(effects.move).toHaveBeenCalledWith(controls, -31.5, 0, 1);
     await waitFor(() => expect(effects.disappear).toHaveBeenCalledWith(controls, 1));
+    expect(effects.move).not.toHaveBeenCalled();
   });
 
   it("runs fall removal, invokes collapse, and restores state after reversing", async () => {
