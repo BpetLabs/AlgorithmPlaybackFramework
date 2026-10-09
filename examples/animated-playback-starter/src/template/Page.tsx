@@ -14,7 +14,7 @@ const canvasSize = { width: 1380, height: 768 };
 
 const visualizationArea = {
   top: 130,
-  left: 400,
+  left: 500,
   width: 860,
   height: 380,
   border: "1px solid #374151"
