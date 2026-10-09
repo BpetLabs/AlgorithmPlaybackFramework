@@ -202,7 +202,6 @@ configureProps={(id, props) => {
 
 `paddingX` and `paddingY` are fractions of the control's width and height.
 `colGap` and `rowGap` are fractions of the inner width and height.
-Both `columns` and `rows` are required
 
 Use `columnSizing.values` and `rowSizing.values` to assign relative track sizes. For example, `[1, 2, 1]` makes the middle track twice as large as the other two. The number of sizing values must match the configured track count; otherwise, all tracks use equal sizes.
 
@@ -250,6 +249,19 @@ Set `gridLines: true` on the graph control in JSON, or on its renderer props thr
 ```
 
 Nodes and edges are stateful and merge by `id`. Later batches only need to provide the properties that change. Remove nodes with `graphNodeDeletes` and edges with `graphEdgeDeletes`; deleting a node also removes edges that no longer have valid endpoints.
+
+Set `itemWidthScale` or `itemHeightScale` on an individual node to resize its visible rectangle relative to its calculated track size. Both values default to `1`, must be positive, and keep the node centered on its existing grid position. Edge anchors and loop bounds use the resized visible rectangle.
+
+```json
+{
+  "id": "verbose-node",
+  "value": "A node with significantly more text",
+  "column": 2,
+  "row": 1,
+  "itemWidthScale": 1.75,
+  "itemHeightScale": 1.25
+}
+```
 
 Edge properties:
 

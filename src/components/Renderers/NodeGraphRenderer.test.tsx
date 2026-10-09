@@ -28,7 +28,6 @@ describe("NodeGraphRenderer", () => {
         }}
         divWidth={400}
         divHeight={200}
-        graphLayout={{ columns: 2, rows: 2 }}
         disableAnimations
       />
     );
@@ -94,24 +93,57 @@ describe("NodeGraphRenderer", () => {
     expect(markup).toContain("var(--apf-grid-border-color, #4b5563)");
   });
 
-  it("requires explicit row and column counts", () => {
-    expect(() =>
-      renderToStaticMarkup(
-        <NodeGraphRenderer
-          snapshot={{
-            id: "missing-layout",
-            type: "nodeGraph",
-            step: 0,
-            items: [],
-            graphNodes: [],
-          }}
-          divWidth={300}
-          divHeight={120}
-          graphLayout={{ columns: 3 }}
-        />
-      )
-    ).toThrow(
-      'Node graph "missing-layout" requires graphLayout.columns and graphLayout.rows.'
+  it("centers per-node scaling and uses the visible bounds for arrows", () => {
+    const markup = renderToStaticMarkup(
+      <NodeGraphRenderer
+        snapshot={{
+          id: "scaled-nodes",
+          type: "nodeGraph",
+          step: 0,
+          items: [],
+          graphNodes: [
+            {
+              id: "from",
+              row: 0,
+              column: 0,
+              value: "From",
+              itemWidthScale: 0.5,
+              itemHeightScale: 0.5,
+            },
+            {
+              id: "to",
+              row: 0,
+              column: 2,
+              value: "To",
+              itemWidthScale: 0.5,
+              itemHeightScale: 0.5,
+            },
+          ],
+          graphEdges: [
+            {
+              id: "scaled-edge",
+              from: "from",
+              to: "to",
+              fromAnchor: "bottom",
+              toAnchor: "top",
+            },
+          ],
+        }}
+        divWidth={300}
+        divHeight={100}
+        graphLayout={{
+          columns: 3,
+          rows: 1,
+          paddingX: 0,
+          paddingY: 0,
+          colGap: 0,
+          rowGap: 0,
+        }}
+      />
     );
+
+    expect(markup).toContain('d="M 50 75 C 50 155, 250 -55, 250 25"');
+    expect(markup).toContain("top:25px;left:25px;width:50px;height:50px");
+    expect(markup).toContain("top:25px;left:225px;width:50px;height:50px");
   });
 });

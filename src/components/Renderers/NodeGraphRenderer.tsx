@@ -33,11 +33,6 @@ type GraphTracks = {
   rows: ReturnType<typeof buildTracks>;
 };
 
-type ConfiguredGraphLayout = GraphLayout & {
-  columns: number;
-  rows: number;
-};
-
 const MIN_TRACK_WEIGHT = 0.0001;
 function getTrackWeights(count: number, sizingValues?: number[]): number[] {
   if (count <= 0) return [];
@@ -85,13 +80,22 @@ function interpolateTrackPosition(values: number[], index: number) {
   return values[baseIndex] + (nextValue - values[baseIndex]) * fraction;
 }
 
+function getItemScale(value: number | undefined): number {
+  return value !== undefined && Number.isFinite(value) && value > 0
+    ? value
+    : 1;
+}
+
 function buildGraphTracks(
-  layout: ConfiguredGraphLayout,
+  nodes: GraphNode[],
+  layout: GraphLayout,
   divWidth: number,
   divHeight: number
 ): GraphTracks {
-  const columnCount = Math.max(1, layout.columns);
-  const rowCount = Math.max(1, layout.rows);
+  const maxColumn = nodes.reduce((max, node) => Math.max(max, node.column), 0);
+  const maxRow = nodes.reduce((max, node) => Math.max(max, node.row), 0);
+  const columnCount = Math.max(1, layout.columns ?? maxColumn + 1);
+  const rowCount = Math.max(1, layout.rows ?? maxRow + 1);
   const paddingX = divWidth * (layout.paddingX ?? 0.00);
   const paddingY = divHeight * (layout.paddingY ?? 0.00);
   const offsetX = divWidth * (layout.offsetX ?? 0);
@@ -174,11 +178,11 @@ function getAnchorVector(anchor: GraphEdgeAnchor) {
 
 function buildNodeRects(
   nodes: GraphNode[],
-  layout: ConfiguredGraphLayout,
+  layout: GraphLayout,
   divWidth: number,
   divHeight: number
 ): Map<string, NodeRect> {
-  const tracks = buildGraphTracks(layout, divWidth, divHeight);
+  const tracks = buildGraphTracks(nodes, layout, divWidth, divHeight);
   const colTracks = tracks.columns;
   const rowTracks = tracks.rows;
   const columns = colTracks.starts.length;
@@ -203,12 +207,16 @@ function buildNodeRects(
     const y = interpolateTrackPosition(rowStartPositions, row);
     const right = interpolateTrackPosition(colEndPositions, endColumn);
     const bottom = interpolateTrackPosition(rowEndPositions, endRow);
+    const baseWidth = Math.max(0, right - x);
+    const baseHeight = Math.max(0, bottom - y);
+    const width = baseWidth * getItemScale(node.itemWidthScale);
+    const height = baseHeight * getItemScale(node.itemHeightScale);
 
     rects.set(node.id, {
-      x,
-      y,
-      width: Math.max(0, right - x),
-      height: Math.max(0, bottom - y),
+      x: x + (baseWidth - width) / 2,
+      y: y + (baseHeight - height) / 2,
+      width,
+      height,
     });
   });
 
@@ -297,17 +305,8 @@ export function NodeGraphRenderer({
   const allNodes = snapshot.graphNodes ?? [];
   const nodes = allNodes;
   const edges = snapshot.graphEdges ?? [];
-  if (graphLayout?.columns === undefined || graphLayout.rows === undefined) {
-    throw new Error(
-      `Node graph "${snapshot.id}" requires graphLayout.columns and graphLayout.rows.`
-    );
-  }
-  const layout: ConfiguredGraphLayout = {
-    ...graphLayout,
-    columns: graphLayout.columns,
-    rows: graphLayout.rows,
-  };
-  const tracks = buildGraphTracks(layout, divWidth, divHeight);
+  const layout = graphLayout ?? {};
+  const tracks = buildGraphTracks(nodes, layout, divWidth, divHeight);
   const markerBaseId = `graph-marker-${snapshot.id}-${snapshot.step}`;
 
   const rects = buildNodeRects(nodes, layout, divWidth, divHeight);
