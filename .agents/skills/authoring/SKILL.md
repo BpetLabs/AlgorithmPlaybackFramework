@@ -1,6 +1,6 @@
 ---
 name: authoring
-description: "Create or update Algorithm Playback starter pages, including Page.tsx layouts, playback.json scaffolding, source-code embedding, trace sizing, and routing to control-specific interactive skills."
+description: "Create or update Algorithm Playback starter pages, including Page.tsx layouts, playback.json scaffolding, source-code embedding, trace sizing, and control placement."
 user-invocable: true
 ---
 
@@ -8,18 +8,9 @@ user-invocable: true
 
 Use this skill to create or modify a playback page and its initial control layout.
 
-Before editing playback JSON, read `interactive-generic` and only the specialized skills needed for the requested controls:
-
-- `interactive-array` for arrays and jagged arrays
-- `interactive-stack` for stacks, queues, and priority queues
-- `interactive-dictionary` for local-variable dictionaries
-- `interactive-text` for play-by-play and console text
-- `interactive-code-highlights` for code pauses and highlights
-- `interactive-graph` for parent-child tree layouts
-
 ## Documentation
 
-- `.\CONTROLS.md`
+- Read the repository's [control reference](../../../CONTROLS.md) for renderer behavior, supported properties, and mutation semantics.
 
 ## Validate the request before creating files
 
@@ -73,13 +64,11 @@ Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx
 
 Add each control's layout and title. Pass renderer options through `configureProps`; include `defaultItemOffset` explicitly for applicable item-based controls.
 
-Unless the user explicitly requests dynamic sizing, reserve a stable layout footprint for every control sized to its maximum state in the executed trace. Use that full footprint for placement and collision checks from the first visible frame, even when the currently rendered content occupies less space.
-
-Set `props.fitContent = true` in `configureProps` for every control whose renderer supports it. It resolves the main-axis extent to complete rendered items and prevents partial items at the boundary. Do not set it on unsupported renderers.
+Reserve a stable effective boundary for every control. Calculate it from the union of the control's maximum rendered state, decorations, and every traced animation path subject to the rules below. Reserve that complete boundary from the first visible frame.
 
 Set `props.borderWidth = 2` in `configureProps` for every `dictionary` control, including the default `locals` control.
 
-Place custom controls relative to `playback-visualization-area` when it exists. Otherwise, use the available page area.
+Place custom controls relative to `playback-visualization-area` when it exists. Otherwise, use the full available page area.
 
 When `Page.tsx` provides separate `defaultControlLayouts` and `visualizationControlLayouts` maps, preserve that structure. Put `code`, `playbyplay`, and `locals` in `defaultControlLayouts`, and put every non-default control in `visualizationControlLayouts` so its coordinates remain relative to `playback-visualization-area`.
 
@@ -88,19 +77,22 @@ Size controls from the executed trace:
 - A fixed array should fit its initialized length exactly. For example, `[1, 2, 3]` should have three visible slots.
 - A dynamic array or list should fit the maximum count reached by the selected trace.
 - A stack, queue, priority queue, or other growable control should fit its maximum traced size.
-- Under the default fixed-footprint rule, reserve space for titles, labels, borders, and content areas against the same maximum-state boundary. Do not rely on a later playback step to establish the control's full footprint.
+- After resolving the content size, expand it to the trace-wide effective boundary defined below. Do not use the content rectangle alone for placement.
 
 ## Placement and clearance
 
-- Under the default fixed-footprint rule, treat each control's reserved maximum-state rectangle as occupied from its first visible frame. Expand the occupied bounds to include any title, label, rendered content, or traced animation phase that is subject to collision clearance. The downward-fall phase of a removal is explicitly exempt below.
-- For every control, list the mutation operations that execute in the trace. For each current traced operation, determine whether it produces visible motion from its resulting item state, renderer, orientation, mutation family, and timing behavior. Reserve animation clearance only for paths that actually execute and animate.
-- For every animated item, read the current renderer and animation implementation to calculate its complete path and motion distances; do not rely on copied constants, documented formulas, or mutation names. For a removal, treat the initial left/right movement as the **removal transition** and any subsequent downward movement as the **fall phase**; they have different collision rules.
-- Keep animation envelopes inside `playback-visualization-area`, except that a removal's downward-fall phase may pass through controls and exit through the bottom boundary as the visualization floor. Its horizontal and rotated bounds must remain inside the area's left and right boundaries. No animation may exit through the top or either side.
-- Keep at least 25 px of edge-to-edge space between the expanded occupied bounds of every pair of controls. For controls `A` and `B`, at least one separating axis must satisfy `A.right + 25 <= B.left`, `B.right + 25 <= A.left`, `A.bottom + 25 <= B.top`, or `B.bottom + 25 <= A.top`. Empty space inside a control boundary is not available to another control or animation.
-- Apply the same 25 px rule to insertions, movements, and the removal transition. The rule applies to that initial left/right removal movement, not to the fall phase. Once the fall begins, it may pass through other controls and does not require 25 px inter-control clearance; only its left and right boundary containment still applies.
-- Placement preferences never override animation containment or the 25 px inter-control clearance.
+- For each control, calculate one stable trace-wide effective boundary: `union(base rendered boundary, decoration boundary, traced animation boundary)`.
+- Calculate the base rendered boundary across every step. Include the container, border, resolved item sizes, gaps, offsets, spans, orientations, multiline content, `fitContent` movement or resizing, pending and outgoing states, and nested-child geometry. The layout rectangle alone is not sufficient when the renderer moves or resizes it.
+- Expand the boundary for every decoration outside the container, including titles, item labels, row and column labels, axis descriptions, edge labels, arrowheads, strokes, and highlight borders. Measure rendered text when practical; otherwise reserve conservatively for the longest traced content.
+- Determine whether each traced mutation actually animates from the current renderer, resolved props, item state, timing flags, and animation implementation. Do not infer an envelope from the mutation name or reuse an unverified formula.
+- For each animation, include the paused pending state and next-step completion state; all mounted incoming, current, displaced, and outgoing nodes; and the real offsets, movement path, keyframes, scale, rotation, and disappearance behavior. Compose parent and child transforms for nested controls. Use axis-aligned bounds of transformed corners for scaling or rotation.
+- Record the maximum left, right, top, and bottom overflow beyond the base rendered boundary. Animations triggered while advancing to a step run together, so completion motion from the previous pause and pending motion at the destination step must both fit. Use the trace-wide union rather than sharing space based on pause timing.
+- The only exception is the downward `falling` phase of a removal. Exclude that phase from inter-control clearance and bottom containment so it may pass through controls and exit through the visualization floor. The preceding removal transition, including its complete horizontal movement, remains inside the effective boundary. Keep the falling phase's horizontal and rotated bounds inside the visualization area's left and right edges; it may not exit through the top.
+- Keep every effective boundary fully inside `playback-visualization-area`. Separately, keep at least 25 px of empty clearance between each pair of controls, measured edge-to-edge between their already-expanded effective boundaries. The 25 px is additional inter-control space and does not require a margin between a control and the visualization-area walls; an effective boundary may touch a wall while remaining contained.
+- For effective boundaries `A` and `B`, at least one axis must satisfy `A.right + 25 <= B.left`, `B.right + 25 <= A.left`, `A.bottom + 25 <= B.top`, or `B.bottom + 25 <= A.top`.
+- Treat the complete effective boundary as occupied from the control's first visible frame through its last. Empty space inside a layout rectangle or between currently visible items is not available to another control.
+- Placement preferences never override animation containment or the additional 25 px clearance between controls.
 - Make items larger when their text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums.
-- Unless specified controls should not grow or move dynamically.
 - Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
 - If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
 
@@ -143,13 +135,13 @@ Child preferences:
 - Preferred calculated node width and height: 40 px; minimum 25 px.
 - Apply the same 25 px edge-to-edge boundary clearance to nodeGraph controls; their bounds may not overlap another control's empty area.
 - Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text.
-- Choose track sizing and gaps that keep arrows readable. Apply `interactive-graph` for tree placement and edge rules.
+- Choose track sizing and gaps that keep arrows readable.
 
 ## Validate the completed page
 
 - Verify the embedded `staticValue` matches the source file.
 - Verify every pause and global step is synchronized across the relevant controls.
-- For every traced mutation, check both its pending and completion animation phases against every other control's occupied bounds and the visualization boundaries. For a removal, verify inter-control clearance during its horizontal transition, then allow its downward fall to cross controls and the floor while still verifying its horizontal and rotated bounds against both side boundaries.
+- For every control, record its maximum base rectangle, decoration overflow on each side, animation overflow on each side, and final effective rectangle in visualization coordinates. Replay every transition and verify that current, incoming, displaced, and outgoing nodes stay inside that boundary except during the explicit `falling` phase; then verify containment and the additional 25 px separation between controls. Preview animated transitions because a static screenshot at a pause does not validate the path between pauses.
 - Before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
 - Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.
 - If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.
