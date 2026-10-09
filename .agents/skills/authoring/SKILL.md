@@ -75,6 +75,8 @@ Add each control's layout and title. Pass renderer options through `configurePro
 
 Set `props.fitContent = true` in `configureProps` for every control whose renderer supports it. The current supported renderer types are `array`, `jaggedArray`, and `stack`; do not set it on unsupported renderers.
 
+Set `props.borderWidth = 2` in `configureProps` for every `dictionary` control, including the default `locals` control.
+
 Place custom controls relative to `playback-visualization-area` when it exists. Otherwise, use the available page area.
 
 When `Page.tsx` provides separate `defaultControlLayouts` and `visualizationControlLayouts` maps, preserve that structure. Put `code`, `playbyplay`, and `locals` in `defaultControlLayouts`, and put every non-default control in `visualizationControlLayouts` so its coordinates remain relative to `playback-visualization-area`.
@@ -150,7 +152,10 @@ Child preferences:
 - Replay every step and confirm state, visibility, and pre-animation completion.
 - Check titles, labels, and static control bounds at every step.
 - Verify every renderer that supports `fitContent` has it enabled, then use its resolved fitted boundary for that step's layout and clearance checks.
+- Verify every `dictionary` control sets `props.borderWidth = 2` in `configureProps`.
 - Calculate and verify the edge-to-edge boundary gap for every pair of controls; each pair must have at least 25 px of separation on one axis.
 - For every traced mutation, check both its pending and completion animation phases against every other control's occupied bounds and the visualization boundaries. For a removal, verify inter-control clearance during its horizontal transition, then allow its downward fall to cross controls and the floor while still verifying its horizontal and rotated bounds against both side boundaries.
 - Confirm dynamic controls fit their maximum traced size and the final step count matches the trace.
-- Run the relevant typecheck, tests, and build for the starter page.
+- Before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
+- Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.
+- If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.

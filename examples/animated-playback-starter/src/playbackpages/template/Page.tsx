@@ -156,6 +156,7 @@ export default function PlaybackPage() {
                     props.showCellBorders = false;
                   } else if (id === "locals") {
                     props.defaultItemOffset = 25;
+                    props.borderWidth = 2;
                   }
                 }}
               />
