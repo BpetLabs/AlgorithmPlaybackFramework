@@ -8,7 +8,7 @@ user-invocable: true
 
 Use this skill to create or modify a playback page and its initial control layout.
 
-Read `CONTROLS.md` for the current control API. Before editing playback JSON, read `interactive-generic` and only the specialized skills needed for the requested controls:
+Before editing playback JSON, read `interactive-generic` and only the specialized skills needed for the requested controls:
 
 - `interactive-array` for arrays and jagged arrays
 - `interactive-stack` for stacks, queues, and priority queues
@@ -16,6 +16,8 @@ Read `CONTROLS.md` for the current control API. Before editing playback JSON, re
 - `interactive-text` for play-by-play and console text
 - `interactive-code-highlights` for code pauses and highlights
 - `interactive-graph` for parent-child tree layouts
+
+Documentation: `.\CONTROLS.md`
 
 ## Validate the request before creating files
 
