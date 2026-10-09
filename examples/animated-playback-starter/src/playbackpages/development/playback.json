@@ -1,0 +1,71 @@
+{
+  "controls": [
+    {
+      "id": "code",
+      "type": "staticText",
+      "staticValue": "",
+      "batches": []
+    },
+    {
+      "id": "playbyplay",
+      "type": "text",
+      "batches": []
+    },
+    {
+      "id": "locals",
+      "type": "dictionary",
+      "batches": []
+    },
+    {
+      "id": "graph",
+      "type": "nodeGraph",
+      "batches": [
+        {
+          "step": 0,
+          "graphNodes": [
+            {
+              "id": "1",
+              "value": "1",
+              "backgroundColor": "RoyalBlue",
+              "row": 0,
+              "column": 4
+            },
+            {
+              "id": "2",
+              "value": "2",
+              "backgroundColor": "RoyalBlue",
+              "row": 1,
+              "column": 3
+            },
+            {
+              "id": "3",
+              "value": "3",
+              "backgroundColor": "RoyalBlue",
+              "itemWidthScale": 1.5,
+              "row": 2,
+              "column": 6
+            }
+          ],
+          "graphEdges": [
+            {
+              "id": "1-2",
+              "from": "2",
+              "to": "1",
+              "fromAnchor": "top",
+              "toAnchor": "lowerLeft",
+              "arrow": "prev"
+            },
+            {
+              "id": "1-3",
+              "from": "3",
+              "to": "1",
+              "fromAnchor": "upperLeft",
+              "toAnchor": "lowerRight",
+              "arrow": "prev"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

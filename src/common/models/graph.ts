@@ -42,6 +42,8 @@ export interface GraphNode extends ControlItemValues {
   row: number;
   columnSpan?: number;
   rowSpan?: number;
+  itemWidthScale?: number;
+  itemHeightScale?: number;
 }
 
 export interface GraphEdge {

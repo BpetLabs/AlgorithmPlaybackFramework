@@ -1,0 +1,166 @@
+import { useMemo } from "react";
+import {
+  InteractiveControlRenderer,
+  SliderControl,
+  loadControls,
+  useControlManager,
+  type ControlDefinition,
+  type ControlRenderLayout,
+} from "algorithm-playback-framework";
+
+import playback from "./playback.json";
+
+const canvasSize = { width: 1400, height: 800 };
+
+const visualizationArea = {
+  top: 130,
+  left: 500,
+  width: 880,
+  height: 400,
+  border: "1px solid #374151"
+};
+
+// Coordinates are relative to the full playback canvas.
+const defaultControlLayouts: Record<string, ControlRenderLayout> = {
+  code: { top: 120, left: 20, width: 460, height: 660 },
+  playbyplay: { top: 580, left: 500, width: 620, height: 200 },
+  locals: { top: 580, left: 1140, width: 240, height: 200 },
+};
+
+// Coordinates are relative to visualizationArea.
+const visualizationControlLayouts: Record<string, ControlRenderLayout> = {
+  graph: { top: 30, left: 5, width: 875, height: 370 },
+};
+
+const defaultControlTitles: Record<string, string> = {
+  code: "Code",
+  playbyplay: "Play by Play",
+  locals: "Local Variables",
+};
+
+const visualizationControlTitles: Record<string, string> = {
+  graph: "Empty Graph",
+};
+
+const defaultControlIds = new Set(["code", "playbyplay", "locals"]);
+
+const sliderLayout = { top: 70, left: 500, width: 400, height: 50 };
+
+export default function PlaybackPage() {
+  const controls = useMemo(
+    () => loadControls(playback.controls as ControlDefinition[]),
+    []
+  );
+
+  const snapshots = useMemo(
+    () =>
+      controls.flatMap((control) => [
+        ...control.snapshots,
+        ...(control.childControls?.flatMap((child) => child.snapshots) ?? []),
+      ]),
+    [controls]
+  );
+
+  const {
+    sliderValue,
+    setSliderValue,
+    disableAnimations,
+    maxSteps,
+    latestSnapshots,
+  } = useControlManager({ snapshots });
+
+  return (
+    <main className="playback-page">
+      <div className="playback-canvas-viewport">
+        <section
+          className="playback-canvas"
+          aria-label="Animated playback"
+          style={canvasSize}
+        >
+          <header className="playback-header">
+            <h1>Animated Playback</h1>
+            <p className="playback-description">
+              Playback Description
+            </p>
+          </header>
+
+          <section
+            className="playback-navigation"
+            aria-label="Playback navigation"
+            style={sliderLayout}
+          >
+            <span>
+              Step {sliderValue} / {maxSteps}
+            </span>
+            <SliderControl
+              historyLength={maxSteps + 1}
+              currentIndex={sliderValue}
+              onChange={setSliderValue}
+            />
+          </section>
+
+          <div
+            className="playback-visualization-area"
+            aria-label="Additional visualization controls"
+            style={visualizationArea}
+          >
+            {controls
+              .filter((control) => !defaultControlIds.has(control.id))
+              .map((control) => (
+                <InteractiveControlRenderer
+                  key={control.id}
+                  control={control}
+                  latestSnapshots={latestSnapshots}
+                  currentStep={sliderValue}
+                  disableAnimations={disableAnimations}
+                  layout={visualizationControlLayouts[control.id]}
+                  defaultHeaderTitle={visualizationControlTitles[control.id]}
+                  configureProps={(id, props) => {
+                    if (id === "graph") {
+                      props.containerStyle = { boxShadow: "none" };
+                      props.graphLayout = {
+                        columns: 8,
+                        rows: 4,
+                        paddingX: 0.00,
+                        paddingY: 0.00,
+                        offsetX: 0,
+                        offsetY: 0,
+                        colGap: 0.04,
+                        rowGap: 0.06,
+                        columnSizing: { values: [1, 1, 1, 1, 1, 1, 1, 1] },
+                        rowSizing: { values: [1, 1, 1, 1] },
+                      };
+                      props.gridLines = true;
+                    }
+                  }}
+                />
+              ))}
+          </div>
+
+          {controls
+            .filter((control) => defaultControlIds.has(control.id))
+            .map((control) => (
+              <InteractiveControlRenderer
+                key={control.id}
+                control={control}
+                latestSnapshots={latestSnapshots}
+                currentStep={sliderValue}
+                disableAnimations={disableAnimations}
+                layout={defaultControlLayouts[control.id]}
+                defaultHeaderTitle={defaultControlTitles[control.id]}
+                configureProps={(id, props) => {
+                  if (id === "playbyplay") {
+                    props.defaultItemOffset = 200;
+                    props.showCellBorders = false;
+                  } else if (id === "locals") {
+                    props.defaultItemOffset = 25;
+                    props.borderWidth = 2;
+                  }
+                }}
+              />
+            ))}
+        </section>
+      </div>
+    </main>
+  );
+}
