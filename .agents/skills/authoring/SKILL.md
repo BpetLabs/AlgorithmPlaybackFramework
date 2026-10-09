@@ -12,6 +12,21 @@ Use this skill to create or modify a playback page and its initial control layou
 
 - Read the repository's [control reference](../../../CONTROLS.md) for renderer behavior, supported properties, and mutation semantics.
 
+## Route to applicable interactive skills
+
+Before creating or editing an AnimatedPlayback, inventory every control in the playback and read `interactive-generic` plus every specialized interactive skill that matches a control:
+
+- `staticText` code control: `interactive-code-highlights`
+- `dictionary` or locals control: `interactive-dictionary`
+- `text`, Play by Play, or console control: `interactive-text`
+- `array`, jagged array, or matrix control: `interactive-array`
+- `stack`, queue, or priority queue control: `interactive-stack`
+- `nodeGraph` control: `interactive-graph`
+
+Announce the complete applicable skill list before editing. Do not proceed until every applicable skill has been read. Do not load specialized interactive skills for control types that are absent.
+
+Before completion, validate each control against the validation section of its matching interactive skill. Also apply the cross-control validation rules from `interactive-generic` to verify that every global step remains synchronized.
+
 ## Validate the request before creating files
 
 Identify or determine:
@@ -144,6 +159,10 @@ Child preferences:
 
 ## Validate the completed page
 
+- Before reporting completion, reread this skill and every applicable interactive skill, then audit the final diff against their requirements and preferences. A successful build or preview does not replace this compliance audit.
+- Check every changed layout value, renderer override, control definition, and batch action. Use each documented default or preferred value unless the user requested otherwise or the executed trace provides a specific, measured reason to deviate.
+- Record the rule and trace-based reason for every deviation in the working notes. If a deviation has no valid justification, restore the documented default or preferred value before completion.
+- Do not report the playback complete while any known skill-rule violation remains.
 - Verify the embedded `staticValue` matches the source file.
 - Verify every pause and global step is synchronized across the relevant controls.
 - For every control, record its maximum base rectangle, decoration overflow on each side, animation overflow on each side, and final effective rectangle in visualization coordinates. Replay every transition and verify that current, incoming, displaced, and outgoing nodes stay inside that boundary except during the explicit `falling` phase; then verify containment and the additional 25 px separation between controls. Preview animated transitions because a static screenshot at a pause does not validate the path between pauses.
