@@ -73,6 +73,8 @@ Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx
 
 Add each control's layout and title. Pass renderer options through `configureProps`; include `defaultItemOffset` explicitly for applicable item-based controls.
 
+Set `props.fitContent = true` in `configureProps` for every control whose renderer supports it. The current supported renderer types are `array`, `jaggedArray`, and `stack`; do not set it on unsupported renderers.
+
 Place custom controls relative to `playback-visualization-area` when it exists. Otherwise, use the available page area.
 
 When `Page.tsx` provides separate `defaultControlLayouts` and `visualizationControlLayouts` maps, preserve that structure. Put `code`, `playbyplay`, and `locals` in `defaultControlLayouts`, and put every non-default control in `visualizationControlLayouts` so its coordinates remain relative to `playback-visualization-area`.
@@ -82,12 +84,17 @@ Size controls from the executed trace:
 - A fixed array should fit its initialized length exactly. For example, `[1, 2, 3, 4, 5]` should have five visible slots.
 - A dynamic array or list should fit the maximum count reached by the selected trace.
 - A stack, queue, priority queue, or other growable control should fit its maximum traced size.
+- With `fitContent` enabled, calculate the resolved control boundary at every trace step. Horizontal arrays fit their width, vertical arrays fit their height, and stacks fit their height while keeping their bottom edge anchored to the layout's original bottom edge. Account for the title moving with the fitted stack's top edge.
 
 ## Placement and clearance
 
-- Prevent items, titles, labels, nodes, and arrows from overlapping or crossing the visualization boundary.
-- Keep at least 25 px between the occupied bounds of controls, including titles and any space reserved for pre-animation movement.
-- If the trace has no animation, the additional pre-animation clearance is unnecessary.
+- Treat each control's resolved rendered rectangle as occupied, including empty space inside that boundary. For a control without `fitContent`, this is its full `top`, `left`, `width`, and `height` rectangle. For a control with `fitContent`, use its fitted boundary at the current step rather than unused space in the declared layout. Expand the occupied bounds to include any title, label, rendered content, or traced animation phase that is subject to collision clearance. The downward-fall phase of a removal is explicitly exempt below.
+- For every control, list the mutation operations that execute in the trace. For each current traced operation, determine whether it produces visible motion from its resulting item state, renderer, orientation, mutation family, and timing behavior. Reserve animation clearance only for paths that actually execute and animate.
+- Calculate each animated item's path from the renderer's current motion distances. For a removal, treat the initial left/right movement as the **removal transition** and any subsequent downward movement as the **fall phase**; they have different collision rules. Inspect the animation implementation when the path is not documented rather than inferring it from the mutation name.
+- Keep animation envelopes inside `playback-visualization-area`, except that a removal's downward-fall phase may pass through controls and exit through the bottom boundary as the visualization floor. Its horizontal and rotated bounds must remain inside the area's left and right boundaries. No animation may exit through the top or either side.
+- Keep at least 25 px of edge-to-edge space between the expanded occupied bounds of every pair of controls. For controls `A` and `B`, at least one separating axis must satisfy `A.right + 25 <= B.left`, `B.right + 25 <= A.left`, `A.bottom + 25 <= B.top`, or `B.bottom + 25 <= A.top`. Empty space inside a control boundary is not available to another control or animation.
+- Apply the same 25 px rule to insertions, movements, and the removal transition. The rule applies to that initial left/right removal movement, not to the fall phase. Once the fall begins, it may pass through other controls and does not require 25 px inter-control clearance; only its left and right boundary containment still applies.
+- Placement preferences never override animation containment or the 25 px inter-control clearance.
 - Make items larger when their text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums.
 - Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
 - If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
@@ -115,10 +122,13 @@ Child preferences:
 
 ### Stacks
 
-- Preferred location: right side - one stack width away from the right wall.
-- Align the bottom edge with the visualization area's floor.
+- Preferred location: right side, with the static stack's right edge one stack width from the visualization area's right wall. For area width `A` and stack width `W`, the preferred `left` is `A - 2W`; do not interpret the stack's `left` value itself as the wall clearance.
+- Align the static stack's bottom edge with the visualization area's floor. A downward removal may fall through that bottom boundary, but it may not leave through either side.
 - Preferred width: 120 px.
 - Minimum `defaultItemOffset`: 25 px.
+- For the vertical stack renderer, indexed inserts and updates enter from the left. Their leftward distance is `itemWidth + preInsertGap` when `preInsertGap` is set, otherwise approximately `1.05 * itemWidth`. Keep that entire entry corridor clear, plus the required 25 px separation from other controls.
+- For the vertical stack renderer, animated removals first slide right by one `itemWidth`, then fall by one `itemWidth` while rotating up to 90 degrees. The rightward slide is the removal transition and must preserve 25 px clearance from other controls. The later fall phase may pass through controls and the floor, but its horizontal bounds must stay inside the visualization area's side boundaries. With resolved item width `W` and height `H`, a conservative right-side rotation extent is `W + (sqrt(W * W + H * H) - W) / 2` beyond the item's resting right edge.
+- When multiple stacks are present, validate each stack's animation phases independently. Do not place another stack in an indexed-insert entry corridor or a removal-transition corridor even when their static rectangles have more than 25 px between them. The subsequent fall-phase corridor may cross other controls.
 
 ### Grids
 
@@ -129,7 +139,7 @@ Child preferences:
 
 - Preferred location: centered, aligned with neighboring controls when practical.
 - Preferred calculated node width and height: 40 px; minimum 25 px.
-- The nodeGraph control bounds may overlap another control's empty area, but rendered nodes, labels, and arrows must not overlap other rendered content.
+- Apply the same 25 px edge-to-edge boundary clearance to nodeGraph controls; their bounds may not overlap another control's empty area.
 - Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text.
 - Choose track sizing and gaps that keep arrows readable. Apply `interactive-graph` for tree placement and edge rules.
 
@@ -138,6 +148,9 @@ Child preferences:
 - Verify the embedded `staticValue` matches the source file.
 - Verify every pause and global step is synchronized across the relevant controls.
 - Replay every step and confirm state, visibility, and pre-animation completion.
-- Check titles, labels, animation clearance, and visualization boundaries at every step.
+- Check titles, labels, and static control bounds at every step.
+- Verify every renderer that supports `fitContent` has it enabled, then use its resolved fitted boundary for that step's layout and clearance checks.
+- Calculate and verify the edge-to-edge boundary gap for every pair of controls; each pair must have at least 25 px of separation on one axis.
+- For every traced mutation, check both its pending and completion animation phases against every other control's occupied bounds and the visualization boundaries. For a removal, verify inter-control clearance during its horizontal transition, then allow its downward fall to cross controls and the floor while still verifying its horizontal and rotated bounds against both side boundaries.
 - Confirm dynamic controls fit their maximum traced size and the final step count matches the trace.
 - Run the relevant typecheck, tests, and build for the starter page.
