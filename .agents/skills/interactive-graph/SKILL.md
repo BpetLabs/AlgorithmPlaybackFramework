@@ -41,14 +41,15 @@ Measure horizontal distance between node centers and compare it with one resolve
 ## Node colors and borders
 
 - Every action that assigns a node value must include a `backgroundColor` in the same input, whether the action initializes the node or changes it later. Use `Teal` by default unless the user requests another color or the value's state has a defined color.
-- An node is relevant when a distinct in-scope local variable refers to it. Preserve that highlight across pauses until the local moves to another node or leaves scope; a pause whose statement does not reference the local does not end the highlight. A local variable may identify at most one highlighted node in a control at a time.
-- If a node is accessed during unpaused execution between two pauses, show that access highlight on the destination step. Preserve it under the same scope rules, or clear it on the next step when it has no continuing in-scope owner.
-- Color each relevant node by the role of its local variable, regardless of how many indices are highlighted in the control: use `Orange` for the current main specific node, and `Yellow` for any additional specific node as needed. Use `Pink` for a previous node and path. For another role, choose a distinct CSS named color and keep that role-color mapping consistent.
-- If multiple locals refer to the same node, render one border for that node. Resolve standard role-color collisions with this precedence: `Orange`, then `Yellow`, then `Pink`. If only custom role colors collide, choose one consistently.
-- Recompute local-to-node mappings at every step. Keep a border while the same in-scope local continues to refer to that node, including pauses where the local is not directly used. Clear or move it only when the local changes its referenced node or leaves scope. Also carry an access that occurred between pauses into the destination step as described above.
-- When a the current node highlighted `orange` moves to another neighbor in another step, the now previous node should be updated to highlighted `pink` and its arrow highlighted `orange`. 
-- When that new neighbor moves to another neighbor in another step, the same process should repeat but the parents incoming arrow should change to highlight `pink`.  
-- `pink` nodes and arrows should stay highlighted as long as they represent the full path from the start to current node, when they no longer represent the path their arrows should go back to their default color. 
+- Recompute node and edge highlights at every step from their current roles. Preserve a role's highlight across pauses until its node changes or the role leaves scope; a pause whose statement does not reference the role does not end the highlight.
+- Use `Orange` for the primary current node. Use `Yellow` as a secondary current or focus color when the visualization needs another simultaneous active node. If the secondary node represents a traversal path, color its incoming edge `Yellow` as well.
+- Use `Pink` for every ancestor node on the active path from the start node to the current node. Color the edges connecting those ancestors `Pink` too. Do not use `Yellow` merely because the active path contains multiple nodes.
+- When traversal descends to a child, change the former current node and its incoming edge from `Orange` to `Pink`, then color the child and the child's incoming edge `Orange`. The root has no incoming edge.
+- When traversal enters a null or otherwise unrepresented child, there is no graph node to color `Orange`. Change the former current node and its incoming edge to `Pink` while that call or state is active. Restore them to `Orange` when traversal returns to that node.
+- When traversal returns from a represented child, clear both the departed child's border and its incoming edge color. Change the parent and its incoming edge from `Pink` to `Orange`; keep earlier ancestors and their connecting edges `Pink`.
+- If a node is accessed during unpaused execution between two pauses, show that access highlight on the destination step. Preserve it while it has a continuing in-scope role; otherwise clear it on the next step.
+- A role may identify at most one highlighted node in a control at a time. If multiple roles refer to the same node, render one border and resolve standard role-color collisions with this precedence: `Orange`, then `Yellow`, then `Pink`. If only custom role colors collide, choose one consistently.
+- When a node or edge no longer belongs to the active path or another highlighted role, clear its `borderColor` or `color` in that step. Clear all remaining node borders and edge colors when traversal finishes.
 
 ## Tree placement
 
