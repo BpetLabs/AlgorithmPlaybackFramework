@@ -12,6 +12,7 @@ import {
 import { BatchProcessor } from "./batchProcessor";
 import type { Batch } from "../common/models/batch";
 import { GridRendererOptions } from "../common/models/gridControl";
+import { GraphRendererOptions } from "../common/models/graph";
 import { resolveHighlightAliases } from "./resolveHighlightAliases";
 
 function mergeRenderConfig(
@@ -33,7 +34,7 @@ interface ChildDefaults extends ArrayRendererOptions {
 }
 
 export interface ControlDefinition<T extends ControlItem = ControlItem>
-  extends ArrayRendererOptions, GridRendererOptions {
+  extends ArrayRendererOptions, GridRendererOptions, GraphRendererOptions {
   id: string;
   type?: string;
   staticValue?: string;
@@ -46,9 +47,9 @@ export interface ControlDefinition<T extends ControlItem = ControlItem>
 }
 
 function getRendererOptions(
-  control: ArrayRendererOptions & GridRendererOptions,
+  control: ArrayRendererOptions & GridRendererOptions & GraphRendererOptions,
   type: string
-): ArrayRendererOptions & GridRendererOptions {
+): ArrayRendererOptions & GridRendererOptions & GraphRendererOptions {
   return {
     orientation:
       type === "array" || type === "jaggedArray"
@@ -70,6 +71,7 @@ function getRendererOptions(
     columnDescription: control.columnDescription,
     rowLabels: control.rowLabels,
     columnLabels: control.columnLabels,
+    gridLines: control.gridLines,
   };
 }
 

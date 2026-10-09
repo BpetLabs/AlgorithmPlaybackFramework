@@ -4,6 +4,7 @@ import { GridItem } from "./griditem";
 import { HighlightLine } from "./highlightLine";
 import { ArrayRendererOptions } from "./arrayControl";
 import { GridRendererOptions } from "./gridControl";
+import { GraphRendererOptions } from "./graph";
 
 export interface Snapshot<T> {
   id: string;
@@ -45,7 +46,7 @@ export interface LoadedControl<T = ControlItem> {
   snapshots: Snapshot<T>[];  // all historical snapshots for this control
   render?: ControlRenderConfig;
   renderByStep?: Record<number, ControlRenderConfig>;
-  rendererOptions?: ArrayRendererOptions & GridRendererOptions;
+  rendererOptions?: ArrayRendererOptions & GridRendererOptions & GraphRendererOptions;
   parentId?: string;
   parentIndex?: number;
   childControls?: LoadedControl<T>[];

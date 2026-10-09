@@ -28,6 +28,7 @@ describe("NodeGraphRenderer", () => {
         }}
         divWidth={400}
         divHeight={200}
+        graphLayout={{ columns: 2, rows: 2 }}
         disableAnimations
       />
     );
@@ -70,5 +71,47 @@ describe("NodeGraphRenderer", () => {
     expect(markup).toContain("Wide");
     expect(markup).not.toContain("NaN");
     expect(markup).not.toContain("Infinity");
+  });
+
+  it("renders grid lines for each configured track cell", () => {
+    const markup = renderToStaticMarkup(
+      <NodeGraphRenderer
+        snapshot={{
+          id: "grid-lines",
+          type: "nodeGraph",
+          step: 0,
+          items: [],
+          graphNodes: [],
+        }}
+        divWidth={300}
+        divHeight={120}
+        graphLayout={{ columns: 3, rows: 2 }}
+        gridLines
+      />
+    );
+
+    expect(markup.match(/data-apf-graph-grid-line/g)).toHaveLength(6);
+    expect(markup).toContain("var(--apf-grid-border-color, #4b5563)");
+  });
+
+  it("requires explicit row and column counts", () => {
+    expect(() =>
+      renderToStaticMarkup(
+        <NodeGraphRenderer
+          snapshot={{
+            id: "missing-layout",
+            type: "nodeGraph",
+            step: 0,
+            items: [],
+            graphNodes: [],
+          }}
+          divWidth={300}
+          divHeight={120}
+          graphLayout={{ columns: 3 }}
+        />
+      )
+    ).toThrow(
+      'Node graph "missing-layout" requires graphLayout.columns and graphLayout.rows.'
+    );
   });
 });

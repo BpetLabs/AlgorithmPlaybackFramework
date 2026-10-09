@@ -148,4 +148,12 @@ describe("loadControls", () => {
       backgroundColor: Highlight.Pause,
     });
   });
+
+  it("loads the node graph grid-lines option", () => {
+    const [control] = loadControls([
+      { id: "graph", type: "nodeGraph", gridLines: true },
+    ]);
+
+    expect(control.rendererOptions?.gridLines).toBe(true);
+  });
 });

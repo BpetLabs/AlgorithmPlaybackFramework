@@ -118,7 +118,7 @@ const makeGridRenderer = (type: RendererType) =>
 
 const makeNodeGraphRenderer = (type: RendererType) =>
   makeRenderer<
-    BaseRendererProps
+    BaseRendererProps & { gridLines?: boolean }
   >(type, NodeGraphRenderer);
 
 // --- EXPORT MAP -------------------------------------------------------------

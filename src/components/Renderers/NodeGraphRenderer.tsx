@@ -11,6 +11,7 @@ interface NodeGraphRendererProps extends RendererProps {
   divHeight: number;
   divWidth: number;
   graphLayout?: GraphLayout;
+  gridLines?: boolean;
   disableAnimations?: boolean;
 }
 
@@ -25,6 +26,16 @@ type EdgeGeometry = {
   d: string;
   labelX: number;
   labelY: number;
+};
+
+type GraphTracks = {
+  columns: ReturnType<typeof buildTracks>;
+  rows: ReturnType<typeof buildTracks>;
+};
+
+type ConfiguredGraphLayout = GraphLayout & {
+  columns: number;
+  rows: number;
 };
 
 const MIN_TRACK_WEIGHT = 0.0001;
@@ -72,6 +83,36 @@ function interpolateTrackPosition(values: number[], index: number) {
 
   const nextValue = values[baseIndex + 1];
   return values[baseIndex] + (nextValue - values[baseIndex]) * fraction;
+}
+
+function buildGraphTracks(
+  layout: ConfiguredGraphLayout,
+  divWidth: number,
+  divHeight: number
+): GraphTracks {
+  const columnCount = Math.max(1, layout.columns);
+  const rowCount = Math.max(1, layout.rows);
+  const paddingX = divWidth * (layout.paddingX ?? 0.00);
+  const paddingY = divHeight * (layout.paddingY ?? 0.00);
+  const offsetX = divWidth * (layout.offsetX ?? 0);
+  const offsetY = divHeight * (layout.offsetY ?? 0);
+  const innerWidth = Math.max(0, divWidth - paddingX * 2);
+  const innerHeight = Math.max(0, divHeight - paddingY * 2);
+
+  return {
+    columns: buildTracks(
+      innerWidth,
+      getTrackWeights(columnCount, layout.columnSizing?.values),
+      layout.colGap ?? 0.04,
+      paddingX + offsetX
+    ),
+    rows: buildTracks(
+      innerHeight,
+      getTrackWeights(rowCount, layout.rowSizing?.values),
+      layout.rowGap ?? 0.06,
+      paddingY + offsetY
+    ),
+  };
 }
 
 function getArrowMarkers(arrow: GraphArrowMode | undefined, markerBaseId: string) {
@@ -133,29 +174,15 @@ function getAnchorVector(anchor: GraphEdgeAnchor) {
 
 function buildNodeRects(
   nodes: GraphNode[],
-  layout: GraphLayout,
+  layout: ConfiguredGraphLayout,
   divWidth: number,
   divHeight: number
 ): Map<string, NodeRect> {
-  const maxColumn = nodes.reduce((max, node) => Math.max(max, node.column), 0);
-  const maxRow = nodes.reduce((max, node) => Math.max(max, node.row), 0);
-
-  const columns = Math.max(1, layout.columns ?? maxColumn + 1);
-  const rows = Math.max(1, layout.rows ?? maxRow + 1);
-
-  const paddingX = divWidth * (layout.paddingX ?? 0.06);
-  const paddingY = divHeight * (layout.paddingY ?? 0.06);
-  const offsetX = divWidth * (layout.offsetX ?? 0);
-  const offsetY = divHeight * (layout.offsetY ?? 0);
-
-  const innerWidth = Math.max(0, divWidth - paddingX * 2);
-  const innerHeight = Math.max(0, divHeight - paddingY * 2);
-
-  const columnWeights = getTrackWeights(columns, layout.columnSizing?.values);
-  const rowWeights = getTrackWeights(rows, layout.rowSizing?.values);
-
-  const colTracks = buildTracks(innerWidth, columnWeights, layout.colGap ?? 0.04, paddingX + offsetX);
-  const rowTracks = buildTracks(innerHeight, rowWeights, layout.rowGap ?? 0.06, paddingY + offsetY);
+  const tracks = buildGraphTracks(layout, divWidth, divHeight);
+  const colTracks = tracks.columns;
+  const rowTracks = tracks.rows;
+  const columns = colTracks.starts.length;
+  const rows = rowTracks.starts.length;
   const colStartPositions = colTracks.starts;
   const rowStartPositions = rowTracks.starts;
   const colEndPositions = colTracks.starts.map((start, i) => start + (colTracks.sizes[i] ?? 0));
@@ -261,6 +288,7 @@ export function NodeGraphRenderer({
   divHeight,
   divWidth,
   graphLayout,
+  gridLines,
   borderWidth,
   containerClassName,
   containerStyle,
@@ -269,7 +297,17 @@ export function NodeGraphRenderer({
   const allNodes = snapshot.graphNodes ?? [];
   const nodes = allNodes;
   const edges = snapshot.graphEdges ?? [];
-  const layout = graphLayout ?? {};
+  if (graphLayout?.columns === undefined || graphLayout.rows === undefined) {
+    throw new Error(
+      `Node graph "${snapshot.id}" requires graphLayout.columns and graphLayout.rows.`
+    );
+  }
+  const layout: ConfiguredGraphLayout = {
+    ...graphLayout,
+    columns: graphLayout.columns,
+    rows: graphLayout.rows,
+  };
+  const tracks = buildGraphTracks(layout, divWidth, divHeight);
   const markerBaseId = `graph-marker-${snapshot.id}-${snapshot.step}`;
 
   const rects = buildNodeRects(nodes, layout, divWidth, divHeight);
@@ -313,6 +351,23 @@ export function NodeGraphRenderer({
             <path d="M8,0 L0,4 L8,8 z" fill="context-stroke" />
           </marker>
         </defs>
+
+        {gridLines &&
+          tracks.rows.starts.flatMap((y, row) =>
+            tracks.columns.starts.map((x, column) => (
+              <rect
+                key={`grid-${row}-${column}`}
+                data-apf-graph-grid-line=""
+                x={x}
+                y={y}
+                width={tracks.columns.sizes[column]}
+                height={tracks.rows.sizes[row]}
+                fill="none"
+                stroke="var(--apf-grid-border-color, #4b5563)"
+                strokeWidth="1"
+              />
+            ))
+          )}
 
         {renderedEdges.map((edge: GraphEdge) => {
           const fromRect = rects.get(edge.from);

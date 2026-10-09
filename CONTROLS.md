@@ -186,18 +186,23 @@ Configure the graph tracks through the `configureProps` property on `Interactive
 configureProps={(id, props) => {
   if (id === "graph") {
     props.graphLayout = {
-      columns: 8,
+      columns: 4,
       rows: 4,
-      paddingX: 0.04,
-      paddingY: 0.08,
-      colGap: 0.03,
-      rowGap: 0.06,
+      paddingX: 0.00,
+      paddingY: 0.00,
+      colGap: 0.04,
+      rowGap: 0.04,
+      columnSizing: { values: [1, 1, 1, 1] },
+      rowSizing: { values: [1, 1, 1, 1] },
     };
+    props.gridLines = true;
   }
 }}
 ```
 
-`paddingX` and `paddingY` are fractions of the control's width and height. `colGap` and `rowGap` are fractions of the inner width and height. If `columns` or `rows` is omitted, the renderer infers it from the greatest node coordinate. Specify both when using fractional coordinates so placement and sizing remain stable as nodes are added or removed.
+`paddingX` and `paddingY` are fractions of the control's width and height.
+`colGap` and `rowGap` are fractions of the inner width and height.
+Both `columns` and `rows` are required
 
 Use `columnSizing.values` and `rowSizing.values` to assign relative track sizes. For example, `[1, 2, 1]` makes the middle track twice as large as the other two. The number of sizing values must match the configured track count; otherwise, all tracks use equal sizes.
 
@@ -211,6 +216,8 @@ Graph layout options:
 | `colGap`, `rowGap` | Space between tracks as a fraction of the inner size. |
 | `columnSizing.values` | Relative widths of the column tracks. |
 | `rowSizing.values` | Relative heights of the row tracks. |
+
+Set `gridLines: true` on the graph control in JSON, or on its renderer props through `configureProps`, to outline every layout track cell.
 
 ```json
 {

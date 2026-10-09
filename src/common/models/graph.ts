@@ -30,6 +30,10 @@ export interface GraphLayout {
   rowSizing?: GraphTrackSizing;
 }
 
+export interface GraphRendererOptions {
+  gridLines?: boolean;
+}
+
 export interface GraphNode extends ControlItemValues {
   id: string;
   state?: GraphNodeState;
