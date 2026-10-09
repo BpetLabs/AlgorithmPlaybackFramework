@@ -75,7 +75,7 @@ Add each control's layout and title. Pass renderer options through `configurePro
 
 Unless the user explicitly requests dynamic sizing, reserve a stable layout footprint for every control sized to its maximum state in the executed trace. Use that full footprint for placement and collision checks from the first visible frame, even when the currently rendered content occupies less space.
 
-Set `props.fitContent = true` in `configureProps` for every control whose renderer supports it. It resolves the main-axis extent to complete rendered items and prevents partial items at the boundary. The current supported renderer types are `array`, `jaggedArray`, and `stack`; do not set it on unsupported renderers.
+Set `props.fitContent = true` in `configureProps` for every control whose renderer supports it. It resolves the main-axis extent to complete rendered items and prevents partial items at the boundary. Do not set it on unsupported renderers.
 
 Set `props.borderWidth = 2` in `configureProps` for every `dictionary` control, including the default `locals` control.
 
@@ -85,14 +85,14 @@ When `Page.tsx` provides separate `defaultControlLayouts` and `visualizationCont
 
 Size controls from the executed trace:
 
-- A fixed array should fit its initialized length exactly. For example, `[1, 2, 3, 4, 5]` should have five visible slots.
+- A fixed array should fit its initialized length exactly. For example, `[1, 2, 3]` should have three visible slots.
 - A dynamic array or list should fit the maximum count reached by the selected trace.
 - A stack, queue, priority queue, or other growable control should fit its maximum traced size.
 - Under the default fixed-footprint rule, reserve space for titles, labels, borders, and content areas against the same maximum-state boundary. Do not rely on a later playback step to establish the control's full footprint.
 
 ## Placement and clearance
 
-- Under the default fixed-footprint rule, treat each control's reserved maximum-state rectangle as occupied from its first visible frame, including space not used by its current `fitContent` extent. If the user explicitly requests dynamic sizing, calculate the resolved boundary at every trace step instead. Expand the occupied bounds to include any title, label, rendered content, or traced animation phase that is subject to collision clearance. The downward-fall phase of a removal is explicitly exempt below.
+- Under the default fixed-footprint rule, treat each control's reserved maximum-state rectangle as occupied from its first visible frame. Expand the occupied bounds to include any title, label, rendered content, or traced animation phase that is subject to collision clearance. The downward-fall phase of a removal is explicitly exempt below.
 - For every control, list the mutation operations that execute in the trace. For each current traced operation, determine whether it produces visible motion from its resulting item state, renderer, orientation, mutation family, and timing behavior. Reserve animation clearance only for paths that actually execute and animate.
 - For every animated item, read the current renderer and animation implementation to calculate its complete path and motion distances; do not rely on copied constants, documented formulas, or mutation names. For a removal, treat the initial left/right movement as the **removal transition** and any subsequent downward movement as the **fall phase**; they have different collision rules.
 - Keep animation envelopes inside `playback-visualization-area`, except that a removal's downward-fall phase may pass through controls and exit through the bottom boundary as the visualization floor. Its horizontal and rotated bounds must remain inside the area's left and right boundaries. No animation may exit through the top or either side.
@@ -100,6 +100,7 @@ Size controls from the executed trace:
 - Apply the same 25 px rule to insertions, movements, and the removal transition. The rule applies to that initial left/right removal movement, not to the fall phase. Once the fall begins, it may pass through other controls and does not require 25 px inter-control clearance; only its left and right boundary containment still applies.
 - Placement preferences never override animation containment or the 25 px inter-control clearance.
 - Make items larger when their text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums.
+- Unless specified controls should not grow or move dynamically.
 - Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
 - If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
 
@@ -127,8 +128,8 @@ Child preferences:
 ### Stacks
 
 - Preferred location: right side, with the static stack's right edge one stack width from the visualization area's right wall. For area width `A` and stack width `W`, the preferred `left` is `A - 2W`; do not interpret the stack's `left` value itself as the wall clearance.
-- Align the static stack's bottom edge with the visualization area's floor. A downward removal may fall through that bottom boundary, but it may not leave through either side.
-- Preferred width: 120 px.
+- Align the static stack's bottom edge with the visualization area's floor.
+- Preferred width: 100 px.
 - Minimum `defaultItemOffset`: 25 px.
 
 ### Grids
