@@ -75,6 +75,8 @@ Add each control's layout and title. Pass renderer options through `configurePro
 
 Place custom controls relative to `playback-visualization-area` when it exists. Otherwise, use the available page area.
 
+When `Page.tsx` provides separate `defaultControlLayouts` and `visualizationControlLayouts` maps, preserve that structure. Put `code`, `playbyplay`, and `locals` in `defaultControlLayouts`, and put every non-default control in `visualizationControlLayouts` so its coordinates remain relative to `playback-visualization-area`.
+
 Size controls from the executed trace:
 
 - A fixed array should fit its initialized length exactly. For example, `[1, 2, 3, 4, 5]` should have five visible slots.
