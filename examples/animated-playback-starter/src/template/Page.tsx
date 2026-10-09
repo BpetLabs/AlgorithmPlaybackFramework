@@ -32,10 +32,14 @@ const visualizationControlLayouts: Record<string, ControlRenderLayout> = {
   // Add layouts for non-default controls here.
 };
 
-const controlTitles: Record<string, string> = {
+const defaultControlTitles: Record<string, string> = {
   code: "Code",
   playbyplay: "Play by Play",
   locals: "Local Variables",
+};
+
+const visualizationControlTitles: Record<string, string> = {
+  // Add titles for non-default controls here.
 };
 
 const defaultControlIds = new Set(["code", "playbyplay", "locals"]);
@@ -110,7 +114,7 @@ export default function PlaybackPage() {
                   currentStep={sliderValue}
                   disableAnimations={disableAnimations}
                   layout={visualizationControlLayouts[control.id]}
-                  defaultHeaderTitle={controlTitles[control.id]}
+                  defaultHeaderTitle={visualizationControlTitles[control.id]}
                 />
               ))}
           </div>
@@ -125,7 +129,7 @@ export default function PlaybackPage() {
                 currentStep={sliderValue}
                 disableAnimations={disableAnimations}
                 layout={defaultControlLayouts[control.id]}
-                defaultHeaderTitle={controlTitles[control.id]}
+                defaultHeaderTitle={defaultControlTitles[control.id]}
                 configureProps={(id, props) => {
                   if (id === "playbyplay") {
                     props.defaultItemOffset = 200;
