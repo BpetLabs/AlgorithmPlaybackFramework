@@ -62,7 +62,11 @@ Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx
 
 ## Configure controls in `Page.tsx`
 
-Add each control's layout and title. Pass renderer options through `configureProps`; include `defaultItemOffset` explicitly for applicable item-based controls.
+Add each control's layout and title. Prefer renderer defaults for all optional control properties. As a documentation exception, inspect the current renderer code for each applicable item-based control and explicitly set its resolved default `defaultItemOffset` in `configureProps` so the value is visible in the page.
+
+Override a renderer default only when the user requests different behavior or the executed trace demonstrates that the default cannot satisfy fit, containment, clearance, readability, or semantic requirements. When an override is necessary, set the smallest possible group of properties and preserve defaults for everything else.
+
+Increase `defaultItemOffset` only for a specific measured requirement, such as traced content or child geometry that does not fit the default slot; do not increase it for general styling. Never reduce it below the control-specific minimum. If the trace cannot fit without going below that minimum, stop processing and inform the user.
 
 Reserve a stable effective boundary for every control. Calculate it from the union of the control's maximum rendered state, decorations, and every traced animation path subject to the rules below. Reserve that complete boundary from the first visible frame.
 
@@ -70,7 +74,7 @@ Set `props.borderWidth = 2` in `configureProps` for every `dictionary` control, 
 
 Place custom controls relative to `playback-visualization-area` when it exists. Otherwise, use the full available page area.
 
-When `Page.tsx` provides separate `defaultControlLayouts` and `visualizationControlLayouts` maps, preserve that structure. Put `code`, `playbyplay`, and `locals` in `defaultControlLayouts`, and put every non-default control in `visualizationControlLayouts` so its coordinates remain relative to `playback-visualization-area`.
+When `Page.tsx` provides separate `defaultControlLayouts` and `visualizationControlLayouts` maps, preserve that structure.
 
 Size controls from the executed trace:
 
@@ -107,14 +111,15 @@ Size controls from the executed trace:
 Parent preferences:
 
 - Location: top-left.
+`itemGap` or `itemCrossAxisGap`: set to 10 px always
 - `orientation`: `"horizontal"`. 
-- `defaultItemOffset`: 60 px; minimum 45 px.
-- `itemGap` or `itemCrossAxisGap`: 10 px where needed.
+- Minimum `defaultItemOffset`: 45 px.
+- Set `itemGap` or `itemCrossAxisGap` only when the default spacing cannot provide the required clearance.
 - Size the parent so every child has 10 px of clearance on each side.
 
 Child preferences:
 
-- `defaultItemOffset`: 40 px; minimum 25 px.
+- Minimum `defaultItemOffset`: 25 px.
 - Preferred orientation: `"vertical"`. Set `childDefaults.orientation` explicitly because child orientation otherwise follows the configured jagged-array orientation.
 
 ### Stacks

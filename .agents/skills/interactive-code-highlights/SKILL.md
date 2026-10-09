@@ -129,6 +129,7 @@ Compare this complete destination frame with the prior frame only after all four
 
 ## Validation
 
+- After authoring, perform a second independent logic pass starting from the source, input, and pause list rather than from the existing highlight batches. Re-derive every pause-to-pause event sequence and complete semantic frame, compare it line-by-line with the generated JSON, and resolve every discrepancy before completion.
 - List the ordered dynamic events between every adjacent pair of pauses before reviewing ranges.
 - Verify current-step executed, evaluated, and structurally traversed lines are Clear unless a stronger current semantic applies.
 - For every transition, verify the complete previous `Highlight.Pause` range became Clear after execution unless a later event on the same source line gives it a stronger state. In particular, never change the previous pause to Highlight.Unused merely because execution exited its loop, branch, method, or scope.
