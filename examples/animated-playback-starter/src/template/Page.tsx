@@ -10,9 +10,8 @@ import {
 
 import playback from "./playback.json";
 
-const canvasSize = { width: 1280, height: 768 };
+const canvasSize = { width: 1380, height: 768 };
 
-// Reserved for algorithm-specific arrays, stacks, grids, graphs, and other controls.
 const visualizationArea = {
   top: 130,
   left: 400,
@@ -21,9 +20,9 @@ const visualizationArea = {
 };
 
 const controlLayouts: Record<string, ControlRenderLayout> = {
-  code: { top: 90, left: 20, width: 360, height: 658 },
-  playbyplay: { top: 550, left: 400, width: 600, height: 198 },
-  locals: { top: 550, left: 1020, width: 240, height: 198 },
+  code: { top: 90, left: 20, width: 460, height: 658 },
+  playbyplay: { top: 550, left: 500, width: 600, height: 198 },
+  locals: { top: 550, left: 1120, width: 240, height: 198 }
 };
 
 const controlTitles: Record<string, string> = {
