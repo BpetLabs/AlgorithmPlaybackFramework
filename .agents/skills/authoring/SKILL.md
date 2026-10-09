@@ -143,6 +143,7 @@ Child preferences:
 - Align the static stack's bottom edge with the visualization area's floor.
 - Preferred width: 100 px.
 - Minimum `defaultItemOffset`: 25 px.
+- If a vertical stack uses `tailInserts`, reserve one `defaultItemOffset` of animation space at the top.
 
 ### Grids
 
@@ -156,6 +157,7 @@ Child preferences:
 - Apply the same 25 px edge-to-edge boundary clearance to nodeGraph controls; their bounds may not overlap another control's empty area.
 - Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text.
 - Choose track sizing and gaps that keep arrows readable.
+- Node Graphs should have no border.
 
 ## Validate the completed page
 
