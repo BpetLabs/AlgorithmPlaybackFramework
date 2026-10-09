@@ -17,7 +17,9 @@ Before editing playback JSON, read `interactive-generic` and only the specialize
 - `interactive-code-highlights` for code pauses and highlights
 - `interactive-graph` for parent-child tree layouts
 
-Documentation: `.\CONTROLS.md`
+## Documentation
+
+- `.\CONTROLS.md`
 
 ## Validate the request before creating files
 
