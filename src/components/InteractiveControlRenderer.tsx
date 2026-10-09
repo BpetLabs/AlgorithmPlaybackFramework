@@ -17,6 +17,8 @@ import {
 import { RendererType } from "./Renderers/rendererConfig";
 import { buildRenderItems } from "./Renderers/utils/buildRenderItems";
 
+const CONTROL_TITLE_OFFSET = 30;
+
 export interface InteractiveControlRendererProps {
   control: LoadedControl<ControlItem>;
   latestSnapshots: Record<string, Snapshot<ControlItem>>;
@@ -127,6 +129,7 @@ export function InteractiveControlRenderer({
   const headerTitle = renderConfig.title ?? defaultHeaderTitle;
   const shouldShowHeader =
     renderConfig.showTitle ?? Boolean(headerTitle);
+  const headerTop = top - resolvedTop - CONTROL_TITLE_OFFSET;
 
   return (
     <div
@@ -143,7 +146,7 @@ export function InteractiveControlRenderer({
         <div
           style={{
             position: "absolute",
-            top: -30,
+            top: headerTop,
             left: "50%",
             width: "max-content",
             transform: "translateX(-50%)",

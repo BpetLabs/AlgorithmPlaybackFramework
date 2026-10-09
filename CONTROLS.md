@@ -463,7 +463,7 @@ Set these layout options at the top level of a control in JSON or assign them in
 | `itemLabels` | Labels displayed beside array slots. |
 | `showCellBorders` | Shows or hides structural slot borders. |
 | `emptyItemText` | Configured value displayed in array slots without item text, such as `"0"`. |
-| `fitContent` | Sets an array, jagged array, or stack's main-axis size to its occupied content size. |
+| `fitContent` | Sets an array, jagged array, or stack's main-axis size to its occupied content size while keeping its title at the original layout height. |
 
 `defaultItemOffset` controls both the spacing between item positions and the background grid. A horizontal array divides its width into slots; a vertical array or stack divides its height into slots. Grid lines continue through unused space unless `showCellBorders` is `false`.
 

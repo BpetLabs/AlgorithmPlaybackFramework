@@ -91,12 +91,13 @@ describe("InteractiveControlRenderer", () => {
     expect(markup).toContain("height:60px");
   });
 
-  it("fits stacks to their occupied height while preserving the bottom edge", () => {
+  it("fits stacks to their occupied height while preserving the bottom edge and title position", () => {
     const stackSnapshot = { ...snapshot, type: "stack" };
     const markup = renderControl(
       control({
         type: "stack",
         snapshots: [stackSnapshot],
+        render: { title: "Stack" },
         rendererOptions: {
           fitContent: true,
           defaultItemOffset: 30,
@@ -108,5 +109,6 @@ describe("InteractiveControlRenderer", () => {
     expect(markup).toContain("top:30px");
     expect(markup).toContain("width:300px");
     expect(markup).toContain("height:60px");
+    expect(markup).toContain("position:absolute;top:-50px");
   });
 });
