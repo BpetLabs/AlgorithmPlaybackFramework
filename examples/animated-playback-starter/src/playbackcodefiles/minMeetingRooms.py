@@ -1,18 +1,28 @@
-def minimum_rooms(meetings: list[list[int]]) -> int:
-    starts = sorted(meeting[0] for meeting in meetings)
-    ends = sorted(meeting[1] for meeting in meetings)
+import heapq
 
-    end_index = 0
-    rooms_in_use = 0
-    maximum_rooms = 0
+class TennisCourtBookings:
+    @staticmethod
+    def assign_courts(bookings: list[list[int]]) -> list[int]:
+        booking_order = sorted(
+            range(len(bookings)),
+            key=lambda index: bookings[index][0]
+        )
 
-    for start in starts:
-        # Release rooms for all meetings that have ended.
-        while end_index < len(ends) and ends[end_index] <= start:
-            rooms_in_use -= 1
-            end_index += 1
+        # Priority queue of (end_time, court_number).
+        court_end_times: list[tuple[int, int]] = []
+        assigned_courts = [0] * len(bookings)
+        court_count = 0
 
-        rooms_in_use += 1
-        maximum_rooms = max(maximum_rooms, rooms_in_use)
+        for index in booking_order:
+            start, end = bookings[index]
 
-    return maximum_rooms
+            if court_end_times and court_end_times[0][0] <= start:
+                _, court = heapq.heappop(court_end_times)
+            else:
+                court_count += 1
+                court = court_count
+
+            assigned_courts[index] = court
+            heapq.heappush(court_end_times, (end, court))
+
+        return assigned_courts
