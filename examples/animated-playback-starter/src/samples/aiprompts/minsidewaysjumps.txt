@@ -1,0 +1,19 @@
+lets create a new playback
+
+Template: 
+- \examples\animated-playback-starter\src\template
+
+Code:
+- \examples\animated-playback-starter\src\samples\pythoncodefiles\minsidewaysjumps.py
+
+PlaybackControls:
+- create a jumps array and a grid for the obstacles at least 5 length
+
+Pause at :
+- each jumps assignment other than initialization and the return
+
+Input: 
+- obstacles - ( values are implied by visible grid dont display )
+- make each obstacle background color gray
+- leave each open space defaulted
+- set emptyItemText = 0

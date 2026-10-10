@@ -1,0 +1,18 @@
+lets create a new playback
+
+Template: 
+- \examples\animated-playback-starter\src\template
+
+Code:
+- \examples\animated-playback-starter\src\playbackcodefiles\tenniscourtbookings.py
+
+PlaybackControls:
+- Create a minHeap,  input jagged array,  and assigned courts array
+
+Pause at :
+- Each call to heappop and heappush and return
+
+Input: 
+- Pick 7 values that return at least 3 courts - use values 7-20 representing hours.
+
+Rules:
