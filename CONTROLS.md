@@ -1,6 +1,8 @@
-# Playback controls
+## Playback controls
 
 Controls are the visual panels in an AnimatedPlayback. Each control has a unique `id`, a `type`, a base position and size supplied by the React page, and optional state changes in `batches`.
+
+This page is designed for documenting actions that you can take with the playback framework only. 
 
 ## Contents
 
