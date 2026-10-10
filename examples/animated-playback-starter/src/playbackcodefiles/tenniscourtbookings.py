@@ -16,7 +16,10 @@ class TennisCourtBookings:
         for index in booking_order:
             start, end = bookings[index]
 
-            if court_end_times and court_end_times[0][0] <= start:
+            if (
+                court_end_times
+                and court_end_times[0][0] <= start
+            ):
                 _, court = heapq.heappop(court_end_times)
             else:
                 court_count += 1
