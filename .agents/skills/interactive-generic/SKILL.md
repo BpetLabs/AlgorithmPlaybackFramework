@@ -10,7 +10,8 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 
 ## Declared-control completeness
 - When updating a playback, treat every declared control—including default or preexisting controls—as part of the playback. Preserve controls the user did not specify unless the requested update affects them or requires changes to keep them synchronized.
-- Populate and synchronize a control whenever the input or executed trace contains state that the control is intended to represent. Do not leave it as an empty scaffold merely because another control is the focus of the request.
+- For new playbacks and trace-changing edits, populate and synchronize every control whose purpose is represented by the input or trace. For a localized edit, limit changes and validation to the requested controls, directly coupled controls, and the adjacent steps needed to prove state continuity. Do not expand a localized edit merely because unrelated controls exist.
+- Use one canonical execution trace for all applicable controls. Reuse it across specialized skills instead of independently replaying the program for each control.
 
 ## Primary objective
 - Keep control state consistent across steps, especially around pauses and transitions.
@@ -55,7 +56,7 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 - If a control value will be set as a number Max value or number Min value, set the node value to the text `MAX` or `MIN` instead unless otherwise specified.
 
 ## Cleanup and minimization
-- Replay each control across steps and remove duplicate, stale, or no-op actions.
+- For new playbacks, trace changes, and explicit audits, replay each affected control across the full trace. For localized edits, replay only the affected range plus the immediately preceding and following state boundaries. Remove duplicate, stale, or no-op actions found within that scope.
 - Stick to cleanup actions, if you find other changes that mismatch to the skills mention the issue and the step that they occurs on without changing.  
 - Treat an action's addressing mode, logical position, and resolved target as its identity. Actions for `"current"` and `"outgoing"` at the same index, head, or tail affect different nodes and are not duplicates.
 - Within one batch, avoid repeated actions for the same identity when one final action can represent the result.
@@ -65,8 +66,9 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 - Remove unnecessary empty batches, but preserve empty batches required to complete pending animations.
 
 ## Cross-control validation
-- After any change, verify that the affected state updates are reflected consistently across all relevant controls and steps.
-- Verify every declared control has the required initial and runtime state for its purpose; reject unexplained empty scaffolds.
+- After any change, verify that affected state updates are reflected consistently across directly coupled controls and steps.
+- Perform full-playback cross-control validation only for new playbacks, changes to pause locations or execution flow, schema-wide transformations, or an explicit audit request. Otherwise preserve unrelated controls and report observed out-of-scope issues without auditing or changing them.
+- Within the selected validation scope, verify each control has the required initial and runtime state for its purpose; reject unexplained empty scaffolds.
 - Ensure that a change to one control’s step progression is not left inconsistent with the others.
 - If a mutation or transition affects multiple controls, update each control’s corresponding state rather than only one.
 - When a transition leaves an outgoing node visible, verify that cleanup intended for that old visual node explicitly uses `target: "outgoing"` rather than accidentally changing the current node.

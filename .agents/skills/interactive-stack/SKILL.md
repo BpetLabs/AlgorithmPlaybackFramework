@@ -1,12 +1,12 @@
 ---
 name: interactive-stack
-description: "Create, populate, edit, audit, or synchronize stack-rendered controls used as stacks, call stacks, FIFO queues, or priority queues, including initialization, frame contents, return values, visual-end mutations, and priority order. Use whenever a playback contains one of these controls."
+description: "Create, edit, audit, or synchronize stack-rendered stacks, call stacks, FIFO queues, or priority queues. Use when the requested work involves one of these controls, its runtime state, or a directly coupled trace change."
 user-invocable: true
 ---
 
 # Interactive Stack, Queue, and Priority Queue Rules
 
-Use these rules whenever an AnimatedPlayback contains a one-dimensional control that represents a stack, call stack, FIFO queue, or priority queue, including new playback authoring and trace changes. Populate its initial and runtime state and synchronize every relevant mutation or call transition.
+Use these rules when the requested work involves an AnimatedPlayback stack, call stack, FIFO queue, priority queue, or a directly coupled trace change. Populate its initial and runtime state and synchronize each in-scope mutation or call transition.
 
 Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for stacks, queues, and priority queues.
 
@@ -35,7 +35,7 @@ For a horizontal control, index 0 and the head are at the left; the tail is at t
 When the stack represents a call stack:
 
 - On a return pause that will pop a frame, add `**Return:** value` to that outgoing frame in the same pre-removal batch only when the method returns a value. Keep the return on its own final line and preserve tuple or structured return values accurately. Do not add a return line for `void` methods.
-- At every pause, replay the code that ran since the previous pause. If that code changed relevant local variables in a displayed frame, use `setValues` on that frame in the current batch so it reflects the destination pause state. This includes updating the resumed caller after a callee returns; target the caller's current logical index, not the outgoing callee.
+- Use the shared execution trace to determine what ran since the previous pause. For new playbacks and trace changes, check every pause. For a localized edit, check only the affected range plus its preceding and following state boundaries. If that code changed relevant local variables in a displayed frame, use `setValues` on that frame in the current batch so it reflects the destination pause state. This includes updating the resumed caller after a callee returns; target the caller's current logical index, not the outgoing callee.
 - Include only arguments and local values relevant to understanding the active call and its return. Do not copy every in-scope variable into the frame.
 - Format values as `name | value`. Put short, closely related values on one comma-separated line when space permits, such as `rob | 22, skip | 20`; use separate lines when grouping would reduce readability.
 - Keep the same background color for a logical frame throughout its lifetime. When a frame corresponds to a node or item shown in another control, prefer that control's existing named color so the same entity is visually consistent across controls.
@@ -61,7 +61,7 @@ When the stack represents a call stack:
 
 ## Validation
 
-- Verify every declared stack, call stack, queue, or priority queue represents the relevant input and runtime state.
+- Verify every in-scope stack, call stack, queue, or priority queue represents the relevant input and runtime state.
 - Verify every mutation uses the operation matching its data-structure mode and visual end.
 - For a stack, verify last-in-first-out behavior at the same visual end.
 - For a FIFO queue, verify additions and removals occur at opposite visual ends in first-in-first-out order.

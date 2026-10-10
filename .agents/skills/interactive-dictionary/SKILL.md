@@ -1,14 +1,14 @@
 ---
 name: interactive-dictionary
-description: "Create, populate, edit, audit, or synchronize local-variable dictionary controls in AnimatedPlayback JSON. Use whenever a playback contains a dictionary or Locals control, including new playback authoring or trace changes."
+description: "Create, edit, audit, or synchronize local-variable dictionary controls in AnimatedPlayback JSON. Use when the requested work involves a dictionary or Locals control, variable state, or a directly coupled trace change."
 user-invocable: true
 ---
 
 # Interactive Dictionary State
 
-Use this skill whenever an AnimatedPlayback contains a local-variable dictionary, including new playback authoring and trace changes.
+Use this skill when the requested work involves an AnimatedPlayback local-variable dictionary, its variable state, or a directly coupled trace change.
 
-A default Locals control is part of the playback even when the user does not mention it explicitly. If the animated method has relevant arguments or local variables, populate the control and synchronize it at every pause.
+A default Locals control is part of the playback even when the user does not mention it explicitly. For new playbacks and trace changes, populate relevant arguments and local variables at every pause using the shared execution trace. For localized edits, synchronize only the affected range plus its preceding and following state boundaries.
 
 Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for local-variable dictionaries.
 
@@ -33,7 +33,7 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - For nested loops, display every loop index whose scope is active at the current pause.
 
 ## Validation
-- Verify every declared Locals or dictionary control displays the relevant variables for the current paused activation.
+- Verify every in-scope Locals or dictionary control displays the relevant variables for the current paused activation.
 - Confirm changed variables get a single Orange border.
 - Ensure unchanged variables do not keep stale borders.
 - Ensure out-of-scope variables are removed promptly and paused assignments do not show future values.

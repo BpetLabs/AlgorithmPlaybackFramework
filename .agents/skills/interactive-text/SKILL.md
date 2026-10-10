@@ -1,11 +1,11 @@
 ---
 name: interactive-text
-description: Create, populate, edit, audit, or synchronize Play by Play narration, console output, and other text-control batches with pause steps in AnimatedPlayback JSON. Use whenever a playback contains a text control.
+description: Create, edit, audit, or synchronize Play by Play narration, console output, and other text-control batches. Use when the requested work involves a text control, narration, output, or a directly coupled trace change.
 ---
 
 # Interactive Text
 
-Apply these rules whenever an AnimatedPlayback contains a text control, including new playback authoring and trace changes, unless the user requests different wording. Populate Play by Play at the introduction, every execution pause, and the conclusion. Populate console or other text controls at the steps where their represented text exists.
+Apply these rules whenever an in-scope AnimatedPlayback control is a text control, unless the user requests different wording. For new playbacks and trace changes, populate Play by Play at the introduction, every execution pause, and the conclusion. For localized edits, update only the affected messages and adjacent continuity checks. Populate console or other text controls at the steps where their represented text exists.
 
 Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for Play by Play, console output, and other text controls.
 
@@ -44,8 +44,8 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - Start each paragraph after `\n\n` with a capital letter.
 
 ## Validation
-- Verify every declared text control is populated at each step where its represented narration or output exists. Reject unexplained empty Play by Play, console, or other text scaffolds.
-- Replay the steps and verify that each message accurately previews the current paused statement and includes only completed work that was not already previewed in the preceding message.
+- Verify every in-scope text control is populated at each selected step where its represented narration or output exists. Reject unexplained empty Play by Play, console, or other text scaffolds within that scope.
+- For new playbacks and trace changes, validate every message against the shared execution trace. For a localized edit, validate only the affected messages plus the preceding and following messages needed to detect duplicated or omitted narration.
 - Verify an operation previewed on one step is not redundantly restated as completed on the next step.
 - Verify relevant unpaused control-flow effects between pauses are not omitted merely because they do not mutate a value.
 - Verify that every console output is absent on its statement pause, appears only on the immediate next step, and is cleared on the step after that.

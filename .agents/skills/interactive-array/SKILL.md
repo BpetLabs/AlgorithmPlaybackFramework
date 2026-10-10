@@ -1,12 +1,12 @@
 ---
 name: interactive-array
-description: "Create, populate, edit, audit, or synchronize array and jagged-array/matrix controls in AnimatedPlayback JSON, including initialization, mutations, node colors, and affected-index borders. Use whenever a playback contains an array or matrix control.
+description: "Create, edit, audit, or synchronize array and jagged-array/matrix controls in AnimatedPlayback JSON. Use when the requested work involves an array or matrix control, its trace, or a directly coupled state change."
 user-invocable: true
 ---
 
 # Interactive Array and Matrix Rules
 
-Use these rules whenever an AnimatedPlayback contains an `array` or `jaggedArray` control, including new playback authoring and trace changes. Populate the control with the relevant input and runtime state. Preserve the user's explicit animation and color choices when they differ from these defaults.
+Use these rules when the requested work involves an `array` or `jaggedArray` control, its trace, or a directly coupled state change. Populate the control with the relevant input and runtime state. Preserve the user's explicit animation and color choices when they differ from these defaults.
 
 Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for arrays and matrices.
 
@@ -29,13 +29,13 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - If an array or matrix index is accessed during unpaused execution between two pauses, show that access highlight on the destination step. Preserve it under the same scope rules, or clear it on the next step when it has no continuing in-scope owner.
 - Color each relevant index by the role of its local variable, regardless of how many indices are highlighted in the control: use `Orange` for a looping index, `Pink` for a specific index, and `Yellow` for a trailing index. For another role, choose a distinct CSS named color and keep that role-color mapping consistent.
 - If multiple locals refer to the same index, render one border for that index. Resolve standard role-color collisions with this precedence: `Orange`, then `Pink`, then `Yellow`. If only custom role colors collide, choose one consistently.
-- Recompute local-to-index mappings at every step. Keep a border while the same in-scope local continues to refer to that index, including pauses where the local is not directly used. Clear or move it only when the local changes its referenced index or leaves scope. Also carry an access that occurred between pauses into the destination step as described above.
+- For new playbacks and trace changes, compute local-to-index mappings from the shared execution trace for every step. For a localized edit, recompute only the affected step range plus its preceding and following state boundaries. Keep a border while the same in-scope local continues to refer to that index, including pauses where the local is not directly used. Clear or move it only when the local changes its referenced index or leaves scope. Also carry an access that occurred between pauses into the destination step as described above.
 - For a matrix, apply these rules to the affected row or cell controls at the corresponding indices for the parent and the child.
 - If any array stores boolean values use `Red` for false and `Green` for true.
 
 ## Validation
 
-- Verify each declared array or matrix contains the relevant input or runtime values and stays synchronized with the trace.
+- Verify each in-scope array or matrix contains the relevant input or runtime values and stays synchronized with the selected trace range.
 - Verify explicit initialization uses `setValues`, while default-backed nodes have no initialization action. Verify paused value replacements use `updates`, while already-completed value replacements use `setValues`.
 - Verify every value-setting action includes the intended background color. Verify default-backed nodes remain untouched until an action assigns them a value and color together.
 - For a highlighted paused update, verify the stationary array index owns the border through `setValues`, the incoming `updates.input` has no `borderColor`, and the next batch clears the displaced node with `target: "outgoing"`. Across consecutive updates, verify current-index highlights move separately and the replacement/current node is cleared only when its own logical highlight ends.

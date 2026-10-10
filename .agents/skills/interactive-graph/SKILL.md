@@ -1,11 +1,11 @@
 ---
 name: interactive-graph
-description: "Create, populate, edit, audit, or synchronize parent-child tree controls in nodeGraph grid JSON, including nodes, edges, traversal state, arrow direction, anchors, placement, and spacing. Use whenever a playback contains a parent-child nodeGraph."
+description: "Create, edit, audit, or synchronize parent-child tree controls in nodeGraph grid JSON. Use when the requested work involves a parent-child nodeGraph, its traversal state, layout, or a directly coupled trace change."
 ---
 
 # Interactive Grid Tree Rules
 
-Use these rules whenever an AnimatedPlayback contains a parent-child tree in a `nodeGraph` grid, including new playback authoring and trace changes. Populate the nodes and edges, then synchronize relevant traversal state at every pause.
+Use these rules when an in-scope AnimatedPlayback control contains a parent-child tree in a `nodeGraph` grid. For new playbacks and trace changes, populate the nodes and edges and synchronize traversal state at every pause. For localized edits, limit work to the affected range and adjacent state boundaries.
 
 Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for node-graph grid layout.
 
@@ -42,7 +42,7 @@ Measure horizontal distance between node centers and compare it with one resolve
 
 - Every action that assigns a node value must include a `backgroundColor` in the same input, whether the action initializes the node or changes it later. Use unique colors for each graph node, perfer colors that would work with white text. 
 - If nodes are part of the input such as start and end values highlight each with a `Lime` border.
-- Recompute node and edge highlights at every step from their current roles. Preserve a role's highlight across pauses until its node changes or the role leaves scope; a pause whose statement does not reference the role does not end the highlight.
+- For new playbacks and trace changes, compute node and edge highlights at every step from the shared execution trace. For a localized edit, recompute only the affected range plus its preceding and following state boundaries. Preserve a role's highlight across pauses until its node changes or the role leaves scope; a pause whose statement does not reference the role does not end the highlight.
 - Use `Orange` for the primary current node. Use `Yellow` as a secondary current or focus color when the visualization needs another simultaneous active node. If the secondary node represents a pending traversal, color its incoming edge `Yellow` as well.
 - Use `Pink` for every ancestor node on the active path from the start node to the current node. Color the edges connecting those ancestors `Pink` too. Do not use `Yellow` merely because the active path contains multiple nodes.
 - Use an `Orange` edge only on the destination step immediately after traversal descends into its represented child. On the following pause, change that edge to `Pink` if it remains on the active path, even when the child remains the current node.
@@ -72,7 +72,7 @@ Measure horizontal distance between node centers and compare it with one resolve
 
 ## Validation
 
-- Verify every declared tree graph contains the nodes and edges required by its input or runtime state and stays synchronized with traversal pauses.
+- Verify every in-scope tree graph contains the nodes and edges required by its input or runtime state and stays synchronized with the selected traversal pauses.
 - Verify every edge references an existing child and parent, with `from` as the child and `to` as the parent; reject reversed relationships.
 - Verify the child is below its parent.
 - Verify every arrowhead appears at the child and points downward from the parent.

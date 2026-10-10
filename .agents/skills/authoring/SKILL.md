@@ -9,23 +9,26 @@ user-invocable: true
 Use this skill to create, populate, or modify a complete playback page and its control layout.
 
 
-## Route to applicable interactive skills
+## Select scope and interactive skills
 
-Before creating or editing an AnimatedPlayback, inventory every control in the playback.
+Inventory the playback's control types before editing. This inventory determines which specialized skills may be needed; it does not put every control in scope.
+
+Always load and apply `interactive-generic` when editing any playback control. Also load the specialized skill for each control type in scope:
 
 - `staticText` code control: `interactive-code-highlights`
-- `dictionary` or locals control: `interactive-dictionary`
+- `dictionary` or Locals control: `interactive-dictionary`
 - `text`, Play by Play, or console control: `interactive-text`
 - `array`, jagged array, or matrix control: `interactive-array`
 - `stack`, queue, or priority queue control: `interactive-stack`
 - `nodeGraph` control: `interactive-graph`
-- `interactive-generic` - Covers all controls
 
-Do not load specialized interactive skills for control types that are absent. 
+Use full-playback scope for a new playback, an execution-flow or pause change, a schema-wide transformation, or an explicit audit. Include every control and step affected by the resulting trace.
 
-Every declared control is part of the authoring scope, including controls supplied by the starter template and controls the user did not mention explicitly. Use the matching specialized skill to populate and synchronize each control when the input or executed trace contains state that the control represents.
+Otherwise use localized scope. Include only the requested controls, controls that must change to remain synchronized, and the adjacent steps needed to verify state continuity. Preserve unrelated controls without auditing them.
 
-Before completion, validate each control against the validation section of its matching interactive skill. Also apply the cross-control validation rules from `interactive-generic` to verify that every global step remains synchronized.
+Load specialized skills as control types enter scope. If the work later requires editing another control type, load its specialized skill before modifying that control.
+
+Before completion, validate every in-scope control using both `interactive-generic` and its matching specialized skill. Under localized scope, validate only the affected controls and steps. Under full-playback scope, validate all trace-affected controls and steps.
 
 ## Default preservation and visualization boundaries
 
@@ -52,12 +55,13 @@ Not every input or runtime property needs a corresponding playback control.
 
 ## Trace the requested scenario
 
-Before creating or updating controls, run the supplied code with the selected command and input. A descriptive input is sufficient; choose a representative concrete value when the request permits it.
+Before creating a playback or changing its execution trace or represented runtime state, run the supplied code once with the selected command and input. A descriptive input is sufficient; choose a representative concrete value when the request permits it. Reuse this canonical trace across all controls and specialized skills. Do not rerun the program for layout-only, wording-only, styling-only, metadata-only, or other edits that cannot affect runtime state.
 
 Use the executed pauses, including conditional and fallback pauses, to determine the playback step count and the maximum size of dynamic controls.
 
 - If the trace produces at most 50 steps, continue.
 - If it produces more than 50 steps, stop, report the count, and ask for approval before continuing.
+- Before exhaustive validation, also ask for approval when the playback has more than 6 dynamic controls or a visible code control exceeds 500 source lines. A localized edit may proceed without approval when it remains limited to its affected range.
 - If the code cannot be executed with the available project tooling, report the blocker instead of guessing the trace.
 
 ## Scaffold a new page
@@ -74,7 +78,7 @@ When a source-code file is provided and the `code` control exists:
 
 ## Create the controls in `playback.json`
 
-Create requested controls with empty `batches` only as temporary scaffolding before authoring their state transitions. Before completion, populate every declared control according to its purpose and the executed trace, subject only to the documented intentionally-static or no-relevant-state exception.
+Create requested controls with empty `batches` only as temporary scaffolding before authoring their state transitions. Before completion, populate every in-scope control according to its purpose and the executed trace, subject only to the documented intentionally-static or no-relevant-state exception.
 
 For a control created later by the running algorithm rather than supplied as input, initialize it with `"render": { "visible": false }` and make it visible in the batch where the runtime value becomes available.
 
@@ -88,7 +92,7 @@ Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx
 
 ## Configure controls in `Page.tsx`
 
-Add each control's layout and title. Prefer renderer defaults for all optional control properties. As a documentation exception, inspect the current renderer code for each applicable item-based control and explicitly set its resolved default `defaultItemOffset` in `configureProps` so the value is visible in the page. For jagged arrays, explicitly set `childGap`, `childWidth`, and `childHeight` instead; jagged slot sizes are derived recursively.
+Add each control's layout and title. Prefer renderer defaults for all optional control properties. Resolve an applicable item-based control's default `defaultItemOffset` from the existing page, established project configuration, or renderer documentation, and explicitly set it in `configureProps`. Inspect renderer source only when the value remains unresolved or the renderer itself changed. For jagged arrays, explicitly set `childGap`, `childWidth`, and `childHeight` instead; jagged slot sizes are derived recursively.
 
 Override a renderer default only when the user requests different behavior or the executed trace demonstrates that the default cannot satisfy fit, containment, clearance, readability, or semantic requirements. When an override is necessary, set the smallest possible group of properties and preserve defaults for everything else.
 
@@ -99,9 +103,9 @@ Increase `defaultItemOffset` only for a specific measured requirement, such as t
 - Prevent partial terminal slots in every array- or stack-based control.
 - For a fixed-size control, resolve its `defaultItemOffset` and rendered main-axis size. Require the size to be within 0.01 px of a whole multiple of the offset: `abs(size - round(size / offset) * offset) <= 0.01`.
 - Use width for horizontal arrays. Use height for vertical arrays, stacks, dictionaries, text controls, and memory stacks. Jagged arrays fit recursively in both dimensions and do not use this fixed-slot check.
-- Apply the check to the base layout and every step-specific render size. If it fails, adjust the main-axis size to a whole number of default slots while preserving containment and clearance.
+- Apply the check to the base layout and each in-scope step-specific render size. If it fails, adjust the main-axis size to a whole number of default slots while preserving containment and clearance.
 
-Reserve a stable effective boundary for every control. Calculate it from the union of the control's maximum rendered state, decorations, and every traced animation path subject to the rules below. Reserve that complete boundary from the first visible frame.
+When creating a page or changing layout, sizing, decorations, content bounds, or animation operations, reserve a stable effective boundary for each affected control. Reuse existing verified boundaries for unchanged controls. Calculate a changed boundary from the union of the control's maximum rendered state, decorations, and traced animation paths subject to the rules below.
 
 Set `props.borderWidth = 2` in `configureProps` for every `dictionary` control, including the default `locals` control.
 
@@ -121,7 +125,7 @@ Size controls from the executed trace:
 - For each control, calculate one stable trace-wide effective boundary: `union(base rendered boundary, decoration boundary, traced animation boundary)`.
 - Use the control's maximum resolved base size across all steps. For `fitContent`, use its maximum resolved size.
 - Expand the boundary for every decoration outside the container, including titles, item labels, row and column labels, axis descriptions, edge labels, arrowheads, strokes, and highlight borders. Measure rendered text when practical; otherwise reserve conservatively for the longest traced content.
-- Read every batch for the control and identify every operation that creates a pending, transition, or completion animation state. Do not use an allowlist of operation names or addressing modes; this rule applies to current and future animation-producing operations.
+- For controls whose geometry or animation operations changed, read their batches and identify operations that create a pending, transition, or completion animation state. Reuse prior verified geometry for unchanged controls. Do not use an allowlist of operation names or addressing modes; this rule applies to current and future animation-producing operations.
 - The presence of an animation-producing operation is sufficient to require its animation-state boundary. Calculate that boundary from the resolved control and item sizes plus the operation's animation geometry, including its offsets, scale, and rotation where applicable. When several operations exist, use the union of their boundaries and record only the maximum left, right, top, and bottom overflow needed across the trace. Frame-by-frame replay is not required.
 - The only exception is the downward `falling` phase of a removal. Exclude that phase from inter-control clearance and bottom containment so it may pass through controls and exit through the visualization floor. The preceding removal transition, including its complete horizontal movement, remains inside the effective boundary. Keep the falling phase's horizontal and rotated bounds inside the visualization area's left and right edges; it may not exit through the top.
 - Keep every effective boundary fully inside `playback-visualization-area`. Separately, keep at least 25 px of empty clearance between each pair of controls, measured edge-to-edge between their already-expanded effective boundaries. The 25 px is additional inter-control space and does not require a margin between a control and the visualization-area walls; an effective boundary may touch a wall while remaining contained. Apply the specialized occupancy exception under Node graphs when a `nodeGraph` layout rectangle overlaps another control.
@@ -173,7 +177,7 @@ Child preferences:
 - Preferred calculated node width and height: 40 px; minimum 25 px.
 - Treat the `nodeGraph` layout rectangle as a positioning canvas rather than an occupied boundary. It may overlap another control's layout or effective boundary, and its empty space does not require clearance.
 - Do not allow the nodeGraph title to overlap another control's effective boundary.
-- At every step, keep each rendered node rectangle at least 25 px from every other control's effective boundary. Edges, edge labels, arrowheads, and empty graph space do not require inter-control clearance.
+- At every in-scope step, keep each rendered node rectangle at least 25 px from every other control's effective boundary. For localized edits, include adjacent state boundaries and any step where the changed node reaches its maximum extent. Edges, edge labels, arrowheads, and empty graph space do not require inter-control clearance.
 - Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text. Use `itemWidthScale` and `itemHeightScale` only if needed for specific node text; prefer to keep all nodes equal sizes.
 - Use fractional rows or columns when needed to refine node spacing.
 - Choose track sizing and gaps that keep arrows readable.
@@ -181,14 +185,11 @@ Child preferences:
 
 ## Validate the completed page
 
-- Check every changed layout value, renderer override, control definition, and batch action. Use each documented default or preferred value unless the user requested otherwise or the executed trace provides a specific, measured reason to deviate.
-- Verify every slot-based control passes the whole-slot check at its fixed size or maximum resolved `fitContent` size. Do not accept a truncated terminal slot.
+- Check every changed layout value, renderer override, control definition, and batch action. Validate unchanged content only when it is directly coupled to the change. Use each documented default or preferred value unless the user requested otherwise or the executed trace provides a specific, measured reason to deviate.
+- Verify every in-scope slot-based control passes the whole-slot check at its fixed size or maximum resolved `fitContent` size. Do not accept a truncated terminal slot.
 - Record the rule and trace-based reason for every deviation in the working notes. If a deviation has no valid justification, restore the documented default or preferred value before completion.
 - Do not report the playback complete while any known skill-rule violation remains.
-- Verify the embedded `staticValue` matches the source file.
-- Verify every pause and global step is synchronized across the relevant controls.
-- Verify every declared control is populated for the state it represents. Reject unexplained empty scaffolds, including default Code, Play by Play, and Locals controls.
-- For every control, record its maximum base rectangle, decoration overflow, animation-state boundaries found by scanning all steps, and final effective rectangle. Verify that their union is contained and maintains the additional 25 px separation, subject to the explicit `falling` and `nodeGraph` exceptions.
-- if a framework change was made, before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
-- Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.
+- When geometry is in scope, record each affected control's maximum base rectangle, decoration overflow, animation-state boundary, and final effective rectangle. Reuse verified measurements for unchanged controls. Verify containment and 25 px separation, subject to the `falling` and `nodeGraph` exceptions.
+- If framework source changed, run `npm.cmd run build` at the repository root before building or previewing the starter. The starter imports the framework package through its built `dist` exports.
+- Run the narrowest starter typecheck, tests, or build that covers the changed files. Do not run multiple commands that validate the same invariant unless an earlier result is inconclusive or project scripts combine distinct required checks.
 - If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.

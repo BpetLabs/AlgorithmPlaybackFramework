@@ -1,11 +1,11 @@
 ---
 name: interactive-code-highlights
-description: "Create, populate, edit, audit, or synchronize code controls and code-highlight batches in AnimatedPlayback JSON, including source embedding, pause-to-pause execution, calls, returns, method borders, and cleanup. Use whenever a playback contains a code control."
+description: "Create, edit, audit, or synchronize code controls and code-highlight batches in AnimatedPlayback JSON. Use when the requested work involves source embedding, pause flow, code highlights, or a directly coupled trace change."
 ---
 
 # Interactive Code Highlights
 
-Use this skill whenever an AnimatedPlayback contains a code control, including new playback authoring and trace changes. Populate `staticValue` with the supplied source and synchronize highlights with every requested pause.
+Use this skill when the requested work involves an AnimatedPlayback code control, source embedding, pause flow, highlights, or a directly coupled trace change. Populate `staticValue` with the supplied source and synchronize highlights with the in-scope pauses.
 
 Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for code highlights.
 
@@ -29,6 +29,8 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 Do not assign more than one background to a line. Use its latest applicable event in the transition, followed by current call-stack semantics.
 
 ## Construct each frame
+
+For new playbacks and trace changes, construct frames for the complete trace. For localized edits, construct only the affected transitions plus the preceding and following frame boundaries needed to preserve state continuity.
 
 1. Identify the previous and current pauses. Advancing executes the previously paused statement.
    - In the destination frame, every line of that previously paused statement is Clear because it executed, unless the same source line later receives a stronger state during the transition. Leaving its loop, branch, method, or scope does not make the executed statement Unused.
@@ -129,15 +131,16 @@ Compare this complete destination frame with the prior frame only after all four
 
 ## Validation
 
-- Verify every declared code control contains its intended source. When the playback has execution pauses, verify it has synchronized highlight batches rather than an empty scaffold.
-- After authoring, perform a second independent logic pass starting from the source, input, and pause list rather than from the existing highlight batches. Re-derive every pause-to-pause event sequence and complete semantic frame, compare it line-by-line with the generated JSON, and resolve every discrepancy before completion.
-- List the ordered dynamic events between every adjacent pair of pauses before reviewing ranges.
+- Verify every in-scope code control contains its intended source. When its execution pauses are in scope, verify it has synchronized highlight batches rather than an empty scaffold.
+- Validate from the canonical execution trace used by the other controls. For new playbacks or trace changes, check every transition once. For localized highlight edits, check only the affected transitions plus the preceding and following frame boundaries.
+- Perform a second independent, line-by-line derivation only when the trace contains recursion, nested loops, fall-through switch behavior, multiple executions of the same source line within one transition, or when the first validation pass finds a discrepancy. Also perform it when the user explicitly requests an exhaustive audit.
+- Record ordered dynamic events only for transitions being validated and only when needed to resolve nontrivial control flow. Do not create a separate event listing for straightforward transitions.
 - Verify current-step executed, evaluated, and structurally traversed lines are Clear unless a stronger current semantic applies.
 - For every transition, verify the complete previous `Highlight.Pause` range became Clear after execution unless a later event on the same source line gives it a stronger state. In particular, never change the previous pause to Highlight.Unused merely because execution exited its loop, branch, method, or scope.
 - Verify conditional headers, switch headers, case labels, compound `} else if` lines, and traversed closing braces are Clear when their rules say they participated.
 - Verify only skipped executable body interiors are False.
 - Verify untouched lines are Unused and no stale False or Clear state leaked from the prior frame.
-- Replay every frame against `staticValue`. For each blank or whitespace-only source line, verify it is Clear when control flow structurally crossed it and Highlight.Unused when it was untouched in the relevant scope; do not classify it from blankness alone. Recheck this participation mapping after source-line contraction or reorganization.
+- Replay each frame in the selected validation scope against `staticValue`. For each blank or whitespace-only source line in that scope, verify it is Clear when control flow structurally crossed it and Highlight.Unused when it was untouched in the relevant scope; do not classify it from blankness alone. Recheck this participation mapping after source-line contraction or reorganization.
 - Verify repeated source lines use the latest event from the current transition.
 - Verify each frame has at most one Pause and each line has at most one background.
 - For every loop exit, verify the full loop body—not only the old pause and closing brace—against the loop-exit frame audit. Confirm that previously Clear but now unreached body lines become Unused and that every traversed exit line becomes Clear.
