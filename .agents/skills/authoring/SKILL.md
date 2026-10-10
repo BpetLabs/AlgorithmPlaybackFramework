@@ -140,6 +140,7 @@ Size controls from the executed trace:
 
 - Preferred location: top-left.
 - Prefer multiple arrays arranged vertically. Use one row at the top or bottom when vertical space is limited.
+- Preferred `defaultItemOffset`: 40 px.
 - Minimum `defaultItemOffset`: 25 px.
 
 ### Jagged arrays
@@ -148,8 +149,9 @@ Parent preferences:
 
 - Location: top-left.
 - Set `orientation` only on the root jagged array. Prefer `"horizontal"` unless the user requests `"vertical"`.
-- Set `childGap` to 10 px unless the user requests another value.
-- Set `childWidth` and `childHeight` to at least 25 px and large enough for the traced leaf content.
+- Set `childGap` to 5 px unless the user requests another value.
+- Preferred `childWidth` and `childHeight`: 40 px.
+- Minimum `childWidth` and `childHeight`: 25.
 - Do not set jagged `defaultItemOffset`, `itemGap`, `itemCrossAxisGap`, or `fitContent`; the renderer recursively derives every parent slot and container size from `childGap`, `childWidth`, and `childHeight`.
 - Only leaf `array` controls contain values. Jagged parents declare ordered stable control IDs in `children`, render borders around their child slots, and provide hierarchy and alternating layout.
 - Leaf arrays support normal value and structural mutations, with structural mutations requiring `now: true`. Jagged-parent inserts require `childId` and `now: true`; jagged-parent deletes require an index and `now: true` and detach the complete subtree.
@@ -171,12 +173,14 @@ Child preferences:
 ### Grids
 
 - Preferred location: centered, aligned with neighboring controls when practical.
+- Preferred `defaultItemOffset`: 40 px.
 - Minimum calculated cell width and height: 25 px.
 
 ### Node graphs
 
 - Preferred location: centered, aligned with neighboring controls when practical.
-- Preferred calculated node width and height: 40 px; minimum 25 px.
+- Preferred calculated node width and height:: 40 px.
+- Minimum: 25 px.
 - Treat the `nodeGraph` layout rectangle as a positioning canvas rather than an occupied boundary. It may overlap another control's layout or effective boundary, and its empty space does not require clearance.
 - Do not allow the nodeGraph title to overlap another control's effective boundary.
 - At every in-scope step, keep each rendered node rectangle at least 25 px from every other control's effective boundary. For localized edits, include adjacent state boundaries and any step where the changed node reaches its maximum extent. Edges, edge labels, arrowheads, and empty graph space do not require inter-control clearance.
