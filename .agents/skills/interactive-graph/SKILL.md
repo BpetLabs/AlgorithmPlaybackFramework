@@ -40,7 +40,8 @@ Measure horizontal distance between node centers and compare it with one resolve
 
 ## Node colors and borders
 
-- Every action that assigns a node value must include a `backgroundColor` in the same input, whether the action initializes the node or changes it later. Use `Teal` by default unless the user requests another color or the value's state has a defined color.
+- Every action that assigns a node value must include a `backgroundColor` in the same input, whether the action initializes the node or changes it later. Use unique colors for each graph node, perfer colors that would work with white text. 
+- If nodes are part of the input such as start and end values highlight each with a `Lime` border.
 - Recompute node and edge highlights at every step from their current roles. Preserve a role's highlight across pauses until its node changes or the role leaves scope; a pause whose statement does not reference the role does not end the highlight.
 - Use `Orange` for the primary current node. Use `Yellow` as a secondary current or focus color when the visualization needs another simultaneous active node. If the secondary node represents a pending traversal, color its incoming edge `Yellow` as well.
 - Use `Pink` for every ancestor node on the active path from the start node to the current node. Color the edges connecting those ancestors `Pink` too. Do not use `Yellow` merely because the active path contains multiple nodes.

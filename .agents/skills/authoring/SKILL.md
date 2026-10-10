@@ -157,7 +157,7 @@ Child preferences:
 
 ### Stacks
 
-- Preferred location: right side
+- Preferred location: - Right of existing controls
 - Align the static stack's bottom edge with the visualization area's floor.
 - Preferred width: 100 px.
 - Minimum `defaultItemOffset`: 25 px.
