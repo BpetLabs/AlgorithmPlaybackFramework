@@ -10,21 +10,21 @@ import {
 
 import playback from "./playback.json";
 
-const canvasSize = { width: 1400, height: 800 };
+const canvasSize = { width: 1500, height: 870 };
 
 const visualizationArea = {
   top: 130,
   left: 500,
-  width: 880,
-  height: 400,
+  width: 980,
+  height: 470,
   border: "1px solid #374151"
 };
 
 // Coordinates are relative to the full playback canvas.
 const defaultControlLayouts: Record<string, ControlRenderLayout> = {
-  code: { top: 120, left: 20, width: 460, height: 660 },
-  playbyplay: { top: 580, left: 500, width: 620, height: 200 },
-  locals: { top: 580, left: 1140, width: 240, height: 200 },
+  code: { top: 120, left: 20, width: 460, height: 730 },
+  playbyplay: { top: 650, left: 500, width: 720, height: 200 },
+  locals: { top: 650, left: 1240, width: 240, height: 200 },
 };
 
 // Coordinates are relative to visualizationArea.
