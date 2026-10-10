@@ -24,6 +24,7 @@ interface ArrayRendererProps extends RendererProps {
   itemLabels?: string[];
   orientation?: ArrayOrientation;
   showCellBorders?: boolean;
+  showItemHighlights?: boolean;
   resolveItemSize?: (
     item: ControlItem,
     options: { index: number; isSlotOwner: boolean }
@@ -45,6 +46,7 @@ export function ArrayRenderer({
   itemLabels = [],
   orientation = "horizontal",
   showCellBorders = true,
+  showItemHighlights = true,
   resolveItemSize,
   renderContent,
   borderWidth,
@@ -196,6 +198,7 @@ export function ArrayRenderer({
               disableAnimations={disableAnimations}
               itemGap={itemGap ?? 0}
               borderWidth={borderWidth}
+              showHighlight={showItemHighlights}
               renderContent={renderContent}
             />
           );

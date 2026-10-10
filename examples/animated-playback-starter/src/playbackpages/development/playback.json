@@ -57,12 +57,81 @@
     {
       "id": "cube",
       "type": "jaggedArray",
-      "batches": []
+      "children": ["cube-0", "cube-1"],
+      "batches": [
+        {
+          "step": 1,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange", "borderWidth": 4 } }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } },
+            { "index": 1, "input": { "borderColor": "Orange", "borderWidth": 4 } }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            { "index": 1, "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 4,
+          "inserts": [
+            { "index": 2, "childId": "empty-plane", "now": true }
+          ]
+        },
+        {
+          "step": 5,
+          "deletes": [
+            { "index": 2, "now": true }
+          ]
+        }
+      ]
     },
     {
       "id": "cube-0",
       "type": "jaggedArray",
-      "batches": []
+      "children": ["cube-0-0", "cube-0-1"],
+      "batches": [
+        {
+          "step": 1,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Gold", "borderWidth": 4 } }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } },
+            { "index": 1, "input": { "borderColor": "Gold", "borderWidth": 4 } }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            { "index": 1, "input": { "borderColor": "" } }
+          ],
+          "inserts": [
+            { "index": 2, "childId": "empty-row", "now": true }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            { "index": 2, "input": { "borderColor": "LimeGreen", "borderWidth": 4 } }
+          ]
+        },
+        {
+          "step": 5,
+          "deletes": [
+            { "index": 2, "now": true }
+          ]
+        }
+      ]
     },
     {
       "id": "cube-0-0",
@@ -108,6 +177,7 @@
     {
       "id": "cube-1",
       "type": "jaggedArray",
+      "children": ["cube-1-0", "cube-1-1", "cube-1-2"],
       "batches": []
     },
     {
@@ -152,6 +222,24 @@
           ]
         }
       ]
+    },
+    {
+      "id": "empty-row",
+      "type": "array",
+      "initialItemCount": 0,
+      "batches": []
+    },
+    {
+      "id": "empty-plane",
+      "type": "jaggedArray",
+      "children": ["empty-plane-row"],
+      "batches": []
+    },
+    {
+      "id": "empty-plane-row",
+      "type": "array",
+      "initialItemCount": 0,
+      "batches": []
     }
   ]
 }

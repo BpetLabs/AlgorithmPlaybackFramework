@@ -571,7 +571,7 @@ export class BatchProcessor<T extends ControlItem> {
         | undefined
     ) => {
       operations?.forEach((operation) => {
-        const input = operation.input;
+        const input = operation.input ?? {};
         const now = operation.now ?? false;
         const animateNow = operation.animateNow ?? false;
         let insertIndex = 0;

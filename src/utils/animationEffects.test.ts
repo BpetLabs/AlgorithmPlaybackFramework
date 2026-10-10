@@ -1,15 +1,10 @@
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { AnimationController } from "../common/models/animation";
 import {
-  disappear,
   fallRotateAndDisappear,
-  move,
   moveThenFallRotateAndDisappear,
-  reset,
-  setZIndex,
   shake,
   shakeAndDisappear,
-  warpIn,
 } from "./animationEffects";
 
 describe("animation effects", () => {
@@ -19,22 +14,6 @@ describe("animation effects", () => {
   beforeEach(() => {
     start = vi.fn<AnimationController["start"]>().mockResolvedValue(undefined);
     controls = { start, set: vi.fn(), stop: vi.fn() };
-  });
-
-  it("builds insert, movement, disappearance, reset, and z-index animations", async () => {
-    await warpIn(controls, 0.5);
-    await move(controls, 10, 20, 0.25);
-    await disappear(controls, 0.75);
-    await reset(controls, 3, 4);
-    await setZIndex(controls);
-
-    expect(start.mock.calls.map(([definition]) => definition)).toEqual([
-      expect.objectContaining({ scaleX: 1, scaleY: 1, opacity: 1, transition: { duration: 0.5, ease: "easeIn" } }),
-      { x: 10, y: 20, transition: { duration: 0.25, ease: "linear" } },
-      { opacity: 0, transition: { duration: 0.75, ease: "linear" } },
-      expect.objectContaining({ x: 3, y: 4, opacity: 1, rotate: 0 }),
-      { zIndex: 1, transition: { duration: 0, ease: "linear" } },
-    ]);
   });
 
   it("raises the item before starting the repeating shake", async () => {

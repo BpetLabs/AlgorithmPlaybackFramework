@@ -28,6 +28,7 @@ export interface ArrayItemProps {
   disableAnimations: boolean;
   itemGap: number;
   borderWidth?: number;
+  showHighlight?: boolean;
   renderContent?: (
     item: ControlItem,
     options?: { index?: number; isSlotOwner?: boolean }
@@ -50,6 +51,7 @@ export default function ArrayItem({
   onCollapse,
   disableAnimations,
   borderWidth,
+  showHighlight = true,
   renderContent,
 }: ArrayItemProps) {
   const { motionStyle, controller: controls } = useAnimationController({
@@ -85,7 +87,9 @@ export default function ArrayItem({
   useAnimatePreRemove(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, isHorizontal);
   useAnimateRemoving(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, isHorizontal, onCollapse);
   useAnimateShake(item, controls, disableAnimations);
-  const highlightOverlayStyle = buildHighlightOverlayStyle(item, { borderWidth, borderRadius: 8 });
+  const highlightOverlayStyle = showHighlight
+    ? buildHighlightOverlayStyle(item, { borderWidth, borderRadius: 8 })
+    : null;
 
   return (
     <motion.div

@@ -125,6 +125,7 @@ export default function PlaybackPage() {
                   defaultHeaderTitle={visualizationControlTitles[control.id]}
                   configureProps={(id, props) => {
                     if (id === "cube") {
+                      props.orientation = "horizontal",
                       props.childGap = 5;
                       props.childWidth = 40;
                       props.childHeight = 40;

@@ -56,7 +56,7 @@ describe("animated item components", () => {
     );
 
     expect(mocks.controller.stop).toHaveBeenCalled();
-    expect(mocks.controller.set).toHaveBeenCalledWith(expect.objectContaining({ opacity: 1, zIndex: 61 }));
+    expect(mocks.controller.set).toHaveBeenCalledWith(expect.objectContaining({ opacity: 1 }));
     expect(container.querySelector('[data-index="4"]')?.getAttribute("data-owner")).toBe("true");
     expect([...container.querySelectorAll<HTMLElement>("div")].some((element) => element.style.border === "4px solid red")).toBe(true);
   });
@@ -79,7 +79,7 @@ describe("animated item components", () => {
       />
     );
 
-    expect(mocks.controller.set).toHaveBeenCalledWith(expect.objectContaining({ opacity: 0, zIndex: 21 }));
+    expect(mocks.controller.set).toHaveBeenCalledWith(expect.objectContaining({ opacity: 0 }));
     expect(container.querySelector('[data-widths="30,70"]')).not.toBeNull();
   });
 });

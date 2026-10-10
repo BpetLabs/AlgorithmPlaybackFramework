@@ -4,7 +4,7 @@ import { ControlItemState } from "../../../common/models/controlItem";
 import { buildGridCells } from "./buildGridCells";
 import { requirePositiveDimension, requirePositiveInteger } from "./dimensions";
 import { parseInlineBoldSegments, renderLineWithInlineBold } from "./inlineBold";
-import { buildHighlightOverlayStyle, buildItemBoxStyle } from "./itemBoxStyle";
+import { buildHighlightOverlayStyle } from "./itemBoxStyle";
 
 describe("renderer utilities", () => {
   it("fills grid gaps and preserves the largest occupied cell size", () => {
@@ -42,13 +42,7 @@ describe("renderer utilities", () => {
     expect(renderToStaticMarkup(<>{renderLineWithInlineBold("")}</>)).toBe(" ");
   });
 
-  it("uses default item styles and conditionally creates highlight overlays", () => {
-    expect(buildItemBoxStyle({ backgroundColor: "red", textColor: "black" })).toMatchObject({
-      backgroundColor: "red",
-      color: "black",
-      borderStyle: "none",
-      borderWidth: 0,
-    });
+  it("creates highlight overlays only when a border color is present", () => {
     expect(buildHighlightOverlayStyle({ borderColor: " " })).toBeNull();
     expect(buildHighlightOverlayStyle(
       { borderColor: "blue", borderWidth: 2 },

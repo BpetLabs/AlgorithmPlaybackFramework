@@ -37,6 +37,7 @@
 }
 
 export interface ControlItemValues {
+  childId?: string;
   value?: string;
   backgroundColor?: string;
   textColor?: string;

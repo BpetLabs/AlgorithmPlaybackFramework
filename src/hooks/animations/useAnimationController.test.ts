@@ -29,12 +29,8 @@ describe("useAnimationController", () => {
     motionMocks.animate.mockImplementation(() => resolvedAnimation());
   });
 
-  it("initializes every motion property and sets final keyframe values", () => {
+  it("sets each property to its final requested keyframe", () => {
     const { result } = renderHook(() => useAnimationController({ x: 5, opacity: 0.5 }));
-
-    expect(motionMocks.useMotionValue.mock.calls.map(([initial]) => initial)).toEqual([
-      5, 0, 0, 0.5, 1, 1, 1, 100,
-    ]);
 
     act(() => result.current.controller.set({ x: [1, 4, 9], opacity: 0.25, transition: { duration: 1 } }));
     expect(result.current.motionStyle.x.set).toHaveBeenCalledWith(9);

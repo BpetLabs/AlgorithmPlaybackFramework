@@ -151,8 +151,10 @@ Parent preferences:
 - Set `childGap` to 10 px unless the user requests another value.
 - Set `childWidth` and `childHeight` to at least 25 px and large enough for the traced leaf content.
 - Do not set jagged `defaultItemOffset`, `itemGap`, `itemCrossAxisGap`, or `fitContent`; the renderer recursively derives every parent slot and container size from `childGap`, `childWidth`, and `childHeight`.
-- Leaf arrays in a jagged tree support value and structural mutations, with structural mutations requiring `now: true`. Jagged parents may insert only empty child containers and may remove only empty child containers; never put values directly on a jagged parent or update its child containers.
-- An empty jagged parent occupies at least `childWidth + 2 × childGap` by `childHeight + 2 × childGap`.
+- Only leaf `array` controls contain values. Jagged parents declare ordered stable control IDs in `children`, render borders around their child slots, and provide hierarchy and alternating layout.
+- Leaf arrays support normal value and structural mutations, with structural mutations requiring `now: true`. Jagged-parent inserts require `childId` and `now: true`; jagged-parent deletes require an index and `now: true` and detach the complete subtree.
+- Every inserted jagged parent must declare a complete descendant path ending in at least one leaf array. Represent an empty row or column with a leaf array whose `initialItemCount` is `0`.
+- Never put values directly on a jagged parent or update its child references in place. The set family may change parent-slot appearance properties such as `borderColor`; parent border highlights render on the referenced child's actual frame.
 
 Child preferences:
 

@@ -17,6 +17,9 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - Set initial values when the array is initialized or in the step where a hidden array becomes visible.
 - Use `updates`, `inserts`, or `deletes` for array mutations. Follow the base skill's pre-animation, completion-step, and `now` timing rules.
 - Preserve update payloads, including the incoming item value needed to render the replacement transition.
+- Treat `array` controls in jagged trees as the only value-bearing arrays. Jagged parents contain ordered child IDs in `children` and retain their container and child-slot borders. Their set family may change parent-slot appearance properties such as `borderColor`; render that highlight on the referenced child's actual renderer frame, not as an inset slot overlay. Parent set actions must not set displayed values or replace `childId`.
+- Insert a jagged-parent child with `childId` and `now: true`. Delete a jagged-parent child by index with `now: true`; the deletion detaches the complete referenced subtree.
+- Require every inserted jagged parent subtree to terminate in a declared leaf array on every branch. Use `initialItemCount: 0` on the leaf to represent an empty row or column.
 
 ## Node colors and borders
 

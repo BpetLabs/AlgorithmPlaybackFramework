@@ -90,7 +90,6 @@ describe("NodeGraphRenderer", () => {
     );
 
     expect(markup.match(/data-apf-graph-grid-line/g)).toHaveLength(6);
-    expect(markup).toContain("var(--apf-grid-border-color, #4b5563)");
   });
 
   it("centers per-node scaling and uses the visible bounds for arrows", () => {

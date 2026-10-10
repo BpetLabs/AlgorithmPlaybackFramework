@@ -322,15 +322,15 @@ Grid coordinates are zero-based. Give each cell a stable `id` so later batches u
 
 ### `jaggedArray`
 
-Displays an outer array whose cells can contain child arrays of different lengths.
+Arranges child lists recursively. Jagged parents render bordered child slots, while only leaf `array` controls contain values.
 
-- Uses the normal array options for the outer and child arrays.
-- Define children as separate `array` controls named `<parent-id>-<index>`.
+- Declares ordered child control IDs through `children`.
+- Uses stable child IDs independently of their current indices.
 - Supports shared child defaults through `childDefaults`.
 - Always fits every jagged level to its child content.
 - Use it for jagged arrays, adjacency lists, and nested collections.
 
-Child controls use the parent ID followed by their zero-based parent index. They are attached to the parent automatically and are not rendered as independent top-level controls:
+Child controls are declared separately and are not rendered as independent top-level controls:
 
 ```json
 [
@@ -341,6 +341,7 @@ Child controls use the parent ID followed by their zero-based parent index. They
     "childGap": 5,
     "childWidth": 40,
     "childHeight": 40,
+    "children": ["matrix-0", "matrix-1"],
     "childDefaults": {
       "emptyItemText": "0"
     },
@@ -357,15 +358,40 @@ Child controls use the parent ID followed by their zero-based parent index. They
     "type": "array",
     "initialItemCount": 3,
     "batches": []
+  },
+  {
+    "id": "matrix-2",
+    "type": "array",
+    "initialItemCount": 0,
+    "batches": []
   }
 ]
 ```
+
+Jagged-parent insertions attach a complete declared subtree by ID. Deletions detach the complete referenced subtree:
+
+```json
+{
+  "step": 3,
+  "inserts": [
+    { "index": 2, "childId": "matrix-2", "now": true }
+  ]
+},
+{
+  "step": 5,
+  "deletes": [
+    { "index": 2, "now": true }
+  ]
+}
+```
+
+An empty leaf is a declared `array` with `initialItemCount: 0`. Every inserted `jaggedArray` child must declare a complete descendant path ending in at least one leaf array. A child ID can belong to only one jagged parent. The legacy `<parent-id>-<index>` convention remains supported when `children` is omitted.
 
 `childDefaults` supplies shared array options and optional render settings. Set `orientation` only on the root jagged array, using `"horizontal"` or `"vertical"`. It determines the starting direction, and every descendant level alternates automatically. Descendant controls and `childDefaults` cannot set `orientation`.
 
 `childWidth` and `childHeight` set the leaf item size. `childGap` adds equal padding on every side between a parent slot and its child. Each parent slot and jagged container is sized recursively from those values and the occupied child content; explicit child layout dimensions and `fitContent` are not used. An empty jagged parent has a minimum size of `childWidth + 2 × childGap` by `childHeight + 2 × childGap`.
 
-Leaf arrays in a jagged tree support the set family normally and support inserts, updates, deletes, and takes when every operation specifies `"now": true`. Every jagged-parent slot must have a separately declared `array` or `jaggedArray` child. Declare an empty child array with `initialItemCount: 0`. Jagged-array parents cannot store values directly, update child containers, or insert child containers dynamically. They may remove a child container only when it is empty. Animated structural mutations (`now` omitted or `animateNow`) are rejected throughout the jagged-array tree because nested mutation animations are unsupported.
+Leaf arrays in a jagged tree support the set family normally and support inserts, updates, deletes, and takes when every structural operation specifies `"now": true`. Jagged parents support immediate inserts with `childId`, immediate recursive deletes by index, and appearance-only set actions on parent slots (for example, `borderColor` and `borderWidth`). A parent slot border highlight replaces the referenced child's actual renderer-frame border instead of drawing an inset overlay. Parent set actions cannot store displayed values or replace `childId`. Animated structural mutations (`now` omitted or `animateNow`) are rejected throughout the jagged-array tree because nested mutation animations are unsupported.
 
 ## Generic properties
 

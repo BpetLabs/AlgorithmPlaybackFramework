@@ -18,13 +18,15 @@ export interface IndexedBatchMutation<T extends ControlItem>
 
 export interface InsertBatchMutation<T extends ControlItem>
   extends BatchTiming {
-  input: BatchItemInput<T>;
+  input?: BatchItemInput<T>;
+  childId?: string;
   index?: number;
 }
 
 export interface EndBatchMutation<T extends ControlItem>
   extends BatchTiming {
-  input: BatchItemInput<T>;
+  input?: BatchItemInput<T>;
+  childId?: string;
 }
 
 export interface IndexedRemoval extends BatchTiming {

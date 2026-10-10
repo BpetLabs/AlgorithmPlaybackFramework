@@ -15,6 +15,7 @@ import { buildRenderItems } from "./utils/buildRenderItems";
 import { requirePositiveDimension } from "./utils/dimensions";
 
 export interface JaggedArrayChild {
+  childId?: string;
   index: number;
   parentItemId?: string;
   snapshot: Snapshot<ControlItem>;
@@ -70,6 +71,7 @@ interface MeasuredJaggedArray {
   height: number;
   defaultItemOffset: number;
   children: Map<number, MeasuredChild>;
+  childrenById: Map<string, MeasuredChild>;
   childrenByParentItemId: Map<string, MeasuredChild>;
 }
 
@@ -104,6 +106,7 @@ function measureJaggedArray(
   navigationDisableAnimations = false
 ): MeasuredJaggedArray {
   const children = new Map<number, MeasuredChild>();
+  const childrenById = new Map<string, MeasuredChild>();
   const childrenByParentItemId = new Map<string, MeasuredChild>();
 
   childArrays.forEach((child) => {
@@ -162,6 +165,7 @@ function measureJaggedArray(
         sizing: childSizing,
       };
       children.set(child.index, measuredChild);
+      childrenById.set(child.childId ?? child.snapshot.id, measuredChild);
       if (child.parentItemId) {
         childrenByParentItemId.set(child.parentItemId, measuredChild);
       }
@@ -188,12 +192,14 @@ function measureJaggedArray(
       sizing: childSizing,
     };
     children.set(child.index, measuredChild);
+    childrenById.set(child.childId ?? child.snapshot.id, measuredChild);
     if (child.parentItemId) {
       childrenByParentItemId.set(child.parentItemId, measuredChild);
     }
   });
 
   const resolveChild = (item: ControlItem, index: number) => {
+    if (item.childId) return childrenById.get(item.childId);
     if (childrenByParentItemId.size === 0) return children.get(index);
     return (
       childrenByParentItemId.get(item.id) ??
@@ -244,6 +250,7 @@ function measureJaggedArray(
     height: orientation === "vertical" ? mainSize : crossSize,
     defaultItemOffset,
     children,
+    childrenById,
     childrenByParentItemId,
   };
 }
@@ -322,7 +329,9 @@ export function JaggedArrayRenderer({
   );
 
   const getMeasuredChild = (item: ControlItem, index: number) =>
-    measured.childrenByParentItemId.size > 0
+    item.childId
+      ? measured.childrenById.get(item.childId)
+      : measured.childrenByParentItemId.size > 0
       ? measured.childrenByParentItemId.get(item.id) ??
         (item.linkId
           ? measured.childrenByParentItemId.get(item.linkId)
@@ -398,6 +407,11 @@ export function JaggedArrayRenderer({
       orientation: measuredChild.orientation,
       renderContent,
       borderWidth: childRender.borderWidth,
+      containerStyle: item.borderColor?.trim()
+        ? {
+            boxShadow: `0 0 0 ${item.borderWidth ?? borderWidth ?? 4}px ${item.borderColor}`,
+          }
+        : undefined,
     };
 
     return (
@@ -479,6 +493,7 @@ export function JaggedArrayRenderer({
       emptyItemText={emptyItemText}
       itemLabels={itemLabels}
       showCellBorders={showCellBorders}
+      showItemHighlights={false}
       orientation={orientation}
       renderContent={renderJaggedItem}
       borderWidth={borderWidth}

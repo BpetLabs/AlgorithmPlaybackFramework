@@ -38,6 +38,7 @@ function getJaggedChildren(
 
     return [
       {
+        childId: child.id,
         index: child.parentIndex,
         ...(parentItemId ? { parentItemId } : {}),
         snapshot: childSnapshot,

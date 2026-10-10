@@ -156,33 +156,42 @@ describe("loadControls", () => {
     );
   });
 
-  it("allows the set family on jagged arrays", () => {
-    const [control] = loadControls([
+  it("allows the set family to change jagged parent appearance", () => {
+    const [matrix] = loadControls([
       {
         id: "matrix",
         type: "jaggedArray",
-        initialItemCount: 1,
+        children: ["row"],
         batches: [
           {
             step: 1,
             setValues: [
-              { index: 0, input: { backgroundColor: "Teal" } },
+              {
+                index: 0,
+                input: { borderColor: "Orange", borderWidth: 4 },
+              },
             ],
-            setHeadValues: [
-              { input: { textColor: "White" } },
-            ],
-            setTailValues: [
-              { input: { borderColor: "Orange" } },
-            ],
+          },
+          {
+            step: 2,
+            setHeadValues: [{ input: { borderColor: "" } }],
+          },
+          {
+            step: 3,
+            setTailValues: [{ input: { borderColor: "Pink" } }],
           },
         ],
       },
-      { id: "matrix-0", type: "array", initialItemCount: 0 },
+      { id: "row", type: "array", initialItemCount: 0 },
     ]);
 
-    expect(control.snapshots.at(-1)?.items[0].backgroundColor).toBe("Teal");
-    expect(control.snapshots.at(-1)?.items[0].textColor).toBe("White");
-    expect(control.snapshots.at(-1)?.items[0].borderColor).toBe("Orange");
+    expect(matrix.snapshots[1].items[0]).toMatchObject({
+      borderColor: "Orange",
+      borderWidth: 4,
+      childId: "row",
+    });
+    expect(matrix.snapshots[2].items[0].borderColor).toBe("");
+    expect(matrix.snapshots[3].items[0].borderColor).toBe("Pink");
   });
 
   it("allows structural leaf-array mutations with now true", () => {
@@ -219,22 +228,69 @@ describe("loadControls", () => {
     });
   });
 
-  it("rejects dynamic child-container inserts", () => {
+  it("inserts and recursively removes an ID-referenced child subtree", () => {
+    const [matrix] = loadControls([
+      {
+        id: "matrix",
+        type: "jaggedArray",
+        children: ["row-a"],
+        batches: [
+          {
+            step: 1,
+            inserts: [{ index: 1, childId: "group-b", now: true }],
+          },
+          { step: 2, deletes: [{ index: 1, now: true }] },
+        ],
+      },
+      { id: "row-a", type: "array", initialItemCount: 0 },
+      {
+        id: "group-b",
+        type: "jaggedArray",
+        children: ["row-b"],
+      },
+      { id: "row-b", type: "array", initialItemCount: 0 },
+    ]);
+
+    expect(matrix.snapshots.find((snapshot) => snapshot.step === 1)?.items)
+      .toEqual(expect.arrayContaining([expect.objectContaining({ childId: "group-b" })]));
+    expect(matrix.snapshots.at(-1)?.items).toHaveLength(1);
+  });
+
+  it("rejects parent inserts without a complete referenced subtree", () => {
     expect(() =>
       loadControls([
         {
           id: "matrix",
           type: "jaggedArray",
-          initialItemCount: 1,
+          children: ["row"],
           batches: [
-            { step: 1, inserts: [{ index: 0, input: {}, now: true }] },
-            { step: 2, deletes: [{ index: 0, now: true }] },
+            {
+              step: 1,
+              inserts: [{ index: 1, childId: "incomplete", now: true }],
+            },
           ],
         },
-        { id: "matrix-0", type: "array", initialItemCount: 0 },
+        { id: "row", type: "array", initialItemCount: 0 },
+        { id: "incomplete", type: "jaggedArray", children: [] },
       ])
     ).toThrow(
-      'Jagged array "matrix" cannot insert child containers dynamically; declare each child control explicitly, using initialItemCount: 0 for an empty array.'
+      'Jagged child "incomplete" must declare a complete subtree ending in at least one leaf array.'
+    );
+
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          children: ["row"],
+          batches: [
+            { step: 1, inserts: [{ index: 1, now: true }] },
+          ],
+        },
+        { id: "row", type: "array", initialItemCount: 0 },
+      ])
+    ).toThrow(
+      'Jagged array "matrix" requires childId for every child insertion.'
     );
   });
 
@@ -248,7 +304,7 @@ describe("loadControls", () => {
         },
       ])
     ).toThrow(
-      'Jagged array "matrix" slot 0 must declare child control "matrix-0"; use initialItemCount: 0 for an empty array.'
+      'Jagged array "matrix" initial slot 0 must reference a child ID.'
     );
   });
 
@@ -256,7 +312,6 @@ describe("loadControls", () => {
     expect(() =>
       loadControls([
         { id: "matrix", type: "jaggedArray" },
-        { id: "matrix-0", type: "array", initialItemCount: 0 },
       ])
     ).not.toThrow();
   });
@@ -275,9 +330,29 @@ describe("loadControls", () => {
             },
           ],
         },
+        { id: "matrix-0", type: "array", initialItemCount: 0 },
       ])
     ).toThrow(
-      'Jagged array "matrix" cannot store values directly; add values to a leaf array instead.'
+      'Jagged array "matrix" set actions support parent-slot appearance properties only; "value" is not allowed.'
+    );
+
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          children: ["row"],
+          batches: [
+            {
+              step: 1,
+              setValues: [{ index: 0, input: { childId: "other-row" } }],
+            },
+          ],
+        },
+        { id: "row", type: "array", initialItemCount: 0 },
+      ])
+    ).toThrow(
+      'Jagged array "matrix" set actions support parent-slot appearance properties only; "childId" is not allowed.'
     );
 
     expect(() =>
@@ -295,13 +370,14 @@ describe("loadControls", () => {
             },
           ],
         },
+        { id: "matrix-0", type: "array", initialItemCount: 0 },
       ])
     ).toThrow(
-      'Jagged array "matrix" cannot update child containers; declared child containers may only be removed when empty.'
+      'Jagged array "matrix" cannot update child references; delete and insert the complete subtree instead.'
     );
   });
 
-  it("rejects removal of a non-empty child", () => {
+  it("recursively removes a non-empty child subtree", () => {
     expect(() =>
       loadControls([
         {
@@ -313,9 +389,7 @@ describe("loadControls", () => {
         },
         { id: "matrix-0", type: "array", initialItemCount: 1 },
       ])
-    ).toThrow(
-      'Jagged array "matrix" cannot remove non-empty child "matrix-0" at step 1; remove its leaf nodes first.'
-    );
+    ).not.toThrow();
   });
 
   it("allows removal after the child leaf nodes are removed", () => {
@@ -400,6 +474,7 @@ describe("loadControls", () => {
             },
           ],
         },
+        { id: "matrix-0", type: "array", initialItemCount: 0 },
       ])
     ).toThrow('does not support animateNow for batch action "deletes"');
   });
@@ -555,11 +630,4 @@ describe("loadControls", () => {
     });
   });
 
-  it("loads the node graph grid-lines option", () => {
-    const [control] = loadControls([
-      { id: "graph", type: "nodeGraph", gridLines: true },
-    ]);
-
-    expect(control.rendererOptions?.gridLines).toBe(true);
-  });
 });

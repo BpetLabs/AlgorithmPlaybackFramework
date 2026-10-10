@@ -83,6 +83,7 @@ describe("getControlRendererProps", () => {
     expect(props.navigationDisableAnimations).toBe(true);
     expect(props.childArrays).toEqual([
       {
+        childId: "child",
         index: 1,
         parentItemId: "parent-item-1",
         snapshot: childSnapshot,

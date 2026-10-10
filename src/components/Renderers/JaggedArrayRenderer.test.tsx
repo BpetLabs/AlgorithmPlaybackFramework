@@ -64,6 +64,41 @@ describe("JaggedArrayRenderer", () => {
     expect(markup).toContain("width:40px;height:30px");
   });
 
+  it("highlights only the referenced child frame in a nested jagged array", () => {
+    const markup = renderJagged([child({
+      snapshot: {
+        id: "matrix-0",
+        type: "jaggedArray",
+        step: 2,
+        items: [
+          { id: "nested-row-0", state: ControlItemState.Initial },
+        ],
+      },
+      childArrays: [child({
+        snapshot: {
+          id: "matrix-0-0",
+          type: "array",
+          step: 2,
+          items: childItems(2),
+        },
+      })],
+    })], 2, {
+      snapshot: {
+        ...parentSnapshot,
+        items: [
+          {
+            ...parentSnapshot.items[0],
+            borderColor: "Orange",
+            borderWidth: 4,
+          },
+        ],
+      },
+    });
+
+    expect(markup.match(/apf-renderer-frame/g)).toHaveLength(3);
+    expect(markup.match(/box-shadow:0 0 0 4px Orange/g)).toHaveLength(1);
+  });
+
   it("uses configured child width and height", () => {
     const markup = renderJagged([child()], 2, {
       childWidth: 35,
