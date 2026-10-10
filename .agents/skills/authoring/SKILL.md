@@ -135,6 +135,7 @@ Size controls from the executed trace:
 - Make items larger when their item text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums. The title length should not be used as justification to change the width of a control.
 - Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
 - If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
+- Always use Preferred sizes unless necessary to fit text or boundaries. 
 
 ### Arrays
 

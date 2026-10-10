@@ -66,8 +66,8 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 - Remove unnecessary empty batches, but preserve empty batches required to complete pending animations.
 
 ## Cross-control validation
-- After any change, verify that affected state updates are reflected consistently across directly coupled controls and steps.
 - Perform full-playback cross-control validation only for new playbacks, changes to pause locations or execution flow, schema-wide transformations, or an explicit audit request. Otherwise preserve unrelated controls and report observed out-of-scope issues without auditing or changing them.
+- After any change, verify that affected state updates are reflected consistently across directly coupled controls and steps.
 - Within the selected validation scope, verify each control has the required initial and runtime state for its purpose; reject unexplained empty scaffolds.
 - Ensure that a change to one control’s step progression is not left inconsistent with the others.
 - If a mutation or transition affects multiple controls, update each control’s corresponding state rather than only one.

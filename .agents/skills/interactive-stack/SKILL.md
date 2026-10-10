@@ -60,9 +60,6 @@ When the stack represents a call stack:
 - Choose indexed, head, or tail addressing only after identifying the required mutation effect and logical position.
 
 ## Validation
-
-- Verify every in-scope stack, call stack, queue, or priority queue represents the relevant input and runtime state.
-- Verify every mutation uses the operation matching its data-structure mode and visual end.
 - For a stack, verify last-in-first-out behavior at the same visual end.
 - For a FIFO queue, verify additions and removals occur at opposite visual ends in first-in-first-out order.
 - For a priority queue, verify every displayed state remains sorted in the configured min/max order, equal-priority ordering is correct, and every removal targets the highest-priority displayed entry.

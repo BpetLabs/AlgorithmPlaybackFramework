@@ -44,8 +44,7 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - Start each paragraph after `\n\n` with a capital letter.
 
 ## Validation
-- Verify every in-scope text control is populated at each selected step where its represented narration or output exists.
-- For new playbacks and trace changes, validate every message against the shared execution trace. For a localized edit, validate only the affected messages plus the preceding and following messages needed to detect duplicated or omitted narration.
+- For new playbacks and trace changes, validate every message against the shared execution trace. For a localized edit, validate only the affected messages plus the preceding and following messages.
 - Verify an operation previewed on one step is not redundantly restated as completed on the next step.
 - Verify relevant unpaused control-flow effects between pauses are not omitted merely because they do not mutate a value.
 - Verify that every console output is absent on its statement pause, appears only on the immediate next step, and is cleared on the step after that.
