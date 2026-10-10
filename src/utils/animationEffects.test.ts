@@ -8,6 +8,7 @@ import {
   reset,
   setZIndex,
   shake,
+  shakeAndDisappear,
   warpIn,
 } from "./animationEffects";
 
@@ -44,6 +45,18 @@ describe("animation effects", () => {
     expect(start.mock.calls[1][0]).toMatchObject({
       y: [0, 3, 0, -3, 0],
       transition: { duration: 1, repeat: Infinity },
+    });
+  });
+
+  it("keeps shaking while a take removal disappears", async () => {
+    await shakeAndDisappear(controls, 0.75);
+
+    expect(start).toHaveBeenCalledTimes(2);
+    expect(start.mock.calls[0][0]).toEqual({ zIndex: 200, transition: { duration: 0 } });
+    expect(start.mock.calls[1][0]).toEqual({
+      y: [0, 3, 0, -3, 0],
+      opacity: [1, 0.75, 0.5, 0.25, 0],
+      transition: { duration: 0.75, ease: "linear" },
     });
   });
 

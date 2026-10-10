@@ -12,6 +12,7 @@ const effects = vi.hoisted(() => ({
   reset: vi.fn(),
   setZIndex: vi.fn(),
   shake: vi.fn(),
+  shakeAndDisappear: vi.fn(),
   warpIn: vi.fn(),
 }));
 
@@ -146,7 +147,7 @@ describe("animation state hooks", () => {
     expect(effects.moveThenFallRotateAndDisappear).not.toHaveBeenCalled();
   });
 
-  it("fades update and take removals in place", async () => {
+  it("fades update removals and shakes take removals while disappearing", async () => {
     const { rerender } = renderHook(
       ({ state }) => useAnimateRemoving(item(state), 0, 20, 30, false, controls, false),
       { initialProps: { state: ControlItemState.RemovingUpdate } }
@@ -157,7 +158,8 @@ describe("animation state hooks", () => {
     effects.disappear.mockClear();
     effects.move.mockClear();
     rerender({ state: ControlItemState.RemovingTake });
-    await waitFor(() => expect(effects.disappear).toHaveBeenCalledWith(controls, 1));
+    await waitFor(() => expect(effects.shakeAndDisappear).toHaveBeenCalledWith(controls, 1));
+    expect(effects.disappear).not.toHaveBeenCalled();
     expect(effects.move).not.toHaveBeenCalled();
   });
 

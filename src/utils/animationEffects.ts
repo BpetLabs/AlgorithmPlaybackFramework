@@ -103,6 +103,22 @@ export async function disappear(
   });
 }
 
+export async function shakeAndDisappear(
+  controls: AnimationController,
+  duration: number,
+){
+  await safeStart(controls, {
+    zIndex: 200,
+    transition: { duration: 0 },
+  });
+
+  await safeStart(controls, {
+    y: [0, 3, 0, -3, 0],
+    opacity: [1, 0.75, 0.5, 0.25, 0],
+    transition: { duration: duration, ease: "linear" },
+  });
+}
+
 export async function reset(
   controls: AnimationController,
   x: number,

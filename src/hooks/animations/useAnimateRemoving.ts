@@ -2,7 +2,7 @@
 import type { AnimationController } from "../../common/models/animation";
 import { useRef } from "react";
 import { ControlItem, ControlItemState, isRemovingState } from "../../common/models/controlItem";
-import { moveThenFallRotateAndDisappear, disappear, setZIndex } from "../../utils/animationEffects";
+import { moveThenFallRotateAndDisappear, disappear, setZIndex, shakeAndDisappear } from "../../utils/animationEffects";
 import { useIsomorphicLayoutEffect } from "../useIsomorphicLayoutEffect";
 
 export function useAnimateRemoving(item: ControlItem,
@@ -114,7 +114,7 @@ export function useAnimateRemoving(item: ControlItem,
         else if (isRemovingTake) {
           (async () => {
             if (cancelled) return;
-            await disappear(controls, 1);
+            await shakeAndDisappear(controls, 1);
             if (cancelled) return;
 
             if(item.collapse !== false) {
