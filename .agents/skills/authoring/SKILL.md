@@ -8,14 +8,10 @@ user-invocable: true
 
 Use this skill to create, populate, or modify a complete playback page and its control layout.
 
-## Documentation
-
-- Read the repository's [control reference](../../../playbackcontrols.md) for renderer behavior, supported properties, and mutation semantics.
-- Examples in documentation are just examples and should not override these rules.
 
 ## Route to applicable interactive skills
 
-Before creating or editing an AnimatedPlayback, inventory every control in the playback and read `interactive-generic` plus every specialized interactive skill that matches a control:
+Before creating or editing an AnimatedPlayback, inventory every control in the playback.
 
 - `staticText` code control: `interactive-code-highlights`
 - `dictionary` or locals control: `interactive-dictionary`
@@ -23,8 +19,9 @@ Before creating or editing an AnimatedPlayback, inventory every control in the p
 - `array`, jagged array, or matrix control: `interactive-array`
 - `stack`, queue, or priority queue control: `interactive-stack`
 - `nodeGraph` control: `interactive-graph`
+- `interactive-generic` - Covers all controls
 
-Announce the complete applicable skill list before editing. Do not proceed until every applicable skill has been read. Do not load specialized interactive skills for control types that are absent.
+Do not load specialized interactive skills for control types that are absent. 
 
 Every declared control is part of the authoring scope, including controls supplied by the starter template and controls the user did not mention explicitly. Use the matching specialized skill to populate and synchronize each control when the input or executed trace contains state that the control represents.
 
@@ -193,6 +190,6 @@ Child preferences:
 - Verify every pause and global step is synchronized across the relevant controls.
 - Verify every declared control is populated for the state it represents. Reject unexplained empty scaffolds, including default Code, Play by Play, and Locals controls.
 - For every control, record its maximum base rectangle, decoration overflow, animation-state boundaries found by scanning all steps, and final effective rectangle. Verify that their union is contained and maintains the additional 25 px separation, subject to the explicit `falling` and `nodeGraph` exceptions.
-- Before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
+- Before building or previewing the starter, run `npm.cmd run build` at the repository root if a framework change was made. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
 - Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.
 - If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.
