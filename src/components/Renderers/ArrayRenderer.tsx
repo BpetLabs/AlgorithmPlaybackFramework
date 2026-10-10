@@ -24,6 +24,10 @@ interface ArrayRendererProps extends RendererProps {
   itemLabels?: string[];
   orientation?: ArrayOrientation;
   showCellBorders?: boolean;
+  resolveItemSize?: (
+    item: ControlItem,
+    options: { index: number; isSlotOwner: boolean }
+  ) => { width?: number; height?: number } | undefined;
 }
 
 export function ArrayRenderer({
@@ -41,6 +45,7 @@ export function ArrayRenderer({
   itemLabels = [],
   orientation = "horizontal",
   showCellBorders = true,
+  resolveItemSize,
   renderContent,
   borderWidth,
   containerClassName,
@@ -151,12 +156,18 @@ export function ArrayRenderer({
 
       <div className="relative flex-grow">
         {renderItems.map(({ item, collapsedIndex, offset, itemOffset }) => {
+          const itemIndex = slotIndexByOffset.get(offset) ?? 0;
+          const isSlotOwner = slotOwnerIdByOffset.get(offset) === item.id;
+          const resolvedSize = resolveItemSize?.(item, {
+            index: itemIndex,
+            isSlotOwner,
+          });
           const baseItemWidth = isHorizontal
-            ? item.itemOffset ?? itemWidth ?? itemOffset
-            : itemWidth ?? divWidth;
+            ? resolvedSize?.width ?? item.itemOffset ?? itemWidth ?? itemOffset
+            : resolvedSize?.width ?? itemWidth ?? divWidth;
           const baseItemHeight = isHorizontal
-            ? itemHeight ?? divHeight
-            : item.itemOffset ?? itemHeight ?? itemOffset;
+            ? resolvedSize?.height ?? itemHeight ?? divHeight
+            : resolvedSize?.height ?? item.itemOffset ?? itemHeight ?? itemOffset;
           const resolvedItemWidth = isHorizontal
             ? Math.max(baseItemWidth - resolvedItemGap * 2, 0)
             : Math.max(baseItemWidth - resolvedCrossAxisGap * 2, 0);
@@ -173,8 +184,8 @@ export function ArrayRenderer({
               slotHeight={isHorizontal ? baseItemHeight : itemOffset}
               slotWidth={isHorizontal ? itemOffset : baseItemWidth}
               collapsedIndex={collapsedIndex}
-              itemIndex={slotIndexByOffset.get(offset) ?? 0}
-              isSlotOwner={slotOwnerIdByOffset.get(offset) === item.id}
+              itemIndex={itemIndex}
+              isSlotOwner={isSlotOwner}
               orientation={orientation}
               mainOffset={
                 offset + resolvedItemGap

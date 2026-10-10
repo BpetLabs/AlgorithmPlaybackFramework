@@ -33,10 +33,13 @@ function getJaggedChildren(
     const childSnapshot = latestSnapshots[child.id];
     if (!childSnapshot || child.parentIndex === undefined) return [];
     const childArrays = getJaggedChildren(child, latestSnapshots);
+    const parentItemId =
+      control.snapshots[0]?.items[child.parentIndex]?.id;
 
     return [
       {
         index: child.parentIndex,
+        ...(parentItemId ? { parentItemId } : {}),
         snapshot: childSnapshot,
         options: child.rendererOptions ?? {},
         render:

@@ -13,6 +13,17 @@ describe("buildRenderItems", () => {
     expect(buildRenderItems([], new Set(), false, 50)).toEqual([]);
   });
 
+  it("does not render removed items", () => {
+    expect(
+      buildRenderItems(
+        [item("removed", ControlItemState.Removed), item("current")],
+        new Set(),
+        false,
+        50
+      ).map(({ item: entry }) => entry.id)
+    ).toEqual(["current"]);
+  });
+
   it("calculates cumulative offsets using per-item overrides", () => {
     const result = buildRenderItems(
       [item("a", undefined, { itemOffset: 20 }), item("b"), item("c", undefined, { itemOffset: 30 })],

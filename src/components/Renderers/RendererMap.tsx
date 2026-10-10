@@ -30,6 +30,9 @@ export type BaseRendererProps = {
 
 export type AnimatedRendererProps = BaseRendererProps & {
   disableAnimations: boolean;
+  childGap?: number;
+  childWidth?: number;
+  childHeight?: number;
   defaultItemOffset?: number;
   itemGap?: number;
   itemCrossAxisGap?: number;

@@ -49,6 +49,13 @@ describe("getControlRendererProps", () => {
     const parentSnapshot = snapshot("parent", 2);
     const childSnapshot = snapshot("child", 2);
     const parent = control({
+      snapshots: [{
+        ...parentSnapshot,
+        items: [
+          { id: "parent-item-0", state: ControlItemState.Initial },
+          { id: "parent-item-1", state: ControlItemState.Initial },
+        ],
+      }],
       childControls: [
         control({
           id: "child",
@@ -77,6 +84,7 @@ describe("getControlRendererProps", () => {
     expect(props.childArrays).toEqual([
       {
         index: 1,
+        parentItemId: "parent-item-1",
         snapshot: childSnapshot,
         options: { itemHeight: 30 },
         render: { title: "Current" },
@@ -93,6 +101,7 @@ describe("getControlRendererProps", () => {
     const rowSnapshot = snapshot("row", 0);
     const parent = control({
       type: "jaggedArray",
+      snapshots: [parentSnapshot],
       childControls: [
         control({
           id: "matrix",
@@ -122,6 +131,7 @@ describe("getControlRendererProps", () => {
     expect(props.childArrays).toMatchObject([
       {
         index: 0,
+        parentItemId: "parent-item",
         snapshot: matrixSnapshot,
         childArrays: [{ index: 1, snapshot: rowSnapshot }],
       },

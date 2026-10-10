@@ -91,7 +91,7 @@ Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx
 
 ## Configure controls in `Page.tsx`
 
-Add each control's layout and title. Prefer renderer defaults for all optional control properties. As a documentation exception, inspect the current renderer code for each applicable item-based control and explicitly set its resolved default `defaultItemOffset` in `configureProps` so the value is visible in the page.
+Add each control's layout and title. Prefer renderer defaults for all optional control properties. As a documentation exception, inspect the current renderer code for each applicable item-based control and explicitly set its resolved default `defaultItemOffset` in `configureProps` so the value is visible in the page. For jagged arrays, explicitly set `childGap`, `childWidth`, and `childHeight` instead; jagged slot sizes are derived recursively.
 
 Override a renderer default only when the user requests different behavior or the executed trace demonstrates that the default cannot satisfy fit, containment, clearance, readability, or semantic requirements. When an override is necessary, set the smallest possible group of properties and preserve defaults for everything else.
 
@@ -101,7 +101,7 @@ Increase `defaultItemOffset` only for a specific measured requirement, such as t
 
 - Prevent partial terminal slots in every array- or stack-based control.
 - For a fixed-size control, resolve its `defaultItemOffset` and rendered main-axis size. Require the size to be within 0.01 px of a whole multiple of the offset: `abs(size - round(size / offset) * offset) <= 0.01`.
-- Use width for horizontal arrays and jagged arrays. Use height for vertical arrays, jagged arrays, stacks, dictionaries, text controls, and memory stacks.
+- Use width for horizontal arrays. Use height for vertical arrays, stacks, dictionaries, text controls, and memory stacks. Jagged arrays fit recursively in both dimensions and do not use this fixed-slot check.
 - Apply the check to the base layout and every step-specific render size. If it fails, adjust the main-axis size to a whole number of default slots while preserving containment and clearance.
 
 Reserve a stable effective boundary for every control. Calculate it from the union of the control's maximum rendered state, decorations, and every traced animation path subject to the rules below. Reserve that complete boundary from the first visible frame.
@@ -146,16 +146,16 @@ Size controls from the executed trace:
 Parent preferences:
 
 - Location: top-left.
-`itemGap` or `itemCrossAxisGap`: Must be set to 10 px
-- `orientation`: `"horizontal"`. 
-- Minimum `defaultItemOffset`: 45 px.
-- Set `itemGap` or `itemCrossAxisGap` only when the default spacing cannot provide the required clearance.
-- Size the parent so every child has 10 px of clearance on each side.
+- Set `orientation` only on the root jagged array. Prefer `"horizontal"` unless the user requests `"vertical"`.
+- Set `childGap` to 10 px unless the user requests another value.
+- Set `childWidth` and `childHeight` to at least 25 px and large enough for the traced leaf content.
+- Do not set jagged `defaultItemOffset`, `itemGap`, `itemCrossAxisGap`, or `fitContent`; the renderer recursively derives every parent slot and container size from `childGap`, `childWidth`, and `childHeight`.
+- Leaf arrays in a jagged tree support value and structural mutations, with structural mutations requiring `now: true`. Jagged parents may insert only empty child containers and may remove only empty child containers; never put values directly on a jagged parent or update its child containers.
+- An empty jagged parent occupies at least `childWidth + 2 × childGap` by `childHeight + 2 × childGap`.
 
 Child preferences:
 
-- Minimum `defaultItemOffset`: 25 px.
-- Preferred orientation: `"vertical"`. Set `childDefaults.orientation` explicitly because child orientation otherwise follows the configured jagged-array orientation.
+- Do not configure `orientation` on descendants or in `childDefaults`. Every level alternates automatically from the root orientation.
 
 ### Stacks
 

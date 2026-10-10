@@ -9,7 +9,45 @@
     {
       "id": "playbyplay",
       "type": "text",
-      "batches": []
+      "initialItemCount": 1,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            { "index": 0, "input": { "value": "This example demonstrates insert and delete animations in a three-dimensional jagged array." } }
+          ]
+        },
+        {
+          "step": 1,
+          "setValues": [
+            { "index": 0, "input": { "value": "The value at cube[0][0][1] was deleted." } }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            { "index": 0, "input": { "value": "The value 13 was inserted at cube[0][1][0]." } }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            { "index": 0, "input": { "value": "The array is ready for another mutation." } }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            { "index": 0, "input": { "value": "Jagged parents accept only empty child containers; values belong in leaf arrays." } }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            { "index": 0, "input": { "value": "Hope you learned something!" } }
+          ]
+        }
+      ]
     },
     {
       "id": "locals",
@@ -19,15 +57,7 @@
     {
       "id": "cube",
       "type": "jaggedArray",
-      "batches": [
-        {
-          "step": 0,
-          "setValues": [
-            { "index": 0, "input": { "itemOffset": 140 } },
-            { "index": 1, "input": { "itemOffset": 180 } }
-          ]
-        }
-      ]
+      "batches": []
     },
     {
       "id": "cube-0",
@@ -45,6 +75,12 @@
             { "index": 0, "input": { "value": "1", "backgroundColor": "RoyalBlue" } },
             { "index": 1, "input": { "value": "2", "backgroundColor": "RoyalBlue" } }
           ]
+        },
+        {
+          "step": 1,
+          "deletes": [
+            { "index": 1, "now": true }
+          ]
         }
       ]
     },
@@ -59,6 +95,12 @@
             { "index": 0, "input": { "value": "3", "backgroundColor": "Teal" } },
             { "index": 1, "input": { "value": "4", "backgroundColor": "Teal" } },
             { "index": 2, "input": { "value": "5", "backgroundColor": "Teal" } }
+          ]
+        },
+        {
+          "step": 2,
+          "inserts": [
+            { "index": 0, "input": { "value": "13", "backgroundColor": "Teal" }, "now": true }
           ]
         }
       ]

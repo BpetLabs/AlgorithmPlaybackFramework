@@ -327,6 +327,7 @@ Displays an outer array whose cells can contain child arrays of different length
 - Uses the normal array options for the outer and child arrays.
 - Define children as separate `array` controls named `<parent-id>-<index>`.
 - Supports shared child defaults through `childDefaults`.
+- Always fits every jagged level to its child content.
 - Use it for jagged arrays, adjacency lists, and nested collections.
 
 Child controls use the parent ID followed by their zero-based parent index. They are attached to the parent automatically and are not rendered as independent top-level controls:
@@ -337,11 +338,10 @@ Child controls use the parent ID followed by their zero-based parent index. They
     "id": "matrix",
     "type": "jaggedArray",
     "orientation": "vertical",
-    "defaultItemOffset": 60,
-    "itemGap": 10,
+    "childGap": 5,
+    "childWidth": 40,
+    "childHeight": 40,
     "childDefaults": {
-      "orientation": "horizontal",
-      "defaultItemOffset": 40,
       "emptyItemText": "0"
     },
     "batches": []
@@ -361,9 +361,11 @@ Child controls use the parent ID followed by their zero-based parent index. They
 ]
 ```
 
-`childDefaults` supplies shared array options and optional render settings. Orientations alternate by nesting depth (`horizontal`, `vertical`, `horizontal`, and so on) unless configured otherwise. An explicit child setting, including `orientation`, overrides the corresponding default, so children can use different orientations.
+`childDefaults` supplies shared array options and optional render settings. Set `orientation` only on the root jagged array, using `"horizontal"` or `"vertical"`. It determines the starting direction, and every descendant level alternates automatically. Descendant controls and `childDefaults` cannot set `orientation`.
 
-The parent jagged array's `itemGap`, `itemCrossAxisGap`, `width`, and `height` determine the space available for each child array.
+`childWidth` and `childHeight` set the leaf item size. `childGap` adds equal padding on every side between a parent slot and its child. Each parent slot and jagged container is sized recursively from those values and the occupied child content; explicit child layout dimensions and `fitContent` are not used. An empty jagged parent has a minimum size of `childWidth + 2 × childGap` by `childHeight + 2 × childGap`.
+
+Leaf arrays in a jagged tree support the set family normally and support inserts, updates, deletes, and takes when every operation specifies `"now": true`. Jagged-array parents cannot store values directly or update child containers. They may insert only empty child containers and may remove a child container only when it is empty. Animated structural mutations (`now` omitted or `animateNow`) are rejected throughout the jagged-array tree because nested mutation animations are unsupported.
 
 ## Generic properties
 
@@ -467,7 +469,9 @@ Set these layout options at the top level of a control in JSON or assign them in
 
 | Option | Effect |
 | --- | --- |
-| `orientation` | Uses `"horizontal"` or `"vertical"` layout. Arrays support both; stacks remain vertical. |
+| `orientation` | Uses `"horizontal"` or `"vertical"` layout. Arrays and root jagged arrays support both; jagged descendants alternate automatically and stacks remain vertical. |
+| `childGap` | Jagged arrays: padding on every side between a parent slot and its fitted child. |
+| `childWidth`, `childHeight` | Jagged arrays: rendered width and height of leaf items used for recursive sizing. |
 | `defaultItemOffset` | Default slot size and distance between consecutive item positions. |
 | `itemWidth`, `itemHeight` | Default rendered size of each item box. |
 | `itemGap` | Inset on both sides of an item along the main axis. |
@@ -476,7 +480,7 @@ Set these layout options at the top level of a control in JSON or assign them in
 | `itemLabels` | Labels displayed beside array slots. |
 | `showCellBorders` | Shows or hides structural slot borders. |
 | `emptyItemText` | Configured value displayed in array slots without item text, such as `"0"`. |
-| `fitContent` | Sets an array, jagged array, or stack's main-axis size to its occupied content size while keeping its title at the original layout height. |
+| `fitContent` | Sets an array or stack's main-axis size to its occupied content size while keeping its title at the original layout height. Jagged arrays always fit recursively in both dimensions. |
 
 `defaultItemOffset` controls both the spacing between item positions and the background grid. A horizontal array divides its width into slots; a vertical array or stack divides its height into slots. Grid lines continue through unused space unless `showCellBorders` is `false`.
 

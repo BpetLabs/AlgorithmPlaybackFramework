@@ -16,6 +16,10 @@ import {
 } from "./Renderers/RendererMap";
 import { RendererType } from "./Renderers/rendererConfig";
 import { buildRenderItems } from "./Renderers/utils/buildRenderItems";
+import {
+  getJaggedArrayDimensions,
+  type JaggedArrayRendererProps,
+} from "./Renderers/JaggedArrayRenderer";
 
 const CONTROL_TITLE_OFFSET = 30;
 
@@ -88,10 +92,17 @@ export function InteractiveControlRenderer({
   let resolvedHeight = height;
   let resolvedTop = top;
 
-  if (
+  if (type === RendererType.JaggedArray) {
+    const fitted = getJaggedArrayDimensions(
+      props as unknown as JaggedArrayRendererProps
+    );
+    resolvedWidth = fitted.width;
+    resolvedHeight = fitted.height;
+    props.divWidth = fitted.width;
+    props.divHeight = fitted.height;
+  } else if (
     props.fitContent === true &&
     (type === RendererType.Array ||
-      type === RendererType.JaggedArray ||
       type === RendererType.Stack)
   ) {
     const defaultItemOffset =

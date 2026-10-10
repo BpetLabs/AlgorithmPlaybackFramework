@@ -7,7 +7,6 @@ import {
   type ControlItem,
   type ControlDefinition,
   type ControlRenderLayout,
-  type JaggedArrayChild,
   type LoadedControl,
   type Snapshot,
 } from "algorithm-playback-framework";
@@ -57,18 +56,6 @@ function collectSnapshots(
     ...control.snapshots,
     ...(control.childControls?.flatMap(collectSnapshots) ?? []),
   ];
-}
-
-function configureNestedArrays(children?: JaggedArrayChild[]) {
-  children?.forEach((matrix) => {
-    matrix.options.defaultItemOffset = 50;
-    matrix.options.itemGap = 6;
-    matrix.options.itemCrossAxisGap = 6;
-
-    matrix.childArrays?.forEach((row) => {
-      row.options.defaultItemOffset = 40;
-    });
-  });
 }
 
 export default function PlaybackPage() {
@@ -138,12 +125,9 @@ export default function PlaybackPage() {
                   defaultHeaderTitle={visualizationControlTitles[control.id]}
                   configureProps={(id, props) => {
                     if (id === "cube") {
-                      props.defaultItemOffset = 160;
-                      props.itemGap = 5;
-                      props.itemCrossAxisGap = 5;
-                      configureNestedArrays(
-                        props.childArrays as JaggedArrayChild[] | undefined
-                      );
+                      props.childGap = 5;
+                      props.childWidth = 40;
+                      props.childHeight = 40;
                     }
                   }}
                 />

@@ -91,6 +91,50 @@ describe("InteractiveControlRenderer", () => {
     expect(markup).toContain("height:60px");
   });
 
+  it("fits jagged arrays to recursively measured child content", () => {
+    const jaggedSnapshot = {
+      id: "items",
+      type: "jaggedArray",
+      step: 0,
+      items: [{ id: "row-slot", state: ControlItemState.Initial }],
+    };
+    const rowSnapshot = {
+      id: "row",
+      type: "array",
+      step: 0,
+      items: [
+        { id: "row-0", state: ControlItemState.Initial },
+        { id: "row-1", state: ControlItemState.Initial },
+      ],
+    };
+    const markup = renderControl(
+      control({
+        type: "jaggedArray",
+        snapshots: [jaggedSnapshot],
+        rendererOptions: { orientation: "horizontal" },
+        childControls: [
+          control({
+            id: "row",
+            parentIndex: 0,
+            snapshots: [rowSnapshot],
+            rendererOptions: { orientation: "horizontal" },
+          }),
+        ],
+      }),
+      { items: jaggedSnapshot, row: rowSnapshot },
+      {
+        configureProps: (_, props) => {
+          props.childGap = 5;
+          props.childWidth = 40;
+          props.childHeight = 40;
+        },
+      }
+    );
+
+    expect(markup).toContain("width:50px");
+    expect(markup).toContain("height:90px");
+  });
+
   it("fits stacks to their occupied height while preserving the bottom edge and title position", () => {
     const stackSnapshot = { ...snapshot, type: "stack" };
     const markup = renderControl(

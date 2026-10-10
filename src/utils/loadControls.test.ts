@@ -20,7 +20,6 @@ describe("loadControls", () => {
       },
       {
         id: "matrix-2",
-        orientation: "horizontal",
         itemHeight: 30,
         render: {
           visible: true,
@@ -62,6 +61,9 @@ describe("loadControls", () => {
       {
         id: "cube",
         type: "jaggedArray",
+        childGap: 5,
+        childWidth: 40,
+        childHeight: 30,
       },
       {
         id: "cube-0",
@@ -76,6 +78,11 @@ describe("loadControls", () => {
 
     expect(controls).toHaveLength(1);
     expect(controls[0].snapshots[0].items).toHaveLength(1);
+    expect(controls[0].rendererOptions).toMatchObject({
+      childGap: 5,
+      childWidth: 40,
+      childHeight: 30,
+    });
 
     const matrix = controls[0].childControls?.[0];
     expect(matrix).toMatchObject({
@@ -93,6 +100,356 @@ describe("loadControls", () => {
       parentIndex: 0,
       rendererOptions: { orientation: "horizontal" },
     });
+  });
+
+  it("uses the root orientation as the alternating starting direction", () => {
+    const [cube] = loadControls([
+      { id: "cube", type: "jaggedArray", orientation: "vertical" },
+      { id: "cube-0", type: "jaggedArray" },
+      { id: "cube-0-0", type: "array" },
+    ]);
+
+    expect(cube.rendererOptions?.orientation).toBe("vertical");
+    expect(cube.childControls?.[0]?.rendererOptions?.orientation).toBe(
+      "horizontal"
+    );
+    expect(
+      cube.childControls?.[0]?.childControls?.[0]?.rendererOptions?.orientation
+    ).toBe("vertical");
+  });
+
+  it("rejects orientations on jagged-array descendants", () => {
+    expect(() =>
+      loadControls([
+        { id: "matrix", type: "jaggedArray" },
+        { id: "matrix-0", type: "array", orientation: "horizontal" },
+      ])
+    ).toThrow(
+      'Control "matrix-0" cannot set orientation because jagged-array descendants alternate automatically.'
+    );
+  });
+
+  it("rejects orientation in jagged child defaults", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          childDefaults: { orientation: "vertical" },
+        } as never,
+      ])
+    ).toThrow(
+      'Jagged array "matrix" childDefaults cannot set orientation because descendants alternate automatically.'
+    );
+  });
+
+  it("rejects unsupported jagged-array orientations", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          orientation: "diagonal",
+        } as never,
+      ])
+    ).toThrow(
+      'Jagged array "matrix" orientation must be "horizontal" or "vertical".'
+    );
+  });
+
+  it("allows the set family on jagged arrays", () => {
+    const [control] = loadControls([
+      {
+        id: "matrix",
+        type: "jaggedArray",
+        initialItemCount: 1,
+        batches: [
+          {
+            step: 1,
+            setValues: [
+              { index: 0, input: { backgroundColor: "Teal" } },
+            ],
+            setHeadValues: [
+              { input: { textColor: "White" } },
+            ],
+            setTailValues: [
+              { input: { borderColor: "Orange" } },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    expect(control.snapshots.at(-1)?.items[0].backgroundColor).toBe("Teal");
+    expect(control.snapshots.at(-1)?.items[0].textColor).toBe("White");
+    expect(control.snapshots.at(-1)?.items[0].borderColor).toBe("Orange");
+  });
+
+  it("allows structural leaf-array mutations with now true", () => {
+    const actions = [
+      ["inserts", [{ index: 0, input: { value: "insert" }, now: true }]],
+      ["headInserts", [{ input: { value: "head" }, now: true }]],
+      ["tailInserts", [{ input: { value: "tail" }, now: true }]],
+      ["updates", [{ index: 0, input: { value: "update" }, now: true }]],
+      ["deletes", [{ index: 0, now: true }]],
+      ["headDeletes", { count: 1, now: true }],
+      ["tailDeletes", { count: 1, now: true }],
+      ["takes", [{ index: 0, now: true }]],
+      ["headTakes", { count: 1, now: true }],
+      ["tailTakes", { count: 1, now: true }],
+    ] as const;
+
+    actions.forEach(([action, operation]) => {
+      expect(() =>
+        loadControls([
+          {
+            id: "matrix",
+            type: "jaggedArray",
+          },
+          {
+            id: "matrix-0",
+            type: "array",
+            initialItemCount: 1,
+            batches: [
+              { step: 1, [action]: operation },
+            ],
+          },
+        ])
+      ).not.toThrow();
+    });
+  });
+
+  it("allows empty child-container inserts and removals", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          initialItemCount: 1,
+          batches: [
+            { step: 1, inserts: [{ index: 0, input: {}, now: true }] },
+            { step: 2, deletes: [{ index: 0, now: true }] },
+          ],
+        },
+      ])
+    ).not.toThrow();
+  });
+
+  it("rejects value-bearing inserts on jagged-array parents", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          batches: [
+            {
+              step: 1,
+              inserts: [
+                { index: 0, input: { value: "14" }, now: true },
+              ],
+            },
+          ],
+        },
+      ])
+    ).toThrow(
+      'Jagged array "matrix" cannot insert value-bearing items; only empty child containers may be inserted. Add values to a leaf array instead.'
+    );
+  });
+
+  it("rejects direct values and structural updates on jagged parents", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          initialItemCount: 1,
+          batches: [
+            {
+              step: 1,
+              setValues: [{ index: 0, input: { value: "14" } }],
+            },
+          ],
+        },
+      ])
+    ).toThrow(
+      'Jagged array "matrix" cannot store values directly; add values to a leaf array instead.'
+    );
+
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          initialItemCount: 1,
+          batches: [
+            {
+              step: 1,
+              updates: [
+                { index: 0, input: {}, now: true },
+              ],
+            },
+          ],
+        },
+      ])
+    ).toThrow(
+      'Jagged array "matrix" cannot update child containers; only empty child containers may be inserted or removed.'
+    );
+  });
+
+  it("rejects removal of a non-empty child", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          batches: [
+            { step: 1, deletes: [{ index: 0, now: true }] },
+          ],
+        },
+        { id: "matrix-0", type: "array", initialItemCount: 1 },
+      ])
+    ).toThrow(
+      'Jagged array "matrix" cannot remove non-empty child "matrix-0" at step 1; remove its leaf nodes first.'
+    );
+  });
+
+  it("allows removal after the child leaf nodes are removed", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          batches: [
+            { step: 2, deletes: [{ index: 0, now: true }] },
+          ],
+        },
+        {
+          id: "matrix-0",
+          type: "array",
+          initialItemCount: 1,
+          batches: [
+            { step: 1, deletes: [{ index: 0, now: true }] },
+          ],
+        },
+      ])
+    ).not.toThrow();
+  });
+
+  it("requires now true for structural jagged-array mutations", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          initialItemCount: 1,
+          batches: [
+            {
+              step: 1,
+              inserts: [{ index: 0, input: { value: "new row" } }],
+            },
+          ],
+        },
+      ])
+    ).toThrow(
+      'Control "matrix" in a jagged array requires now: true for batch action "inserts" at step 1.'
+    );
+
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          initialItemCount: 1,
+          batches: [
+            {
+              step: 1,
+              inserts: [
+                {
+                  index: 0,
+                  input: { value: "animated" },
+                  animateNow: true,
+                },
+              ],
+            },
+          ],
+        },
+      ])
+    ).toThrow('does not support animateNow for batch action "inserts"');
+
+    expect(() =>
+      loadControls([
+        {
+          id: "matrix",
+          type: "jaggedArray",
+          initialItemCount: 1,
+          batches: [
+            {
+              step: 1,
+              deletes: [{ index: 0, now: true, animateNow: true }],
+            },
+          ],
+        },
+      ])
+    ).toThrow('does not support animateNow for batch action "deletes"');
+  });
+
+  it("applies immediate-only mutations to every jagged-array descendant", () => {
+    expect(() =>
+      loadControls([
+        { id: "matrix", type: "jaggedArray" },
+        { id: "matrix-0", type: "jaggedArray" },
+        {
+          id: "matrix-0-0",
+          type: "array",
+          initialItemCount: 1,
+          batches: [
+            {
+              step: 1,
+              deletes: [{ index: 0 }],
+            },
+          ],
+        },
+      ])
+    ).toThrow(
+      'Control "matrix-0-0" in a jagged array requires now: true for batch action "deletes" at step 1.'
+    );
+
+    expect(() =>
+      loadControls([
+        { id: "matrix", type: "jaggedArray" },
+        { id: "matrix-0", type: "jaggedArray" },
+        {
+          id: "matrix-0-0",
+          type: "array",
+          initialItemCount: 1,
+          batches: [
+            {
+              step: 1,
+              deletes: [{ index: 0, now: true }],
+            },
+          ],
+        },
+      ])
+    ).not.toThrow();
+  });
+
+  it("keeps animation support for arrays outside jagged-array trees", () => {
+    expect(() =>
+      loadControls([
+        {
+          id: "items",
+          type: "array",
+          initialItemCount: 1,
+          batches: [
+            {
+              step: 1,
+              deletes: [{ index: 0 }],
+            },
+            { step: 2 },
+          ],
+        },
+      ])
+    ).not.toThrow();
   });
 
   it("accumulates render overrides across snapshot steps", () => {

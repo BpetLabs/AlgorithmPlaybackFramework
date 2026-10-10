@@ -60,6 +60,7 @@ export function buildRenderItems<T extends ControlItem>(
 
   for (let index = 0; index < snapshot.length; index++) {
     const item = snapshot[index];
+    if (item.state === ControlItemState.Removed) continue;
     if (
       item.state === ControlItemState.Empty &&
       item.linkId &&
