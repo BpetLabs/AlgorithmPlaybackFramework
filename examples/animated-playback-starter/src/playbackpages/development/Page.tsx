@@ -4,8 +4,12 @@ import {
   SliderControl,
   loadControls,
   useControlManager,
+  type ControlItem,
   type ControlDefinition,
   type ControlRenderLayout,
+  type JaggedArrayChild,
+  type LoadedControl,
+  type Snapshot,
 } from "algorithm-playback-framework";
 
 import playback from "./playback.json";
@@ -29,7 +33,7 @@ const defaultControlLayouts: Record<string, ControlRenderLayout> = {
 
 // Coordinates are relative to visualizationArea.
 const visualizationControlLayouts: Record<string, ControlRenderLayout> = {
-  graph: { top: 30, left: 5, width: 875, height: 370 },
+  cube: { top: 30, left: 5, width: 320, height: 160 },
 };
 
 const defaultControlTitles: Record<string, string> = {
@@ -39,12 +43,33 @@ const defaultControlTitles: Record<string, string> = {
 };
 
 const visualizationControlTitles: Record<string, string> = {
-  graph: "Empty Graph",
+  cube: "Triple Jagged Array",
 };
 
 const defaultControlIds = new Set(["code", "playbyplay", "locals"]);
 
 const sliderLayout = { top: 70, left: 500, width: 400, height: 50 };
+
+function collectSnapshots(
+  control: LoadedControl<ControlItem>
+): Snapshot<ControlItem>[] {
+  return [
+    ...control.snapshots,
+    ...(control.childControls?.flatMap(collectSnapshots) ?? []),
+  ];
+}
+
+function configureNestedArrays(children?: JaggedArrayChild[]) {
+  children?.forEach((matrix) => {
+    matrix.options.defaultItemOffset = 50;
+    matrix.options.itemGap = 6;
+    matrix.options.itemCrossAxisGap = 6;
+
+    matrix.childArrays?.forEach((row) => {
+      row.options.defaultItemOffset = 40;
+    });
+  });
+}
 
 export default function PlaybackPage() {
   const controls = useMemo(
@@ -53,11 +78,7 @@ export default function PlaybackPage() {
   );
 
   const snapshots = useMemo(
-    () =>
-      controls.flatMap((control) => [
-        ...control.snapshots,
-        ...(control.childControls?.flatMap((child) => child.snapshots) ?? []),
-      ]),
+    () => controls.flatMap(collectSnapshots),
     [controls]
   );
 
@@ -80,7 +101,7 @@ export default function PlaybackPage() {
           <header className="playback-header">
             <h1>Animated Playback</h1>
             <p className="playback-description">
-              Playback Description
+              A three-dimensional jagged array with differently sized rows.
             </p>
           </header>
 
@@ -116,21 +137,13 @@ export default function PlaybackPage() {
                   layout={visualizationControlLayouts[control.id]}
                   defaultHeaderTitle={visualizationControlTitles[control.id]}
                   configureProps={(id, props) => {
-                    if (id === "graph") {
-                      props.containerStyle = { boxShadow: "none" };
-                      props.graphLayout = {
-                        columns: 8,
-                        rows: 4,
-                        paddingX: 0.00,
-                        paddingY: 0.00,
-                        offsetX: 0,
-                        offsetY: 0,
-                        colGap: 0.04,
-                        rowGap: 0.06,
-                        columnSizing: { values: [1, 1, 1, 1, 1, 1, 1, 1] },
-                        rowSizing: { values: [1, 1, 1, 1] },
-                      };
-                      props.gridLines = true;
+                    if (id === "cube") {
+                      props.defaultItemOffset = 160;
+                      props.itemGap = 5;
+                      props.itemCrossAxisGap = 5;
+                      configureNestedArrays(
+                        props.childArrays as JaggedArrayChild[] | undefined
+                      );
                     }
                   }}
                 />

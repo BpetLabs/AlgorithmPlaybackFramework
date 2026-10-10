@@ -83,4 +83,48 @@ describe("getControlRendererProps", () => {
       },
     ]);
   });
+
+  it("builds recursively nested jagged child props", () => {
+    const parentSnapshot = snapshot("parent", 0);
+    const matrixSnapshot = {
+      ...snapshot("matrix", 0),
+      type: "jaggedArray",
+    };
+    const rowSnapshot = snapshot("row", 0);
+    const parent = control({
+      type: "jaggedArray",
+      childControls: [
+        control({
+          id: "matrix",
+          type: "jaggedArray",
+          parentIndex: 0,
+          childControls: [
+            control({ id: "row", parentIndex: 1 }),
+          ],
+        }),
+      ],
+    });
+
+    const props = getControlRendererProps({
+      control: parent,
+      snapshot: parentSnapshot,
+      latestSnapshots: {
+        parent: parentSnapshot,
+        matrix: matrixSnapshot,
+        row: rowSnapshot,
+      },
+      dimensions: { width: 200, height: 100 },
+      renderConfig: {},
+      currentStep: 0,
+      disableAnimations: true,
+    });
+
+    expect(props.childArrays).toMatchObject([
+      {
+        index: 0,
+        snapshot: matrixSnapshot,
+        childArrays: [{ index: 1, snapshot: rowSnapshot }],
+      },
+    ]);
+  });
 });

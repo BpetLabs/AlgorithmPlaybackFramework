@@ -15,6 +15,7 @@ export interface JaggedArrayChild {
   snapshot: Snapshot<ControlItem>;
   options: ArrayRendererOptions;
   render: ControlRenderConfig;
+  childArrays?: JaggedArrayChild[];
 }
 
 export interface JaggedArrayChildDefaults extends ArrayRendererOptions {
@@ -45,10 +46,14 @@ function getChildDimensions(
   fallbackOffset: number,
   fallbackWidth: number,
   fallbackHeight: number,
-  disableAnimations: boolean
+  disableAnimations: boolean,
+  fallbackOrientation: ArrayRendererOptions["orientation"]
 ) {
   const orientation =
-    defaults.orientation ?? child.options.orientation ?? "horizontal";
+    child.options.orientation ??
+    defaults.orientation ??
+    fallbackOrientation ??
+    "horizontal";
   const offset =
     child.options.defaultItemOffset ??
     defaults.defaultItemOffset ??
@@ -181,18 +186,50 @@ export function JaggedArrayRenderer({
     const childDisableAnimations =
       navigationDisableAnimations ||
       (currentStep !== undefined && child.snapshot.step !== currentStep);
+    const childOrientation =
+      child.options.orientation ??
+      childDefaults.orientation ??
+      (orientation === "horizontal" ? "vertical" : "horizontal");
     const dimensions = getChildDimensions(
       child,
       childDefaults,
       childOffset,
       parentItemWidth,
       parentItemHeight,
-      childDisableAnimations
+      childDisableAnimations,
+      childOrientation
     );
     const labelHeight = Math.max(
       (parentItemHeight - dimensions.height) / 2,
       0
     );
+
+    const childRendererProps = {
+      snapshot: child.snapshot,
+      disableAnimations: childDisableAnimations,
+      defaultItemOffset: childOffset,
+      divHeight: dimensions.height,
+      divWidth: dimensions.width,
+      itemGap: childGap,
+      itemCrossAxisGap:
+        child.options.itemCrossAxisGap ??
+        childDefaults.itemCrossAxisGap ??
+        0,
+      itemWidth: child.options.itemWidth ?? childDefaults.itemWidth,
+      itemHeight: child.options.itemHeight ?? childDefaults.itemHeight,
+      preInsertGap:
+        child.options.preInsertGap ?? childDefaults.preInsertGap,
+      emptyItemText:
+        child.options.emptyItemText ?? childDefaults.emptyItemText,
+      itemLabels: child.options.itemLabels ?? childDefaults.itemLabels,
+      showCellBorders:
+        child.options.showCellBorders ??
+        childDefaults.showCellBorders ??
+        true,
+      orientation: childOrientation,
+      renderContent,
+      borderWidth: childRender.borderWidth,
+    };
 
     return (
       <div
@@ -212,44 +249,16 @@ export function JaggedArrayRenderer({
             transform: "translate(-50%, -50%)",
           }}
         >
-          <ArrayRenderer
-            snapshot={child.snapshot}
-            disableAnimations={childDisableAnimations}
-            defaultItemOffset={childOffset}
-            divHeight={dimensions.height}
-            divWidth={dimensions.width}
-            itemGap={childGap}
-            itemCrossAxisGap={
-              child.options.itemCrossAxisGap ??
-              childDefaults.itemCrossAxisGap ??
-              0
-            }
-            itemWidth={
-              child.options.itemWidth ?? childDefaults.itemWidth
-            }
-            itemHeight={
-              child.options.itemHeight ?? childDefaults.itemHeight
-            }
-            preInsertGap={
-              child.options.preInsertGap ?? childDefaults.preInsertGap
-            }
-            emptyItemText={
-              child.options.emptyItemText ?? childDefaults.emptyItemText
-            }
-            itemLabels={
-              child.options.itemLabels ?? childDefaults.itemLabels
-            }
-            showCellBorders={
-              child.options.showCellBorders ??
-              childDefaults.showCellBorders ??
-              true
-            }
-            orientation={
-              childDefaults.orientation ?? child.options.orientation
-            }
-            renderContent={renderContent}
-            borderWidth={childRender.borderWidth}
-          />
+          {child.snapshot.type === "jaggedArray" ? (
+            <JaggedArrayRenderer
+              {...childRendererProps}
+              childArrays={child.childArrays}
+              currentStep={currentStep}
+              navigationDisableAnimations={navigationDisableAnimations}
+            />
+          ) : (
+            <ArrayRenderer {...childRendererProps} />
+          )}
         </div>
 
         {labelHeight > 0 && (

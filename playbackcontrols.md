@@ -361,7 +361,7 @@ Child controls use the parent ID followed by their zero-based parent index. They
 ]
 ```
 
-`childDefaults` supplies shared array options and optional render settings. An explicit child setting overrides the corresponding default. Child orientation is shared and cannot vary by row.
+`childDefaults` supplies shared array options and optional render settings. Orientations alternate by nesting depth (`horizontal`, `vertical`, `horizontal`, and so on) unless configured otherwise. An explicit child setting, including `orientation`, overrides the corresponding default, so children can use different orientations.
 
 The parent jagged array's `itemGap`, `itemCrossAxisGap`, `width`, and `height` determine the space available for each child array.
 

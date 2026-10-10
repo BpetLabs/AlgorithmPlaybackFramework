@@ -46,7 +46,7 @@ describe("loadControls", () => {
       parentId: "matrix",
       parentIndex: 2,
       rendererOptions: {
-        orientation: "vertical",
+        orientation: "horizontal",
         itemWidth: 80,
         itemHeight: 30,
       },
@@ -54,6 +54,44 @@ describe("loadControls", () => {
         visible: true,
         layout: { width: 100, height: 40 },
       },
+    });
+  });
+
+  it("loads recursively nested jagged arrays", () => {
+    const controls = loadControls([
+      {
+        id: "cube",
+        type: "jaggedArray",
+      },
+      {
+        id: "cube-0",
+        type: "jaggedArray",
+      },
+      {
+        id: "cube-0-0",
+        type: "array",
+        initialItemCount: 2,
+      },
+    ]);
+
+    expect(controls).toHaveLength(1);
+    expect(controls[0].snapshots[0].items).toHaveLength(1);
+
+    const matrix = controls[0].childControls?.[0];
+    expect(matrix).toMatchObject({
+      id: "cube-0",
+      type: "jaggedArray",
+      parentId: "cube",
+      parentIndex: 0,
+      rendererOptions: { orientation: "vertical" },
+    });
+    expect(matrix?.snapshots[0].items).toHaveLength(1);
+    expect(matrix?.childControls?.[0]).toMatchObject({
+      id: "cube-0-0",
+      type: "array",
+      parentId: "cube-0",
+      parentIndex: 0,
+      rendererOptions: { orientation: "horizontal" },
     });
   });
 

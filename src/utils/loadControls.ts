@@ -143,16 +143,18 @@ function buildJaggedChildDefinition<T extends ControlItem>(
   explicitChild: ControlDefinition<T>
 ): ControlDefinition<T> {
   const defaults = parent.childDefaults ?? {};
+  const parentOrientation: ArrayOrientation =
+    parent.orientation ?? "horizontal";
   const inheritedOrientation: ArrayOrientation =
-    defaults.orientation ?? parent.orientation ?? "horizontal";
+    defaults.orientation ??
+    (parentOrientation === "horizontal" ? "vertical" : "horizontal");
 
   return {
     ...defaults,
     ...explicitChild,
     id: `${parent.id}-${index}`,
-    type: "array",
-    // Child orientation is global and cannot vary by row.
-    orientation: inheritedOrientation,
+    type: explicitChild.type ?? "array",
+    orientation: explicitChild.orientation ?? inheritedOrientation,
     render: mergeRenderConfig(defaults.render, explicitChild?.render),
   };
 }
@@ -217,42 +219,48 @@ export function loadControls<T extends ControlItem = ControlItem>(
       jaggedChildrenByParent.set(parent.id, children);
     });
 
+  const buildControlTree = (
+    control: ControlDefinition<T>,
+    parentId?: string,
+    parentIndex?: number
+  ): LoadedControl<T> => {
+    const type = control.type ?? "array";
+    const children = jaggedChildrenByParent.get(control.id) ?? [];
+    const requiredItemCount = children.length
+      ? children[children.length - 1].index + 1
+      : 0;
+    const resolvedControl =
+      type === "jaggedArray"
+        ? {
+            ...control,
+            initialItemCount: Math.max(
+              control.initialItemCount ?? 0,
+              requiredItemCount
+            ),
+          }
+        : control;
+    const loaded = buildLoadedControl(
+      resolvedControl,
+      type,
+      parentId,
+      parentIndex
+    );
+
+    if (type !== "jaggedArray") return loaded;
+
+    loaded.childControls = children.map(({ index, definition }) => {
+      const childDefinition = buildJaggedChildDefinition(
+        control,
+        index,
+        definition
+      );
+      return buildControlTree(childDefinition, control.id, index);
+    });
+
+    return loaded;
+  };
+
   return resolvedControls
     .filter((control) => !attachedChildIds.has(control.id))
-    .map((control) => {
-      const type = control.type ?? "array";
-      const children = jaggedChildrenByParent.get(control.id) ?? [];
-      const requiredItemCount = children.length
-        ? children[children.length - 1].index + 1
-        : 0;
-      const resolvedControl =
-        type === "jaggedArray"
-          ? {
-              ...control,
-              initialItemCount: Math.max(
-                control.initialItemCount ?? 0,
-                requiredItemCount
-              ),
-            }
-          : control;
-      const loaded = buildLoadedControl(resolvedControl, type);
-
-      if (type !== "jaggedArray") return loaded;
-
-      loaded.childControls = children.map(({ index, definition }) => {
-        const childDefinition = buildJaggedChildDefinition(
-          control,
-          index,
-          definition
-        );
-        return buildLoadedControl(
-          childDefinition,
-          "array",
-          control.id,
-          index
-        );
-      });
-
-      return loaded;
-    });
+    .map((control) => buildControlTree(control));
 }

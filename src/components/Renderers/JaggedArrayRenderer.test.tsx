@@ -18,7 +18,11 @@ const child = (overrides: Record<string, unknown> = {}) => ({
     step: 2,
     items: [{ id: "child-0", state: ControlItemState.RemovingInPlace, value: "Child" }],
   },
-  options: { fitContent: true, defaultItemOffset: 30 },
+  options: {
+    orientation: "horizontal",
+    fitContent: true,
+    defaultItemOffset: 30,
+  },
   render: {},
   ...overrides,
 });
@@ -53,7 +57,7 @@ describe("JaggedArrayRenderer", () => {
 
   it("uses a child item offset independent of the parent default", () => {
     const markup = renderJagged([
-      child({ options: { fitContent: true } }),
+      child({ options: { orientation: "horizontal", fitContent: true } }),
     ]);
 
     expect(markup).toContain("width:40px");
@@ -92,5 +96,66 @@ describe("JaggedArrayRenderer", () => {
     );
 
     expect(markup).toContain("width:30px;height:60px");
+  });
+
+  it("lets a child orientation override the shared default", () => {
+    const markup = renderJagged(
+      [
+        child({
+          options: {
+            orientation: "horizontal",
+            fitContent: true,
+            defaultItemOffset: 30,
+          },
+        }),
+      ],
+      2,
+      { childDefaults: { orientation: "vertical" } }
+    );
+
+    expect(markup).toContain("width:30px;height:80px");
+  });
+
+  it("alternates the child orientation when none is configured", () => {
+    const markup = renderJagged([
+      child({
+        options: { fitContent: true, defaultItemOffset: 30 },
+      }),
+    ]);
+
+    expect(markup).toContain("width:100px;height:30px");
+  });
+
+  it("renders nested jagged children recursively", () => {
+    const markup = renderJagged([
+      child({
+        snapshot: {
+          id: "matrix-0",
+          type: "jaggedArray",
+          step: 2,
+          items: [
+            { id: "row-0", state: ControlItemState.Initial },
+          ],
+        },
+        childArrays: [
+          child({
+            snapshot: {
+              id: "matrix-0-0",
+              type: "array",
+              step: 2,
+              items: [
+                {
+                  id: "value-0",
+                  state: ControlItemState.Initial,
+                  value: "Nested",
+                },
+              ],
+            },
+          }),
+        ],
+      }),
+    ]);
+
+    expect(markup).toContain('data-value="Nested"');
   });
 });

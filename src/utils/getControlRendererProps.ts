@@ -25,6 +25,28 @@ export interface ControlRendererPropsArgs {
 export type ResolvedControlRendererProps = BaseRendererProps &
   Record<string, unknown>;
 
+function getJaggedChildren(
+  control: LoadedControl<ControlItem>,
+  latestSnapshots: Record<string, Snapshot<ControlItem>>
+): JaggedArrayChild[] {
+  return (control.childControls ?? []).flatMap((child) => {
+    const childSnapshot = latestSnapshots[child.id];
+    if (!childSnapshot || child.parentIndex === undefined) return [];
+    const childArrays = getJaggedChildren(child, latestSnapshots);
+
+    return [
+      {
+        index: child.parentIndex,
+        snapshot: childSnapshot,
+        options: child.rendererOptions ?? {},
+        render:
+          child.renderByStep?.[childSnapshot.step] ?? child.render ?? {},
+        ...(childArrays.length ? { childArrays } : {}),
+      },
+    ];
+  });
+}
+
 export function getControlRendererProps({
   control,
   snapshot,
@@ -50,25 +72,6 @@ export function getControlRendererProps({
   props.currentStep = currentStep;
   props.navigationDisableAnimations = disableAnimations;
 
-  const childArrays: JaggedArrayChild[] = control.childControls.flatMap(
-    (child) => {
-      const childSnapshot = latestSnapshots[child.id];
-      if (!childSnapshot || child.parentIndex === undefined) return [];
-
-      return [
-        {
-          index: child.parentIndex,
-          snapshot: childSnapshot,
-          options: child.rendererOptions ?? {},
-          render:
-            child.renderByStep?.[childSnapshot.step] ??
-            child.render ??
-            {},
-        },
-      ];
-    }
-  );
-
-  props.childArrays = childArrays;
+  props.childArrays = getJaggedChildren(control, latestSnapshots);
   return props;
 }
