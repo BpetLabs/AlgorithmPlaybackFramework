@@ -1,11 +1,11 @@
 ---
 name: interactive-code-highlights
-description: "Create or edit code-highlight batches in AnimatedPlayback JSON, including pause-to-pause execution, conditionals, loops, calls, returns, method borders, and cleanup."
+description: "Create, populate, edit, audit, or synchronize code controls and code-highlight batches in AnimatedPlayback JSON, including source embedding, pause-to-pause execution, calls, returns, method borders, and cleanup. Use whenever a playback contains a code control."
 ---
 
 # Interactive Code Highlights
 
-Use this skill when updating the code-highlight section of AnimatedPlayback JSON.
+Use this skill whenever an AnimatedPlayback contains a code control, including new playback authoring and trace changes. Populate `staticValue` with the supplied source and synchronize highlights with every requested pause.
 
 Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for code highlights.
 
@@ -129,6 +129,7 @@ Compare this complete destination frame with the prior frame only after all four
 
 ## Validation
 
+- Verify every declared code control contains its intended source. When the playback has execution pauses, verify it has synchronized highlight batches rather than an empty scaffold.
 - After authoring, perform a second independent logic pass starting from the source, input, and pause list rather than from the existing highlight batches. Re-derive every pause-to-pause event sequence and complete semantic frame, compare it line-by-line with the generated JSON, and resolve every discrepancy before completion.
 - List the ordered dynamic events between every adjacent pair of pauses before reviewing ranges.
 - Verify current-step executed, evaluated, and structurally traversed lines are Clear unless a stronger current semantic applies.

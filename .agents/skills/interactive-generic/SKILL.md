@@ -1,12 +1,16 @@
 ---
 name: interactive-generic
-description: "Base rules for all AnimatedPlayback JSON, including animation timing, target selection, cleanup, statefulness, and formatting. Use alongside every specialized interactive skill."
+description: "Create, populate, edit, audit, or synchronize AnimatedPlayback controls using shared rules for completeness, timing, targeting, cleanup, statefulness, and formatting. Use alongside every specialized interactive skill."
 user-invocable: true
 ---
 
 # Interactive Generic Control Rules
 
 This is the base skill for all AnimatedPlayback JSON work. Always apply it alongside any specialized interactive skill. Specialized skills extend these rules and take precedence only for their scoped control-specific behavior; the user's explicit instructions take precedence over both.
+
+## Declared-control completeness
+- When updating a playback, treat every declared control—including default or preexisting controls—as part of the playback. Preserve controls the user did not specify unless the requested update affects them or requires changes to keep them synchronized.
+- Populate and synchronize a control whenever the input or executed trace contains state that the control is intended to represent. Do not leave it as an empty scaffold merely because another control is the focus of the request.
 
 ## Primary objective
 - Keep control state consistent across steps, especially around pauses and transitions.
@@ -62,6 +66,7 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 
 ## Cross-control validation
 - After any change, verify that the affected state updates are reflected consistently across all relevant controls and steps.
+- Verify every declared control has the required initial and runtime state for its purpose; reject unexplained empty scaffolds.
 - Ensure that a change to one control’s step progression is not left inconsistent with the others.
 - If a mutation or transition affects multiple controls, update each control’s corresponding state rather than only one.
 - When a transition leaves an outgoing node visible, verify that cleanup intended for that old visual node explicitly uses `target: "outgoing"` rather than accidentally changing the current node.

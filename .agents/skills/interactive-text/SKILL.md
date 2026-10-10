@@ -1,11 +1,11 @@
 ---
 name: interactive-text
-description: Create, edit, audit, or synchronize Play by Play narration, console output, and other text-control batches with pause steps in AnimatedPlayback JSON.
+description: Create, populate, edit, audit, or synchronize Play by Play narration, console output, and other text-control batches with pause steps in AnimatedPlayback JSON. Use whenever a playback contains a text control.
 ---
 
 # Interactive Text
 
-Apply these rules to text controls in AnimatedPlayback JSON unless the user requests different wording.
+Apply these rules whenever an AnimatedPlayback contains a text control, including new playback authoring and trace changes, unless the user requests different wording. Populate Play by Play at the introduction, every execution pause, and the conclusion. Populate console or other text controls at the steps where their represented text exists.
 
 Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for Play by Play, console output, and other text controls.
 
@@ -44,7 +44,7 @@ Before editing, read and apply [interactive-generic](../interactive-generic/SKIL
 - Start each paragraph after `\n\n` with a capital letter.
 
 ## Validation
-
+- Verify every declared text control is populated at each step where its represented narration or output exists. Reject unexplained empty Play by Play, console, or other text scaffolds.
 - Replay the steps and verify that each message accurately previews the current paused statement and includes only completed work that was not already previewed in the preceding message.
 - Verify an operation previewed on one step is not redundantly restated as completed on the next step.
 - Verify relevant unpaused control-flow effects between pauses are not omitted merely because they do not mutate a value.

@@ -1,12 +1,12 @@
 ---
 name: interactive-array
-description: "Create or edit array and jagged-array/matrix controls in AnimatedPlayback JSON, including initialization, mutations, node colors, and affected-index borders. Use for array or matrix control batches, not dictionaries, text, code highlights, or graph layouts."
+description: "Create, populate, edit, audit, or synchronize array and jagged-array/matrix controls in AnimatedPlayback JSON, including initialization, mutations, node colors, and affected-index borders. Use whenever a playback contains an array or matrix control.
 user-invocable: true
 ---
 
 # Interactive Array and Matrix Rules
 
-Use these rules when editing `array` and `jaggedArray` controls. Preserve the user's explicit animation and color choices when they differ from these defaults.
+Use these rules whenever an AnimatedPlayback contains an `array` or `jaggedArray` control, including new playback authoring and trace changes. Populate the control with the relevant input and runtime state. Preserve the user's explicit animation and color choices when they differ from these defaults.
 
 Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for arrays and matrices.
 
@@ -35,6 +35,7 @@ Before editing, read and apply [interactive-generic](../interactive-generic/SKIL
 
 ## Validation
 
+- Verify each declared array or matrix contains the relevant input or runtime values and stays synchronized with the trace. Accept empty batches only when static/default state fully defines an intentionally static control or the scenario has no relevant array state.
 - Verify explicit initialization uses `setValues`, while default-backed nodes have no initialization action. Verify paused value replacements use `updates`, while already-completed value replacements use `setValues`.
 - Verify every value-setting action includes the intended background color. Verify default-backed nodes remain untouched until an action assigns them a value and color together.
 - For a highlighted paused update, verify the stationary array index owns the border through `setValues`, the incoming `updates.input` has no `borderColor`, and the next batch clears the displaced node with `target: "outgoing"`. Across consecutive updates, verify current-index highlights move separately and the replacement/current node is cleared only when its own logical highlight ends.

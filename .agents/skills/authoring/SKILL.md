@@ -1,12 +1,12 @@
 ---
 name: authoring
-description: "Create or update Algorithm Playback starter pages, including Page.tsx layouts, playback.json scaffolding, source-code embedding, trace sizing, and control placement."
+description: "Create, populate, or update complete Algorithm Playback starter pages, including Page.tsx layouts, playback.json state, source-code embedding, trace sizing, control placement, and cross-control synchronization."
 user-invocable: true
 ---
 
 # Algorithm Playback Page Authoring
 
-Use this skill to create or modify a playback page and its initial control layout.
+Use this skill to create, populate, or modify a complete playback page and its control layout.
 
 ## Documentation
 
@@ -25,6 +25,8 @@ Before creating or editing an AnimatedPlayback, inventory every control in the p
 - `nodeGraph` control: `interactive-graph`
 
 Announce the complete applicable skill list before editing. Do not proceed until every applicable skill has been read. Do not load specialized interactive skills for control types that are absent.
+
+Every declared control is part of the authoring scope, including controls supplied by the starter template and controls the user did not mention explicitly. Use the matching specialized skill to populate and synchronize each control when the input or executed trace contains state that the control represents.
 
 Before completion, validate each control against the validation section of its matching interactive skill. Also apply the cross-control validation rules from `interactive-generic` to verify that every global step remains synchronized.
 
@@ -75,7 +77,7 @@ When a source-code file is provided and the `code` control exists:
 
 ## Create the controls in `playback.json`
 
-Create requested controls with empty `batches` before authoring their state transitions.
+Create requested controls with empty `batches` only as temporary scaffolding before authoring their state transitions. Before completion, populate every declared control according to its purpose and the executed trace, subject only to the documented intentionally-static or no-relevant-state exception.
 
 For a control created later by the running algorithm rather than supplied as input, initialize it with `"render": { "visible": false }` and make it visible in the batch where the runtime value becomes available.
 
@@ -189,6 +191,7 @@ Child preferences:
 - Do not report the playback complete while any known skill-rule violation remains.
 - Verify the embedded `staticValue` matches the source file.
 - Verify every pause and global step is synchronized across the relevant controls.
+- Verify every declared control is populated for the state it represents. Reject unexplained empty scaffolds, including default Code, Play by Play, and Locals controls.
 - For every control, record its maximum base rectangle, decoration overflow, animation-state boundaries found by scanning all steps, and final effective rectangle. Verify that their union is contained and maintains the additional 25 px separation, subject to the explicit `falling` and `nodeGraph` exceptions.
 - Before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
 - Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.

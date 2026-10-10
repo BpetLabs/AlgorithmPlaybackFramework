@@ -1,11 +1,11 @@
 ---
 name: interactive-graph
-description: "Use when creating or editing parent-child tree layouts in nodeGraph grid JSON, including arrow direction, anchors, placement, and spacing."
+description: "Create, populate, edit, audit, or synchronize parent-child tree controls in nodeGraph grid JSON, including nodes, edges, traversal state, arrow direction, anchors, placement, and spacing. Use whenever a playback contains a parent-child nodeGraph."
 ---
 
 # Interactive Grid Tree Rules
 
-Use these rules when creating or editing a parent-child tree in a `nodeGraph` grid.
+Use these rules whenever an AnimatedPlayback contains a parent-child tree in a `nodeGraph` grid, including new playback authoring and trace changes. Populate the nodes and edges, then synchronize relevant traversal state at every pause.
 
 Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for node-graph grid layout.
 
@@ -72,6 +72,7 @@ Measure horizontal distance between node centers and compare it with one resolve
 
 ## Validation
 
+- Verify every declared tree graph contains the nodes and edges required by its input or runtime state and stays synchronized with traversal pauses. Reject unexplained empty graph scaffolds.
 - Verify every edge references an existing child and parent, with `from` as the child and `to` as the parent; reject reversed relationships.
 - Verify the child is below its parent.
 - Verify every arrowhead appears at the child and points downward from the parent.

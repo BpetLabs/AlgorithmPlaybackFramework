@@ -1,12 +1,14 @@
 ---
 name: interactive-dictionary
-description: "Use when editing local-variable dictionary controls in AnimatedPlayback JSON."
+description: "Create, populate, edit, audit, or synchronize local-variable dictionary controls in AnimatedPlayback JSON. Use whenever a playback contains a dictionary or Locals control, including new playback authoring or trace changes."
 user-invocable: true
 ---
 
 # Interactive Dictionary State
 
-Use this skill when updating the local-variable dictionary shown alongside the code animation.
+Use this skill whenever an AnimatedPlayback contains a local-variable dictionary, including new playback authoring and trace changes.
+
+A default Locals control is part of the playback even when the user does not mention it explicitly. If the animated method has relevant arguments or local variables, populate the control and synchronize it at every pause.
 
 Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for local-variable dictionaries.
 
@@ -31,6 +33,7 @@ Before editing, read and apply [interactive-generic](../interactive-generic/SKIL
 - For nested loops, display every loop index whose scope is active at the current pause.
 
 ## Validation
+- Verify every declared Locals or dictionary control displays the relevant variables for the current paused activation. Reject empty batches when the executed method has relevant arguments or local variables.
 - Confirm changed variables get a single Orange border.
 - Ensure unchanged variables do not keep stale borders.
 - Ensure out-of-scope variables are removed promptly and paused assignments do not show future values.

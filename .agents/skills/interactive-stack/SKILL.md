@@ -1,12 +1,12 @@
 ---
 name: interactive-stack
-description: "Create or edit stack-rendered controls used as stacks, call stacks, FIFO queues, or priority queues, including frame contents, return values, visual-end mutations, and priority order."
+description: "Create, populate, edit, audit, or synchronize stack-rendered controls used as stacks, call stacks, FIFO queues, or priority queues, including initialization, frame contents, return values, visual-end mutations, and priority order. Use whenever a playback contains one of these controls."
 user-invocable: true
 ---
 
 # Interactive Stack, Queue, and Priority Queue Rules
 
-Use these rules for one-dimensional interactive controls that visually represent a stack, FIFO queue, or priority queue. Preserve an explicitly requested direction or priority convention when it differs from these defaults.
+Use these rules whenever an AnimatedPlayback contains a one-dimensional control that represents a stack, call stack, FIFO queue, or priority queue, including new playback authoring and trace changes. Populate its initial and runtime state and synchronize every relevant mutation or call transition.
 
 Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for stacks, queues, and priority queues.
 
@@ -61,6 +61,7 @@ When the stack represents a call stack:
 
 ## Validation
 
+- Verify every declared stack, call stack, queue, or priority queue represents the relevant input and runtime state. Reject unexplained empty scaffolds and distinguish them from a deliberately empty data-structure state.
 - Verify every mutation uses the operation matching its data-structure mode and visual end.
 - For a stack, verify last-in-first-out behavior at the same visual end.
 - For a FIFO queue, verify additions and removals occur at opposite visual ends in first-in-first-out order.
