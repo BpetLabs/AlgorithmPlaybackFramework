@@ -157,7 +157,7 @@ Child preferences:
 
 ### Stacks
 
-- Preferred location: right side, with the static stack's right edge one stack width from the visualization area's right wall. For area width `A` and stack width `W`, the preferred `left` is `A - 2W`; do not interpret the stack's `left` value itself as the wall clearance.
+- Preferred location: right side
 - Align the static stack's bottom edge with the visualization area's floor.
 - Preferred width: 100 px.
 - Minimum `defaultItemOffset`: 25 px.

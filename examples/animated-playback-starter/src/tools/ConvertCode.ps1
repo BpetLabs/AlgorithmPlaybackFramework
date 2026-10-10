@@ -3,8 +3,21 @@
     [string]$InputFile
 )
 
-# Read lines, trim trailing spaces, escape quotes, and join with \n
-$singleLine = (Get-Content $InputFile | ForEach-Object {
+# Read lines and reject code that is too wide for the playback display.
+$lines = @(Get-Content $InputFile)
+$longLines = for ($index = 0; $index -lt $lines.Count; $index++) {
+    $trimmedLine = $lines[$index].TrimEnd()
+    if ($trimmedLine.Length -gt 62) {
+        "Line $($index + 1): $($trimmedLine.Length) characters"
+    }
+}
+
+if ($longLines) {
+    throw "Lines should not exceed 62 characters:`n$($longLines -join "`n")"
+}
+
+# Trim trailing spaces, escape quotes, and join with \n
+$singleLine = ($lines | ForEach-Object {
     $_.TrimEnd() -replace '"', '\"'
 }) -join "\n"
 
