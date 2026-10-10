@@ -125,9 +125,9 @@ Size controls from the executed trace:
 - Read every batch for the control and identify every operation that creates a pending, transition, or completion animation state. Do not use an allowlist of operation names or addressing modes; this rule applies to current and future animation-producing operations.
 - The presence of an animation-producing operation is sufficient to require its animation-state boundary. Calculate that boundary from the resolved control and item sizes plus the operation's animation geometry, including its offsets, scale, and rotation where applicable. When several operations exist, use the union of their boundaries and record only the maximum left, right, top, and bottom overflow needed across the trace. Frame-by-frame replay is not required.
 - The only exception is the downward `falling` phase of a removal. Exclude that phase from inter-control clearance and bottom containment so it may pass through controls and exit through the visualization floor. The preceding removal transition, including its complete horizontal movement, remains inside the effective boundary. Keep the falling phase's horizontal and rotated bounds inside the visualization area's left and right edges; it may not exit through the top.
-- Keep every effective boundary fully inside `playback-visualization-area`. Separately, keep at least 25 px of empty clearance between each pair of controls, measured edge-to-edge between their already-expanded effective boundaries. The 25 px is additional inter-control space and does not require a margin between a control and the visualization-area walls; an effective boundary may touch a wall while remaining contained.
-- For effective boundaries `A` and `B`, at least one axis must satisfy `A.right + 25 <= B.left`, `B.right + 25 <= A.left`, `A.bottom + 25 <= B.top`, or `B.bottom + 25 <= A.top`.
-- Treat the complete effective boundary as occupied from the control's first visible frame through its last. Empty space inside a layout rectangle or between currently visible items is not available to another control.
+- Keep every effective boundary fully inside `playback-visualization-area`. Separately, keep at least 25 px of empty clearance between each pair of controls, measured edge-to-edge between their already-expanded effective boundaries. The 25 px is additional inter-control space and does not require a margin between a control and the visualization-area walls; an effective boundary may touch a wall while remaining contained. Apply the specialized occupancy exception under Node graphs when a `nodeGraph` layout rectangle overlaps another control.
+- For ordinary control effective boundaries `A` and `B`, at least one axis must satisfy `A.right + 25 <= B.left`, `B.right + 25 <= A.left`, `A.bottom + 25 <= B.top`, or `B.bottom + 25 <= A.top`.
+- Treat the complete effective boundary as occupied from the control's first visible frame through its last. Empty space inside a layout rectangle or between currently visible items is not available to another control, except for unoccupied space inside a `nodeGraph` layout rectangle as defined below.
 - Placement preferences never override animation containment or the additional 25 px clearance between controls.
 - Make items larger when their item text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums. The title length should not be used as justification to change the width of a control.
 - Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
@@ -161,7 +161,7 @@ Child preferences:
 - Align the static stack's bottom edge with the visualization area's floor.
 - Preferred width: 100 px.
 - Minimum `defaultItemOffset`: 25 px.
-- If a vertical stack uses `tailInserts`, reserve one `defaultItemOffset` of animation space at the top.
+- If a vertical stack uses `tailInserts`, use a fixed-height layout with `fitContent` disabled. Set its height to `(maximum traced item count + 1) × defaultItemOffset`; the additional top slot is reserved for the insertion animation.
 
 ### Grids
 
@@ -172,8 +172,11 @@ Child preferences:
 
 - Preferred location: centered, aligned with neighboring controls when practical.
 - Preferred calculated node width and height: 40 px; minimum 25 px.
-- Apply the same 25 px edge-to-edge boundary clearance to nodeGraph controls; their bounds may not overlap another control's empty area.
-- Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text.
+- Treat the `nodeGraph` layout rectangle as a positioning canvas rather than an occupied boundary. It may overlap another control's layout or effective boundary, and its empty space does not require clearance.
+- Do not allow the nodeGraph title to overlap another control's effective boundary.
+- At every step, keep each rendered node rectangle at least 25 px from every other control's effective boundary. Edges, edge labels, arrowheads, and empty graph space do not require inter-control clearance.
+- Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text. Use `itemWidthScale` and `itemHeightScale` only if needed for specific node text; prefer to keep all nodes equal sizes.
+- Use fractional rows or columns when needed to refine node spacing.
 - Choose track sizing and gaps that keep arrows readable.
 - Node Graphs should have no border.
 
@@ -186,7 +189,7 @@ Child preferences:
 - Do not report the playback complete while any known skill-rule violation remains.
 - Verify the embedded `staticValue` matches the source file.
 - Verify every pause and global step is synchronized across the relevant controls.
-- For every control, record its maximum base rectangle, decoration overflow, animation-state boundaries found by scanning all steps, and final effective rectangle. Verify that their union is contained and maintains the additional 25 px separation, subject to the explicit `falling` exception.
+- For every control, record its maximum base rectangle, decoration overflow, animation-state boundaries found by scanning all steps, and final effective rectangle. Verify that their union is contained and maintains the additional 25 px separation, subject to the explicit `falling` and `nodeGraph` exceptions.
 - Before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
 - Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.
 - If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.

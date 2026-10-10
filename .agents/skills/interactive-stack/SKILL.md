@@ -22,8 +22,8 @@ Do not choose operations from the control's `type` alone. Determine the represen
 
 For the vertical stack renderer, index 0 and the head are at the bottom; the tail is at the top.
 
-- Vertical stack: use `tailInserts` to push at the top and `tailDeletes` to pop from the top.
-- Vertical FIFO queue: use `tailInserts` to enqueue at the top and `headDeletes` to dequeue from the bottom.
+- Vertical stack: use `tailInserts` to push at the top and `tailTakes` to pop from the top.
+- Vertical FIFO queue: use `tailInserts` to enqueue at the top and `headTakes` to dequeue from the bottom.
 
 For a horizontal control, index 0 and the head are at the left; the tail is at the right.
 
@@ -43,10 +43,10 @@ When the stack represents a call stack:
 ## Priority queues
 
 - Use `inserts` with an explicit `index`; do not use `headInserts` or `tailInserts`.
-- Use `deletes` with an explicit `index`; do not use `headDeletes` or `tailDeletes`.
+- Use `takes` with an explicit `index`; do not use `deletes`.
 - Maintain priority-queue order after every insertion.
-- For a min-priority queue, sort priorities ascending and keep the minimum at index 0. Insert at the appropriate sorted index and delete index 0.
-- For a max-priority queue, sort priorities descending and keep the maximum at index 0. Insert at the appropriate sorted index and delete index 0.
+- For a min-priority queue, sort priorities ascending and keep the minimum at index 0. Insert at the appropriate sorted index and take index 0.
+- For a max-priority queue, sort priorities descending and keep the maximum at index 0. Insert at the appropriate sorted index and take index 0.
 - Preserve insertion order among equal priorities unless the algorithm or API defines another tie-breaker.
 
 ## Animation timing

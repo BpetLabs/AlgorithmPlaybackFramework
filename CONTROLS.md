@@ -231,10 +231,12 @@ Set `gridLines: true` on the graph control in JSON, or on its renderer props thr
     },
     {
       "id": "child",
-      "value": "Child",
+      "value": "A child node with significantly more text",
       "column": 1.5,
       "row": 1,
-      "backgroundColor": "ForestGreen"
+      "backgroundColor": "ForestGreen",
+      "itemWidthScale": 1.75,
+      "itemHeightScale": 1.25
     }
   ],
   "graphEdges": [
@@ -248,20 +250,10 @@ Set `gridLines: true` on the graph control in JSON, or on its renderer props thr
 }
 ```
 
-Nodes and edges are stateful and merge by `id`. Later batches only need to provide the properties that change. Remove nodes with `graphNodeDeletes` and edges with `graphEdgeDeletes`; deleting a node also removes edges that no longer have valid endpoints.
+Nodes and edges are stateful and merge by `id`. Later batches only need to provide the properties that change. 
+Remove nodes with `graphNodeDeletes` and edges with `graphEdgeDeletes`; deleting a node also removes edges that no longer have valid endpoints.
 
-Set `itemWidthScale` or `itemHeightScale` on an individual node to resize its visible rectangle relative to its calculated track size. Both values default to `1`, must be positive, and keep the node centered on its existing grid position. Edge anchors and loop bounds use the resized visible rectangle.
-
-```json
-{
-  "id": "verbose-node",
-  "value": "A node with significantly more text",
-  "column": 2,
-  "row": 1,
-  "itemWidthScale": 1.75,
-  "itemHeightScale": 1.25
-}
-```
+Set `itemWidthScale` or `itemHeightScale` on an individual node to resize its visible rectangle relative to its calculated track size. Both values default to `1`.
 
 Edge properties:
 
