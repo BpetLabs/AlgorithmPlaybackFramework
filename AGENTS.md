@@ -18,3 +18,7 @@
 - Use a concise title describing the overall PR change.
 - Run the relevant tests before opening a PR.
 - Follow .github/pull_request_template.md.
+
+# Tests
+
+Only add tests that protect meaningful behavior, conditional branches, edge cases; avoid tests that merely restate static output, configuration, or implementation details.
