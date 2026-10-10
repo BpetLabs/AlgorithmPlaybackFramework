@@ -10,7 +10,7 @@ Use this skill to create, populate, or modify a complete playback page and its c
 
 ## Documentation
 
-- Read the repository's [control reference](../../../CONTROLS.md) for renderer behavior, supported properties, and mutation semantics.
+- Read the repository's [control reference](../../../playbackcontrols.md) for renderer behavior, supported properties, and mutation semantics.
 - Examples in documentation are just examples and should not override these rules.
 
 ## Route to applicable interactive skills

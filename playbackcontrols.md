@@ -1,8 +1,8 @@
 ## Playback controls
 
-Controls are the visual panels in an AnimatedPlayback. Each control has a unique `id`, a `type`, a base position and size supplied by the React page, and optional state changes in `batches`.
+This page is designed for documenting actions and properties that you can take with the playback framework. 
 
-This page is designed for documenting actions that you can take with the playback framework only. 
+Controls are the visual panels in an AnimatedPlayback. Each control has a unique `id`, a `type`, a base position and size supplied by the React page, and optional state changes in `batches`, controlled by a `steps` slider.
 
 ## Contents
 
@@ -533,6 +533,8 @@ Every control starts with a snapshot at step `0`. If a control has no batch on a
 ```
 
 Use step `0` for state that exists before the animated operation begins. Method-created arrays, locals, frames, and derived values normally begin on the first execution step instead.
+
+You may skip steps, but an empty step next step is necessary to complete a multi state animation step such as `inserts`,`updates`, and `deletes` that do not include `now` or `animateNow`.
 
 ## Mutation animations
 
