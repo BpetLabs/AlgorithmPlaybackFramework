@@ -9,7 +9,6 @@ describe("loadControls", () => {
         id: "matrix",
         type: "jaggedArray",
         orientation: "vertical",
-        initialItemCount: 1,
         childDefaults: {
           itemWidth: 80,
           render: {
@@ -19,7 +18,7 @@ describe("loadControls", () => {
         },
       },
       {
-        id: "matrix-2",
+        id: "matrix-0",
         itemHeight: 30,
         render: {
           visible: true,
@@ -35,15 +34,15 @@ describe("loadControls", () => {
     ]);
 
     const parent = controls[0];
-    expect(parent.snapshots[0].items).toHaveLength(3);
+    expect(parent.snapshots[0].items).toHaveLength(1);
     expect(parent.childControls).toHaveLength(1);
 
     const child = parent.childControls?.[0];
     expect(child).toMatchObject({
-      id: "matrix-2",
+      id: "matrix-0",
       type: "array",
       parentId: "matrix",
-      parentIndex: 2,
+      parentIndex: 0,
       rendererOptions: {
         orientation: "horizontal",
         itemWidth: 80,
@@ -178,6 +177,7 @@ describe("loadControls", () => {
           },
         ],
       },
+      { id: "matrix-0", type: "array", initialItemCount: 0 },
     ]);
 
     expect(control.snapshots.at(-1)?.items[0].backgroundColor).toBe("Teal");
@@ -219,7 +219,7 @@ describe("loadControls", () => {
     });
   });
 
-  it("allows empty child-container inserts and removals", () => {
+  it("rejects dynamic child-container inserts", () => {
     expect(() =>
       loadControls([
         {
@@ -231,29 +231,34 @@ describe("loadControls", () => {
             { step: 2, deletes: [{ index: 0, now: true }] },
           ],
         },
+        { id: "matrix-0", type: "array", initialItemCount: 0 },
       ])
-    ).not.toThrow();
+    ).toThrow(
+      'Jagged array "matrix" cannot insert child containers dynamically; declare each child control explicitly, using initialItemCount: 0 for an empty array.'
+    );
   });
 
-  it("rejects value-bearing inserts on jagged-array parents", () => {
+  it("requires a declared child for every jagged-array slot", () => {
     expect(() =>
       loadControls([
         {
           id: "matrix",
           type: "jaggedArray",
-          batches: [
-            {
-              step: 1,
-              inserts: [
-                { index: 0, input: { value: "14" }, now: true },
-              ],
-            },
-          ],
+          initialItemCount: 1,
         },
       ])
     ).toThrow(
-      'Jagged array "matrix" cannot insert value-bearing items; only empty child containers may be inserted. Add values to a leaf array instead.'
+      'Jagged array "matrix" slot 0 must declare child control "matrix-0"; use initialItemCount: 0 for an empty array.'
     );
+  });
+
+  it("allows explicitly declared empty child arrays", () => {
+    expect(() =>
+      loadControls([
+        { id: "matrix", type: "jaggedArray" },
+        { id: "matrix-0", type: "array", initialItemCount: 0 },
+      ])
+    ).not.toThrow();
   });
 
   it("rejects direct values and structural updates on jagged parents", () => {
@@ -292,7 +297,7 @@ describe("loadControls", () => {
         },
       ])
     ).toThrow(
-      'Jagged array "matrix" cannot update child containers; only empty child containers may be inserted or removed.'
+      'Jagged array "matrix" cannot update child containers; declared child containers may only be removed when empty.'
     );
   });
 
@@ -341,17 +346,20 @@ describe("loadControls", () => {
         {
           id: "matrix",
           type: "jaggedArray",
-          initialItemCount: 1,
+        },
+        {
+          id: "matrix-0",
+          type: "array",
           batches: [
             {
               step: 1,
-              inserts: [{ index: 0, input: { value: "new row" } }],
+              inserts: [{ index: 0, input: { value: "new item" } }],
             },
           ],
         },
       ])
     ).toThrow(
-      'Control "matrix" in a jagged array requires now: true for batch action "inserts" at step 1.'
+      'Control "matrix-0" in a jagged array requires now: true for batch action "inserts" at step 1.'
     );
 
     expect(() =>
@@ -359,7 +367,10 @@ describe("loadControls", () => {
         {
           id: "matrix",
           type: "jaggedArray",
-          initialItemCount: 1,
+        },
+        {
+          id: "matrix-0",
+          type: "array",
           batches: [
             {
               step: 1,

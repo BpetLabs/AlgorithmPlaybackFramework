@@ -181,7 +181,6 @@ Child preferences:
 
 ## Validate the completed page
 
-- Before reporting completion, reread this skill and every applicable interactive skill, then audit the final diff against their requirements and preferences. A successful build or preview does not replace this compliance audit.
 - Check every changed layout value, renderer override, control definition, and batch action. Use each documented default or preferred value unless the user requested otherwise or the executed trace provides a specific, measured reason to deviate.
 - Verify every slot-based control passes the whole-slot check at its fixed size or maximum resolved `fitContent` size. Do not accept a truncated terminal slot.
 - Record the rule and trace-based reason for every deviation in the working notes. If a deviation has no valid justification, restore the documented default or preferred value before completion.
@@ -190,6 +189,6 @@ Child preferences:
 - Verify every pause and global step is synchronized across the relevant controls.
 - Verify every declared control is populated for the state it represents. Reject unexplained empty scaffolds, including default Code, Play by Play, and Locals controls.
 - For every control, record its maximum base rectangle, decoration overflow, animation-state boundaries found by scanning all steps, and final effective rectangle. Verify that their union is contained and maintains the additional 25 px separation, subject to the explicit `falling` and `nodeGraph` exceptions.
-- Before building or previewing the starter, run `npm.cmd run build` at the repository root if a framework change was made. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
+- if a framework change was made, before building or previewing the starter, run `npm.cmd run build` at the repository root. The starter imports the framework package through its built `dist` exports, so source changes are not visible until this build completes.
 - Run the relevant typecheck, tests, and `npm.cmd run build` for `examples/animated-playback-starter` after the framework build.
 - If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.

@@ -91,6 +91,15 @@ function validateJaggedArrayBatches<T extends ControlItem>(
         );
       }
 
+      if (
+        isJaggedContainer &&
+        ["inserts", "headInserts", "tailInserts"].includes(action)
+      ) {
+        throw new Error(
+          `Jagged array "${control.id}" cannot insert child containers dynamically; declare each child control explicitly, using initialItemCount: 0 for an empty array.`
+        );
+      }
+
       if (operations.some((operation) => operation?.animateNow === true)) {
         throw new Error(
           `Control "${control.id}" in a jagged array does not support animateNow for batch action "${action}" at step ${batch.step ?? 0}.`
@@ -103,16 +112,7 @@ function validateJaggedArrayBatches<T extends ControlItem>(
       }
       if (isJaggedContainer && action === "updates") {
         throw new Error(
-          `Jagged array "${control.id}" cannot update child containers; only empty child containers may be inserted or removed.`
-        );
-      }
-      if (
-        isJaggedContainer &&
-        ["inserts", "headInserts", "tailInserts"].includes(action) &&
-        hasDisplayedValue
-      ) {
-        throw new Error(
-          `Jagged array "${control.id}" cannot insert value-bearing items; only empty child containers may be inserted. Add values to a leaf array instead.`
+          `Jagged array "${control.id}" cannot update child containers; declared child containers may only be removed when empty.`
         );
       }
     });
@@ -290,15 +290,25 @@ function validateJaggedContainerRemovals<T extends ControlItem>(
       }
     });
     slots = slots.filter((slot) => !removedSlots.has(slot));
-
-    batch.headInserts?.forEach(() => slots.unshift({}));
-    batch.tailInserts?.forEach(() => slots.push({}));
-    batch.inserts?.forEach(({ index }) => {
-      const insertIndex = index ?? slots.length;
-      while (slots.length < insertIndex) slots.push({});
-      slots.splice(insertIndex, 0, {});
-    });
   });
+}
+
+function validateJaggedChildren<T extends ControlItem>(
+  control: ControlDefinition<T>,
+  loaded: LoadedControl<T>
+) {
+  const childIndexes = new Set(
+    (loaded.childControls ?? []).map((child) => child.parentIndex)
+  );
+  const itemCount = control.initialItemCount ?? 0;
+
+  for (let index = 0; index < itemCount; index += 1) {
+    if (!childIndexes.has(index)) {
+      throw new Error(
+        `Jagged array "${control.id}" slot ${index} must declare child control "${control.id}-${index}"; use initialItemCount: 0 for an empty array.`
+      );
+    }
+  }
 }
 
 function buildJaggedChildDefinition<T extends ControlItem>(
@@ -398,6 +408,15 @@ export function loadControls<T extends ControlItem = ControlItem>(
             `Control "${child.definition.id}" cannot set orientation because jagged-array descendants alternate automatically.`
           );
         }
+        if (
+          child.definition.type !== undefined &&
+          child.definition.type !== "array" &&
+          child.definition.type !== "jaggedArray"
+        ) {
+          throw new Error(
+            `Control "${child.definition.id}" must be an array or jaggedArray because it is a child of jagged array "${parent.id}".`
+          );
+        }
         childIndexes.add(child.index);
         attachedChildIds.add(child.definition.id);
       });
@@ -446,6 +465,7 @@ export function loadControls<T extends ControlItem = ControlItem>(
       );
       return buildControlTree(childDefinition, control.id, index, true);
     });
+    validateJaggedChildren(resolvedControl, loaded);
     validateJaggedContainerRemovals(resolvedControl, loaded);
 
     return loaded;

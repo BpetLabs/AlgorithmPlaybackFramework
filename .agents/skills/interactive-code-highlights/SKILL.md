@@ -7,7 +7,7 @@ description: "Create, populate, edit, audit, or synchronize code controls and co
 
 Use this skill whenever an AnimatedPlayback contains a code control, including new playback authoring and trace changes. Populate `staticValue` with the supplied source and synchronize highlights with every requested pause.
 
-Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for code highlights.
+Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for code highlights.
 
 ## Governing rule
 

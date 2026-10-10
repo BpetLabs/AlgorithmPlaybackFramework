@@ -7,7 +7,7 @@ description: Create, populate, edit, audit, or synchronize Play by Play narratio
 
 Apply these rules whenever an AnimatedPlayback contains a text control, including new playback authoring and trace changes, unless the user requests different wording. Populate Play by Play at the introduction, every execution pause, and the conclusion. Populate console or other text controls at the steps where their represented text exists.
 
-Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for Play by Play, console output, and other text controls.
+Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for Play by Play, console output, and other text controls.
 
 ## Content
 

@@ -365,7 +365,7 @@ Child controls use the parent ID followed by their zero-based parent index. They
 
 `childWidth` and `childHeight` set the leaf item size. `childGap` adds equal padding on every side between a parent slot and its child. Each parent slot and jagged container is sized recursively from those values and the occupied child content; explicit child layout dimensions and `fitContent` are not used. An empty jagged parent has a minimum size of `childWidth + 2 × childGap` by `childHeight + 2 × childGap`.
 
-Leaf arrays in a jagged tree support the set family normally and support inserts, updates, deletes, and takes when every operation specifies `"now": true`. Jagged-array parents cannot store values directly or update child containers. They may insert only empty child containers and may remove a child container only when it is empty. Animated structural mutations (`now` omitted or `animateNow`) are rejected throughout the jagged-array tree because nested mutation animations are unsupported.
+Leaf arrays in a jagged tree support the set family normally and support inserts, updates, deletes, and takes when every operation specifies `"now": true`. Every jagged-parent slot must have a separately declared `array` or `jaggedArray` child. Declare an empty child array with `initialItemCount: 0`. Jagged-array parents cannot store values directly, update child containers, or insert child containers dynamically. They may remove a child container only when it is empty. Animated structural mutations (`now` omitted or `animateNow`) are rejected throughout the jagged-array tree because nested mutation animations are unsupported.
 
 ## Generic properties
 

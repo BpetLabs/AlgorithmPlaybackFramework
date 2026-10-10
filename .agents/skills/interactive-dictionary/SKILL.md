@@ -10,7 +10,7 @@ Use this skill whenever an AnimatedPlayback contains a local-variable dictionary
 
 A default Locals control is part of the playback even when the user does not mention it explicitly. If the animated method has relevant arguments or local variables, populate the control and synchronize it at every pause.
 
-Before editing, read and apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for local-variable dictionaries.
+Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for local-variable dictionaries.
 
 ## Primary objective
 - Keep dictionary state consistent with the current paused execution step.
@@ -33,7 +33,7 @@ Before editing, read and apply [interactive-generic](../interactive-generic/SKIL
 - For nested loops, display every loop index whose scope is active at the current pause.
 
 ## Validation
-- Verify every declared Locals or dictionary control displays the relevant variables for the current paused activation. Reject empty batches when the executed method has relevant arguments or local variables.
+- Verify every declared Locals or dictionary control displays the relevant variables for the current paused activation.
 - Confirm changed variables get a single Orange border.
 - Ensure unchanged variables do not keep stale borders.
 - Ensure out-of-scope variables are removed promptly and paused assignments do not show future values.
