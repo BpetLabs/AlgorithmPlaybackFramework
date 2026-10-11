@@ -1,11 +1,11 @@
 ---
 name: interactive-graph
-description: "Create, edit, audit, or synchronize parent-child tree controls in nodeGraph grid JSON. Use when the requested work involves a parent-child nodeGraph, its traversal state, layout, or a directly coupled trace change."
+description: "Create, edit, audit, or synchronize node items in nodeGraph JSON. Use when the requested work involves a nodeGraph, its traversal state, layout, or a directly coupled trace change."
 ---
 
-# Interactive Grid Tree Rules
+# Interactive Graph Rules
 
-Use these rules when an in-scope AnimatedPlayback control contains a parent-child tree in a `nodeGraph` grid. For new playbacks and trace changes, populate the nodes and edges and synchronize traversal state at every pause. For localized edits, limit work to the affected range and adjacent state boundaries.
+Use these rules when an in-scope AnimatedPlayback control contains a `nodeGraph`. For new playbacks and trace changes, populate the nodes and edges and synchronize traversal state at every pause. For localized edits, limit work to the affected range and adjacent state boundaries.
 
 Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for node-graph grid layout.
 
