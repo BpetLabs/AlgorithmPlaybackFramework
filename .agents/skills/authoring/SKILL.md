@@ -137,14 +137,14 @@ Size controls from the executed trace:
 - Treat the complete effective boundary as occupied from the control's first visible frame through its last. Empty space inside a layout rectangle or between currently visible items is not available to another control, except for unoccupied space inside a `nodeGraph` layout rectangle as defined below.
 - Placement preferences never override animation containment or the additional 25 px clearance between controls.
 - Make items larger when their item text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums. The title length should not be used as justification to change the width of a control.
-- Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
+- For controls of type `array`, put caller-supplied input arrays before derived arrays in JSON order and visual reading order, normally top-to-bottom and left-to-right. Do not apply this ordering requirement to other control types.
 - If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
 
 ### Arrays preferences and defaults
 
 - Set `defaultHeaderPosition` to `"bottom"`;
 - Preferred location: top-left.
-- Prefer multiple arrays arranged vertically. Use one row at the top or bottom when vertical space is limited.
+- Prefer multiple arrays arranged vertically on the left side. Use one row at the top or bottom when vertical space is limited.
 - Preferred `defaultItemOffset`: 40 px.
 - Minimum `defaultItemOffset`: 25 px.
 - Use `emptyItemText`: "0" if its a numberic array when the programming language uses zero-initialization; otherwise "".
