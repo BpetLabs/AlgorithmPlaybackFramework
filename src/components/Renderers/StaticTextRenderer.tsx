@@ -30,7 +30,7 @@ export function StaticTextRenderer({
   const defaultScrollSpeedLinesPerSecond = 40;
 
   const paddingPx = 4;
-  const fontSizePx = 13;
+  const fontSizePx = 12;
   const lineHeightEm = 1.2;
   const lineHeightPx = fontSizePx * lineHeightEm;
   const contentHeightPx = lines.length * lineHeightPx;

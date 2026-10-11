@@ -14,16 +14,18 @@ const canvasSize = { width: 1500, height: 870 };
 
 const visualizationArea = {
   top: 130,
-  left: 500,
-  width: 980,
+  left: 520,
+  width: 960,
   height: 470,
   border: "1px solid #374151"
 };
 
+const sliderLayout = { top: 70, left: 550, width: 400, height: 50 };
+
 // Coordinates are relative to the full playback canvas.
 const defaultControlLayouts: Record<string, ControlRenderLayout> = {
-  code: { top: 120, left: 20, width: 460, height: 730 },
-  playbyplay: { top: 650, left: 500, width: 720, height: 200 },
+  code: { top: 100, left: 20, width: 480, height: 750 },
+  playbyplay: { top: 650, left: 520, width: 700, height: 200 },
   locals: { top: 650, left: 1240, width: 240, height: 200 },
 };
 
@@ -43,8 +45,6 @@ const visualizationControlTitles: Record<string, string> = {
 };
 
 const defaultControlIds = new Set(["code", "playbyplay", "locals"]);
-
-const sliderLayout = { top: 70, left: 500, width: 400, height: 50 };
 
 export default function PlaybackPage() {
   const controls = useMemo(

@@ -66,7 +66,7 @@ describe("StaticTextRenderer", () => {
       />
     );
 
-    expect(scrollContainer.scrollTop).toBeCloseTo(48);
+    expect(scrollContainer.scrollTop).toBeCloseTo(42);
   });
 
   it("cancels animated scrolling after user interaction", () => {
