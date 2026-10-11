@@ -47,5 +47,6 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - Verify every grid mutation uses coordinate-addressed `gridItems`, no generic mutation or target field is used for a grid cell, and each batch contains at most one entry per coordinate.
 - Verify each `gridItems` entry contains only properties that change and omitted properties persist unchanged on later steps.
 - Replay the affected trace range and verify values show pre-state on paused writes and post-state on the following destination step.
-- Verify every persistent border has an active role, each role identifies at most one cell, role colors remain consistent, and moved or expired highlights are explicitly cleared.
+- For each step, derive required `(role, row, col, color)` highlights from the trace, not the JSON. Keep each role highlighted while in scope—even without a new access—move it with its coordinate, and clear its former cell when it moves, expires, or becomes invalid.
+- After applying color-collision precedence, compare the required highlight set with the grid's rendered border set in both directions: every required role must produce its expected border, and every rendered border must correspond to a required active role. Also verify each role identifies at most one cell, role colors remain consistent, and moved or expired highlights are explicitly cleared.
 - Verify structural cell borders remain independent from algorithmic highlight borders.
