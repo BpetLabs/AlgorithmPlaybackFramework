@@ -196,13 +196,7 @@ Child preferences:
 - Choose track sizing and gaps that keep arrows readable.
 - Node Graphs should have no border.
 
-## Validate the completed page
-
-- Check every changed layout value, renderer override, control definition, and batch action. Validate unchanged content only when it is directly coupled to the change. Use each documented default or preferred value unless the user requested otherwise or the executed trace provides a specific, measured reason to deviate.
-- Verify every in-scope slot-based control passes the whole-slot check at its fixed size or maximum resolved `fitContent` size. Do not accept a truncated terminal slot.
-- Record the rule and trace-based reason for every deviation in the working notes. If a deviation has no valid justification, restore the documented default or preferred value before completion.
-- Do not report the playback complete while any known skill-rule violation remains.
-- When geometry is in scope, record each affected control's maximum base rectangle, decoration overflow, animation-state boundary, and final effective rectangle. Reuse verified measurements for unchanged controls. Verify containment and 25 px separation, subject to the `falling` and `nodeGraph` exceptions.
+## Build
 - If framework source changed, run `npm.cmd run build` at the repository root before building or previewing the starter. The starter imports the framework package through its built `dist` exports.
 - Run the narrowest starter typecheck, tests, or build that covers the changed files. Do not run multiple commands that validate the same invariant unless an earlier result is inconclusive or project scripts combine distinct required checks.
 - If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.

@@ -17,3 +17,13 @@ Input:
 - make each obstacle background color gray
 - leave each open space defaulted
 - set emptyItemText = 0
+
+Verification:
+
+- Review and verify that all skills were properly followed; 
+    including but not limited to double checking: 
+        highlighting, 
+        object placement and properties,  
+        text output
+- Fix any issues found
+- Report any contradictions or rules that need additional clarity.

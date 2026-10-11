@@ -14,3 +14,13 @@ Pause at :
 
 Input: 
 - Pick inputs from the 2nd and 3rd row
+
+Verification:
+
+- Review and verify that all skills were properly followed; 
+    including but not limited to double checking: 
+        highlighting, 
+        object placement and properties,  
+        text output
+- Fix any issues found
+- Report any contradictions or rules that need additional clarity.

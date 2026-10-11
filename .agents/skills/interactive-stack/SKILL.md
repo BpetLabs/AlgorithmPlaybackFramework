@@ -59,10 +59,3 @@ When the stack represents a call stack:
 
 - Apply the base skill's generic set, insert, and delete mutation model and its control-agnostic `current`/`outgoing`/`all` target model.
 - Choose indexed, head, or tail addressing only after identifying the required mutation effect and logical position.
-
-## Validation
-- For a stack, verify last-in-first-out behavior at the same visual end.
-- For a FIFO queue, verify additions and removals occur at opposite visual ends in first-in-first-out order.
-- For a priority queue, verify every displayed state remains sorted in the configured min/max order, equal-priority ordering is correct, and every removal targets the highest-priority displayed entry.
-- For a call stack, verify every non-void returning frame shows its pending `**Return:** value` and every void frame omits it; each displayed frame reflects relevant local-variable changes made by code executed since the previous pause; those changes use `setValues` on the current logical frame; frame text contains only relevant values in `name | value` form; and corresponding entities use consistent colors across controls.
-- Verify no stale item borders remain after insertion highlighting ends.
