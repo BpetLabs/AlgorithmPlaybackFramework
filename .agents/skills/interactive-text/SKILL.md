@@ -11,6 +11,7 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 
 ## Content
 
+- Every input uses 'setValues' at input 0. 
 - Do not change existing text descriptions or formatting unless asked and instead recommend changes, however do change text that aligns with code or step changes without asking, try to match the same style to existing text.
 - Describe what the code does, not what the visualization displays.
 - At each paused execution step, preview the pending effect of the current paused statement. Describe relevant operations completed since the previous pause only when they were not already previewed by the preceding narration.
@@ -25,8 +26,7 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - When there are 5 or less sentences prefer multi line \n\n breaks between sentences.
 - The final conclusion text should read "Hope you learned something!"
 - Introduction step at step 0 should describe what the code does, and not the specific input, and how it could be used. If it is a coding problem, it should very briefly describe the problem being solved and include its time and space complexity in Big O notation.
-- Every input uses 'setValues' at input 0.
-- When a calculation happens or is will happen at a pause step show the calculation in text. 
+- When a calculation happens or is will happen at a pause step show the calculation in text.
 
 ## Console output
 
