@@ -16,6 +16,10 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - Keep dictionary state consistent with the current paused execution step.
 - Show the pre-state on the paused line and the post-state on the next step after execution advances.
 
+## Row values
+- Store each dictionary row in `input.value` using the format `name | value`
+- Use the default 50/50 column split. Set `splitColumnWidths` only when rendered content overflows, clips, or becomes unreadable. Use the smallest adjustment that fits, with positive percentages totaling 100.
+
 ## State rules
 - When a variable first appears or changes, give it Orange borderColor for that global step only.
 - Clear that Orange border on the next global step if the variable has not changed again.

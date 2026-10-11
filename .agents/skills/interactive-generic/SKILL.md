@@ -53,6 +53,9 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 - When a highlighted node becomes outgoing during an insert, delete, or replacement transition, use a set operation to put the destination node's border on `"current"` and clear the animated node's border with `"outgoing"` in the completion batch. This rule applies to every control type and addressing mode.
 
 ## Values
+- Put all displayed item content in `input.value`.
+- Do not use `leftAlignedValue` or `rightAlignedValue` unless the user explicitly requests those exact aligned fields. When requested, treat them as supplemental presentation fields; they never replace `value`.
+- When a specialized control encodes multiple displayed fields in one item, use that control's documented `value` format.
 - If a control value will be set as a number Max value or number Min value, set the node value to the text `MAX` or `MIN` instead unless otherwise specified.
 
 ## Cleanup and minimization
@@ -69,6 +72,7 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 - Perform full-playback cross-control validation only for new playbacks, changes to pause locations or execution flow, schema-wide transformations, or an explicit audit request. Otherwise preserve unrelated controls and report observed out-of-scope issues without auditing or changing them.
 - After any change, verify that affected state updates are reflected consistently across directly coupled controls and steps.
 - Within the selected validation scope, verify each control has the required initial and runtime state for its purpose; reject unexplained empty scaffolds.
+- Verify every item intended to display content has a nonempty `value`. Reject `leftAlignedValue` or `rightAlignedValue` unless the user explicitly requested those exact aligned fields, and never accept them as substitutes for `value`.
 - Ensure that a change to one control’s step progression is not left inconsistent with the others.
 - If a mutation or transition affects multiple controls, update each control’s corresponding state rather than only one.
 - When a transition leaves an outgoing node visible, verify that cleanup intended for that old visual node explicitly uses `target: "outgoing"` rather than accidentally changing the current node.
