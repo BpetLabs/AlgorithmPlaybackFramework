@@ -13,10 +13,10 @@ Pause at :
 - each jumps assignment other than initialization and the return
 
 Input: 
-- obstacles - ( values are implied by visible grid dont display )
-- make each obstacle background color gray
-- leave each open space defaulted
-- set emptyItemText = 0
+- obstacles:
+    - make each obstacle background color gray
+    - leave each open space defaulted
+    - set emptyItemText = 0
 
 After completion:
 
