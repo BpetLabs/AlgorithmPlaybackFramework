@@ -26,5 +26,5 @@ After completion:
         highlighting, 
         object placement and properties,  
         text output
-- Fix any issues found
+- Report and fix any issues found.
 - Report any contradictions or rules that need additional clarity.
