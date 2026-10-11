@@ -165,7 +165,7 @@ Child preferences:
 
 ### Stacks
 
-- Preferred location: - Right of existing controls
+- Preferred location: - Right of existing controls.
 - Align the static stack's bottom edge with the visualization area's floor.
 - Preferred width: 100 px.
 - Minimum `defaultItemOffset`: 25 px.
@@ -173,18 +173,18 @@ Child preferences:
 
 ### Grids
 
-- Preferred location: centered, aligned with neighboring controls when practical.
+- Preferred location: Centered horizontal and vertically.
 - Preferred `defaultItemOffset`: 40 px.
 - Minimum calculated cell width and height: 25 px.
 
 ### Node graphs
 
-- Preferred location: centered, aligned with neighboring controls when practical.
+- Preferred location: Centered horizontal and vertically.
 - Preferred calculated node width and height:: 40 px.
 - Minimum: 25 px.
 - Treat the `nodeGraph` layout rectangle as a positioning canvas rather than an occupied boundary. It may overlap another control's layout or effective boundary, and its empty space does not require clearance.
 - Do not allow the nodeGraph title to overlap another control's effective boundary.
-- At every in-scope step, keep each rendered node rectangle at least 25 px from every other control's effective boundary. For localized edits, include adjacent state boundaries and any step where the changed node reaches its maximum extent. Edges, edge labels, arrowheads, and empty graph space do not require inter-control clearance.
+- Keep each rendered node rectangle at least 25 px from every other control's effective boundary. For localized edits, include adjacent state boundaries and any step where the changed node reaches its maximum extent.
 - Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text. Use `itemWidthScale` and `itemHeightScale` only if needed for specific node text; prefer to keep all nodes equal sizes.
 - Use fractional rows or columns when needed to refine node spacing.
 - Choose track sizing and gaps that keep arrows readable.
