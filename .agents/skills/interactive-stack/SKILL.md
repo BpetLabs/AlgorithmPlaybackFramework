@@ -34,6 +34,7 @@ For a horizontal control, index 0 and the head are at the left; the tail is at t
 
 When the stack represents a call stack:
 
+- The current active stack frame should be highlighted with an `orange` border.
 - On a return pause that will pop a frame, add `**Return:** value` to that outgoing frame in the same pre-removal batch only when the method returns a value. Keep the return on its own final line and preserve tuple or structured return values accurately. Do not add a return line for `void` methods.
 - Use the shared execution trace to determine what ran since the previous pause. For new playbacks and trace changes, check every pause. For a localized edit, check only the affected range plus its preceding and following state boundaries. If that code changed relevant local variables in a displayed frame, use `setValues` on that frame in the current batch so it reflects the destination pause state. This includes updating the resumed caller after a callee returns; target the caller's current logical index, not the outgoing callee.
 - Include only arguments and local values relevant to understanding the active call and its return. Do not copy every in-scope variable into the frame.
