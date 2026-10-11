@@ -20,7 +20,7 @@ Always load and apply `interactive-generic` when editing any playback control. A
 - `text`, Play by Play, or console control: `interactive-text`
 - `array`, jagged array, or matrix control: `interactive-array`
 - `stack`, queue, or priority queue control: `interactive-stack`
-- `grid`, queue, or priority queue control: `interactive-grid`
+- `grid`, grid control: `interactive-grid`
 - `nodeGraph` control: `interactive-graph`
 
 Use full-playback scope for a new playback, an execution-flow or pause change, a schema-wide transformation, or an explicit audit. Include every control and step affected by the resulting trace.
