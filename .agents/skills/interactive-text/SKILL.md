@@ -26,6 +26,7 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - The final conclusion text should read "Hope you learned something!"
 - Introduction step at step 0 should describe what the code does, and not the specific input, and how it could be used. If it is a coding problem, it should very briefly describe the problem being solved and include its time and space complexity in Big O notation.
 - Every input uses 'setValues' at input 0.
+- When a calculation happens or is will happen at a pause step show the calculation in text. 
 
 ## Console output
 
