@@ -13,7 +13,9 @@ Pause at :
 - Each call to heappush and heappop and each return.
 
 Input: 
+call add(...) - 8 times
 - Choose 8 random inputs value 1-9
+call median(...) at the end
 
 After completion:
 
