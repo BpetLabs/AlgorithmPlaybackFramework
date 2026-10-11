@@ -93,9 +93,9 @@ Keep spatial layout, dimensions, titles, and renderer configuration in `Page.tsx
 
 ## Configure controls in `Page.tsx`
 
-Add each control's layout and title. Prefer renderer defaults for all optional control properties. Resolve an applicable item-based control's default `defaultItemOffset` from the existing page, established project configuration, or renderer documentation, and explicitly set it in `configureProps`. Inspect renderer source only when the value remains unresolved or the renderer itself changed. For jagged arrays, explicitly set `childGap`, `childWidth`, and `childHeight` instead; jagged slot sizes are derived recursively.
+Add each control's layout and title. Prefer renderer defaults for optional control properties unless a control-specific preference below applies. Resolve an applicable item-based control's default `defaultItemOffset` from the existing page, established project configuration, or renderer documentation, and explicitly set it in `configureProps`. Inspect renderer source only when the value remains unresolved or the renderer itself changed. For jagged arrays, explicitly set `childGap`, `childWidth`, and `childHeight` instead; jagged slot sizes are derived recursively.
 
-Override a renderer default only when the user requests different behavior or the executed trace demonstrates that the default cannot satisfy fit, containment, clearance, readability, or semantic requirements. When an override is necessary, set the smallest possible group of properties and preserve defaults for everything else.
+Override a renderer default only when the user requests different behavior, a control-specific preference below applies, or the executed trace demonstrates that the default cannot satisfy fit, containment, clearance, readability, or semantic requirements. When an override is necessary, set the smallest possible group of properties and preserve defaults for everything else.
 
 Increase `defaultItemOffset` only for a specific measured requirement, such as traced content or child geometry that does not fit the default slot; do not increase it for general styling. Never reduce it below the control-specific minimum. If the trace cannot fit without going below that minimum, stop processing and inform the user.
 
@@ -172,12 +172,12 @@ Child preferences:
 
 ### Stack preferences and defaults
 
-- Set `defaultHeaderPosition` to `"top"`;
+- Set `defaultHeaderPosition` to `"bottom"`;
 - Preferred location: - Right of existing controls.
-- Align the static stack's bottom edge with the visualization area's floor.
+- Set `fitContent` for stacks so their rendered height follows the current item count. Size the layout height for the maximum traced item count; `layout.top + layout.height` remains the fixed bottom anchor as the stack grows and shrinks. For a vertical stack using `tailInserts`, include the pending item's one-slot overflow above the fitted stack in the trace-wide effective boundary.
+- Place the bottom anchor near the visualization area's floor while reserving enough space below it for the bottom title, title gap, borders, and traced animation overflow. Keep the complete effective boundary contained.
 - Preferred width: 100 px.
 - Minimum `defaultItemOffset`: 25 px.
-- If a vertical stack uses `tailInserts`, use a fixed-height layout with `fitContent` disabled. Set its height to `(maximum traced item count + 1) × defaultItemOffset`; the additional top slot is reserved for the insertion animation.
 
 ### Grid preferences and defaults
 
