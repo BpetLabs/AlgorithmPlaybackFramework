@@ -4,7 +4,7 @@ Template:
 - \examples\animated-playback-starter\src\template
 
 Code:
-- \examples\animated-playback-starter\src\playbackcodefiles\tenniscourtbookings.py
+- \examples\animated-playback-starter\src\pythoncodefiles\tenniscourtbookings.py
 
 PlaybackControls:
 - Create a minHeap,  input jagged array,  and assigned courts array

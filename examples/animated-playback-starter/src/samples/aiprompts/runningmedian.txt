@@ -4,7 +4,7 @@ Template:
 - \examples\animated-playback-starter\src\template
 
 Code:
-- \examples\animated-playback-starter\src\playbackcodefiles\runningmedian.py
+- \examples\animated-playback-starter\src\pythoncodefiles\runningmedian.py
 
 PlaybackControls:
 - Create a min and max heap.
