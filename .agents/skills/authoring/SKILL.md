@@ -122,6 +122,7 @@ Size controls from the executed trace:
 
 ## Placement and clearance
 
+- Always use preferred sizes and prefered location for controls below unless necessary to fit text or boundaries. 
 - For each control, calculate one stable trace-wide effective boundary: `union(base rendered boundary, decoration boundary, traced animation boundary)`.
 - Use the control's maximum resolved base size across all steps. For `fitContent`, use its maximum resolved size.
 - Expand the boundary for every decoration outside the container, including titles, item labels, row and column labels, axis descriptions, edge labels, arrowheads, strokes, and highlight borders. Measure rendered text when practical; otherwise reserve conservatively for the longest traced content.
@@ -135,7 +136,6 @@ Size controls from the executed trace:
 - Make items larger when their item text requires it, or smaller when necessary to fit the visualization, without going below the control-specific minimums. The title length should not be used as justification to change the width of a control.
 - Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
 - If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
-- Always use Preferred sizes unless necessary to fit text or boundaries. 
 
 ### Arrays
 
