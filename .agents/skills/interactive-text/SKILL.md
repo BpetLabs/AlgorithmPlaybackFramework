@@ -26,7 +26,7 @@ Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as 
 - When there are 5 or less sentences prefer multi line \n\n breaks between sentences.
 - The final conclusion text should read "Hope you learned something!"
 - Introduction step at step 0 should describe what the code does, and not the specific input, and how it could be used. If it is a coding problem, it should very briefly describe the problem being solved and include its time and space complexity in Big O notation.
-- When a calculation happens or is will happen at a pause step show the calculation in text.
+- When a calculation happened or will happen at a pause step show the full calculation; do not show the same calculation on the next step, only the result.
 
 ## Console output
 
