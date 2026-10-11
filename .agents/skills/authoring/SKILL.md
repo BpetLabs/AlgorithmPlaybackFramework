@@ -199,7 +199,7 @@ Child preferences:
 - Choose row and column counts that produce square numeric nodes or rectangles wide enough for the longest text. Use `itemWidthScale` and `itemHeightScale` only if needed for specific node text; prefer to keep all nodes equal sizes.
 - Use fractional rows or columns when needed to refine node spacing.
 - Choose track sizing and gaps that keep arrows readable.
-- Node Graphs should have no border.
+- The nodeGraph control container must not render a frame, outline, border, or box shadow. Remove the default apf-renderer-frame styling, for example by setting props.containerClassName = "bg-transparent". This rule does not apply to individual node borders, traversal highlights, or the surrounding playback-visualization-area boundary.
 
 ## Build
 - If framework source changed, run `npm.cmd run build` at the repository root before building or previewing the starter. The starter imports the framework package through its built `dist` exports.
