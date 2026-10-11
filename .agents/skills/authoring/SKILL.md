@@ -121,7 +121,7 @@ Size controls from the executed trace:
 - A stack, queue, priority queue, or other growable control should fit its maximum traced size.
 - After resolving the content size, expand it to the trace-wide effective boundary defined below. Do not use the content rectangle alone for placement.
 
-## Placement and clearance
+## Placement and clearance rules
 
 - Always use preferred sizes and prefered location for controls below unless necessary to fit text or boundaries. 
 - For each control, calculate one stable trace-wide effective boundary: `union(base rendered boundary, decoration boundary, traced animation boundary)`.
@@ -140,18 +140,20 @@ Size controls from the executed trace:
 - Put input controls first in JSON order and visual reading order, normally top-to-bottom and left-to-right.
 - If the controls cannot fit within the available area, stop and recommend specific size, orientation, or placement changes.
 
-### Arrays
+### Arrays preferences and defaults
 
+- Set `defaultHeaderPosition` to `"bottom"`;
 - Preferred location: top-left.
 - Prefer multiple arrays arranged vertically. Use one row at the top or bottom when vertical space is limited.
 - Preferred `defaultItemOffset`: 40 px.
 - Minimum `defaultItemOffset`: 25 px.
 - Use `emptyItemText`: "0" if its a numberic array when the programming language uses zero-initialization; otherwise "".
 
-### Jagged arrays
+### Jagged Array preferences and defaults
 
 Parent preferences:
 
+- Set `defaultHeaderPosition` to `"top"`;
 - Location: top-left.
 - Set `orientation` only on the root jagged array. Prefer `"horizontal"` unless the user requests `"vertical"`.
 - Set `childGap` to 5 px unless the user requests another value.
@@ -168,23 +170,26 @@ Child preferences:
 
 - Do not configure `orientation` on descendants or in `childDefaults`. Every level alternates automatically from the root orientation.
 
-### Stacks
+### Stack preferences and defaults
 
+- Set `defaultHeaderPosition` to `"top"`;
 - Preferred location: - Right of existing controls.
 - Align the static stack's bottom edge with the visualization area's floor.
 - Preferred width: 100 px.
 - Minimum `defaultItemOffset`: 25 px.
 - If a vertical stack uses `tailInserts`, use a fixed-height layout with `fitContent` disabled. Set its height to `(maximum traced item count + 1) × defaultItemOffset`; the additional top slot is reserved for the insertion animation.
 
-### Grids
+### Grid preferences and defaults
 
+- Set `defaultHeaderPosition` to `"top"`;
 - Preferred location: Centered horizontal and vertically.
 - Preferred `defaultItemOffset`: 40 px.
 - Minimum calculated cell width and height: 25 px.
 - Use `emptyItemText`: "0" if its a numberic grid when the programming language uses zero-initialization; otherwise "".
 
-### Node graphs
+### Node Graph preferences and defaults
 
+- Set `defaultHeaderPosition` to `"top"`;
 - Preferred location: Centered horizontal and vertically.
 - Preferred calculated node width and height:: 40 px.
 - Minimum: 25 px.

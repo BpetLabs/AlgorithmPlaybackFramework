@@ -757,6 +757,7 @@ Some common uses include hiding a control until it is needed or changing its tit
 | `visible` | Shows or completely hides the control. |
 | `title` | Replaces the page-supplied control title. |
 | `showTitle` | Shows or hides the control title. |
+| `titlePosition` | Places the title above (`"top"`, the default) or below (`"bottom"`) the control. |
 | `borderWidth` | Sets the control's default highlight-border thickness. |
 | `layout.top`, `layout.left` | Overrides the control position. |
 | `layout.width`, `layout.height` | Overrides the control size. |
@@ -767,10 +768,30 @@ Some common uses include hiding a control until it is needed or changing its tit
     "visible": true,
     "title": "Input Array",
     "showTitle": true,
+    "titlePosition": "bottom",
     "borderWidth": 2
   }
 }
 ```
+
+Pages can set the default placement without a JSON override by passing
+`defaultHeaderPosition` to `InteractiveControlRenderer`:
+
+```tsx
+<InteractiveControlRenderer
+  control={control}
+  latestSnapshots={latestSnapshots}
+  currentStep={sliderValue}
+  disableAnimations={disableAnimations}
+  layout={controlLayouts[control.id]}
+  defaultHeaderTitle={controlTitles[control.id]}
+  defaultHeaderPosition="bottom"
+/>
+```
+
+A JSON `titlePosition` overrides `defaultHeaderPosition`. Bottom titles are
+positioned from the control's resolved height, including controls using
+`fitContent`.
 
 Set step-specific overrides in `renderBatches`:
 
