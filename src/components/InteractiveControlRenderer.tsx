@@ -3,6 +3,7 @@
 import { ControlItem } from "../common/models/controlItem";
 import {
   ControlRenderLayout,
+  ControlTitlePosition,
   LoadedControl,
   Snapshot,
 } from "../common/models/snapshot";
@@ -22,6 +23,7 @@ import {
 } from "./Renderers/JaggedArrayRenderer";
 
 const CONTROL_TITLE_OFFSET = 30;
+const CONTROL_TITLE_GAP = 10;
 
 export interface InteractiveControlRendererProps {
   control: LoadedControl<ControlItem>;
@@ -30,6 +32,7 @@ export interface InteractiveControlRendererProps {
   disableAnimations: boolean;
   layout?: ControlRenderLayout;
   defaultHeaderTitle?: string;
+  defaultHeaderPosition?: ControlTitlePosition;
   configureProps?: (
     id: string,
     props: ResolvedControlRendererProps,
@@ -44,6 +47,7 @@ export function InteractiveControlRenderer({
   disableAnimations,
   layout,
   defaultHeaderTitle,
+  defaultHeaderPosition,
   configureProps,
 }: InteractiveControlRendererProps) {
   const snapshot = latestSnapshots[control.id];
@@ -138,9 +142,14 @@ export function InteractiveControlRenderer({
   }
 
   const headerTitle = renderConfig.title ?? defaultHeaderTitle;
+  const headerPosition =
+    renderConfig.titlePosition ?? defaultHeaderPosition ?? "top";
   const shouldShowHeader =
     renderConfig.showTitle ?? Boolean(headerTitle);
-  const headerTop = top - resolvedTop - CONTROL_TITLE_OFFSET;
+  const headerTop =
+    headerPosition === "bottom"
+      ? resolvedHeight + CONTROL_TITLE_GAP
+      : top - resolvedTop - CONTROL_TITLE_OFFSET;
 
   return (
     <div
@@ -155,6 +164,7 @@ export function InteractiveControlRenderer({
     >
       {shouldShowHeader && headerTitle && (
         <div
+          data-apf-control-title-position={headerPosition}
           style={{
             position: "absolute",
             top: headerTop,

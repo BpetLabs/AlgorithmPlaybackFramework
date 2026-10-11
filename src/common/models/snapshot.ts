@@ -26,11 +26,14 @@ export interface ControlRenderLayout {
   height?: number;
 }
 
+export type ControlTitlePosition = "top" | "bottom";
+
 export interface ControlRenderConfig {
   visible?: boolean;
   layout?: ControlRenderLayout;
   title?: string;
   showTitle?: boolean;
+  titlePosition?: ControlTitlePosition;
   borderWidth?: number;
 }
 

@@ -78,6 +78,23 @@ describe("InteractiveControlRenderer", () => {
     expect(markup).toContain("custom-control");
   });
 
+  it("supports titles below the resolved control height", () => {
+    const markup = renderControl(
+      control({
+        rendererOptions: { fitContent: true, defaultItemOffset: 40 },
+        render: { titlePosition: "bottom" },
+      }),
+      { items: snapshot },
+      {
+        defaultHeaderTitle: "Items",
+        defaultHeaderPosition: "top",
+      }
+    );
+
+    expect(markup).toContain('data-apf-control-title-position="bottom"');
+    expect(markup).toContain("top:90px");
+  });
+
   it("fits vertical arrays along the height axis", () => {
     const markup = renderControl(control({
       rendererOptions: {
