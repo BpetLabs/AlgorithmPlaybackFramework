@@ -4,16 +4,16 @@ Template:
 - \examples\animated-playback-starter\src\template
 
 Code:
-- \examples\animated-playback-starter\src\playbackcodefiles\lowestcommonancestor.py
+- \examples\animated-playback-starter\src\playbackcodefiles\runningmedian.py
 
 PlaybackControls:
-- Create a CallStack and a 3 level deep tree
+- Create a min and max heap.
 
 Pause at :
-- Each call to LowestCommonAncestor and each return
+- Each call to heappush and heappop and each return.
 
 Input: 
-- Pick inputs from the 2nd and 3rd row
+- Choose 8 random inputs value 1-9
 
 After completion:
 

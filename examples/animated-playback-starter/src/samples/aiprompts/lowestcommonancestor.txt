@@ -10,7 +10,7 @@ PlaybackControls:
 - Create a CallStack and a 3 level deep tree
 
 Pause at :
-- Each call to LowestCommonAncestor and each return
+- Each recursive call to LowestCommonAncestor and each return
 
 Input: 
 - Pick inputs from the 2nd and 3rd row
