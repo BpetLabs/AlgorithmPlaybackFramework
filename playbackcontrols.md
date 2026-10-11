@@ -276,12 +276,13 @@ Edge properties:
 
 Displays values at fixed row and column coordinates.
 
+- `gridItems` is the only supported cell-update action. Do not use setValues or any other playback action.
 - Requires positive `rows` and `cols` values.
-- Updates cells through `gridItems` containing `row` and `col`.
+- Initializes and updates cells through `gridItems` entries containing `row` and `col`.
 - Supports row labels, column labels, axis descriptions, empty-cell text, and optional cell borders.
 - Use it for matrices, boards, maps, and dynamic-programming tables.
 
-Grid coordinates are zero-based. Give each cell a stable `id` so later batches update the existing cell instead of creating another item:
+Grid coordinates are zero-based. Each `gridItems` entry is a persistent partial update keyed by its `(row, col)` coordinate, so omitted properties keep their existing values on later steps:
 
 ```json
 {
@@ -299,7 +300,6 @@ Grid coordinates are zero-based. Give each cell a stable `id` so later batches u
       "step": 1,
       "gridItems": [
         {
-          "id": "cell-0-1",
           "row": 0,
           "col": 1,
           "value": "5",
@@ -311,14 +311,14 @@ Grid coordinates are zero-based. Give each cell a stable `id` so later batches u
     {
       "step": 2,
       "gridItems": [
-        { "id": "cell-0-1", "row": 0, "col": 1, "value": "8" }
+        { "row": 0, "col": 1, "borderColor": "" }
       ]
     }
   ]
 }
 ```
 
-`gridItems` are stateful and merge by `id`. Grid cells support the generic `value`, background, text, and highlight-border properties. Set `showCellBorders: false` to hide the structural cell borders.
+The second batch clears only the highlight border; the value remains `5` and the background remains `RoyalBlue`. Grid cells support the generic `value`, background, text, and highlight-border properties. Set `showCellBorders: false` to hide the structural cell borders.
 
 ### `jaggedArray`
 

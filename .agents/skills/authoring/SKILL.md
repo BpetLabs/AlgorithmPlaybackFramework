@@ -143,6 +143,7 @@ Size controls from the executed trace:
 - Prefer multiple arrays arranged vertically. Use one row at the top or bottom when vertical space is limited.
 - Preferred `defaultItemOffset`: 40 px.
 - Minimum `defaultItemOffset`: 25 px.
+- Use `emptyItemText`: "0" if its a numberic array when the programming language uses zero-initialization; otherwise "".
 
 ### Jagged arrays
 
@@ -158,6 +159,7 @@ Parent preferences:
 - Leaf arrays support normal value and structural mutations, with structural mutations requiring `now: true`. Jagged-parent inserts require `childId` and `now: true`; jagged-parent deletes require an index and `now: true` and detach the complete subtree.
 - Every inserted jagged parent must declare a complete descendant path ending in at least one leaf array. Represent an empty row or column with a leaf array whose `initialItemCount` is `0`.
 - Never put values directly on a jagged parent or update its child references in place. The set family may change parent-slot appearance properties such as `borderColor`; parent border highlights render on the referenced child's actual frame.
+- Use `emptyItemText`: "0" if its a numberic array when the programming language uses zero-initialization; otherwise "".
 
 Child preferences:
 
@@ -176,6 +178,7 @@ Child preferences:
 - Preferred location: Centered horizontal and vertically.
 - Preferred `defaultItemOffset`: 40 px.
 - Minimum calculated cell width and height: 25 px.
+- Use `emptyItemText`: "0" if its a numberic grid when the programming language uses zero-initialization; otherwise "".
 
 ### Node graphs
 

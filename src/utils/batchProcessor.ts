@@ -180,6 +180,18 @@ export class BatchProcessor<T extends ControlItem> {
   private snapshots: Snapshot<T>[] = [];
   private uniqueIdCounter = 0;
 
+  private validateGridBatch(batch: Batch<T>): void {
+    if (this.type !== "grid") return;
+
+    const allowedKeys = new Set(["step", "gridItems", "render"]);
+    const unsupportedAction = Object.keys(batch).find((key) => !allowedKeys.has(key));
+    if (unsupportedAction) {
+      throw new Error(
+        `Grid control "${this.id}" does not support batch action "${unsupportedAction}"; use gridItems.`
+      );
+    }
+  }
+
   private createId(prefix: string): string {
     return `${prefix}-${this.uniqueIdCounter++}`;
   }
@@ -651,7 +663,31 @@ export class BatchProcessor<T extends ControlItem> {
 
     const prevGridItems = prevSnapshot?.gridItems ?? [];
     const newGridItems = batch.gridItems ?? [];
-    const mergedGridItems: GridItem[] = mergeById(prevGridItems, newGridItems, "grid");
+    const incomingGridCoordinates = new Set<string>();
+    newGridItems.forEach((item) => {
+      const coordinate = `${item.row}-${item.col}`;
+      if (incomingGridCoordinates.has(coordinate)) {
+        throw new Error(
+          `Duplicate grid coordinate row ${item.row}, col ${item.col}.`
+        );
+      }
+      incomingGridCoordinates.add(coordinate);
+    });
+    const newGridItemsByCoordinate = new Map(
+      newGridItems.map((item) => [`${item.row}-${item.col}`, item])
+    );
+    const previousGridCoordinates = new Set(
+      prevGridItems.map((item) => `${item.row}-${item.col}`)
+    );
+    const mergedGridItems: GridItem[] = [
+      ...prevGridItems.map((item) => {
+        const update = newGridItemsByCoordinate.get(`${item.row}-${item.col}`);
+        return update ? { ...item, ...update } : { ...item };
+      }),
+      ...newGridItems
+        .filter((item) => !previousGridCoordinates.has(`${item.row}-${item.col}`))
+        .map((item) => ({ ...item })),
+    ];
     const graphEdgeDeleteIds = new Set(batch.graphEdgeDeletes ?? []);
     const graphNodeDeletes = batch.graphNodeDeletes ?? [];
     const graphNodeDeleteById = new Map(graphNodeDeletes.map(deleteOp => [deleteOp.id, deleteOp]));
@@ -758,6 +794,8 @@ export class BatchProcessor<T extends ControlItem> {
   // 🚀 Main entry
   applyBatch(batch: Batch<T>) {
     if (!batch) return;
+
+    this.validateGridBatch(batch);
 
     const previousStep = this.snapshots[this.snapshots.length - 1].step;
     const step = batch.step ?? previousStep + 1;

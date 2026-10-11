@@ -370,31 +370,108 @@ describe("BatchProcessor", () => {
     expect(processor.getHistory()[2].scrollBottom).toBe(3);
   });
 
-  it("merges grid items by generated or explicit id and rejects duplicate updates", () => {
+  it("persists coordinate-addressed grid items as partial updates", () => {
     const processor = new BatchProcessor("grid", "grid");
-    processor.applyBatch({ step: 1, gridItems: [{ row: 0, col: 0, value: "A" }] });
-    const generatedId = processor.getHistory()[1].gridItems?.[0].id;
-    expect(generatedId).toBeDefined();
+    processor.applyBatch({
+      step: 1,
+      gridItems: [
+        {
+          row: 0,
+          col: 0,
+          value: "A",
+          backgroundColor: "Gray",
+          borderColor: "Orange",
+        },
+      ],
+    });
 
     processor.applyBatch({
       step: 2,
       gridItems: [
-        { id: generatedId, row: 0, col: 0, value: "Updated" },
-        { id: "second", row: 0, col: 1, value: "B" },
+        { row: 0, col: 0, borderColor: "" },
+        { row: 0, col: 1, value: "B" },
       ],
     });
-    expect(processor.getHistory()[2].gridItems?.map((entry) => entry.value)).toEqual([
-      "Updated",
-      "B",
+    processor.applyBatch({ step: 3 });
+
+    expect(processor.getHistory()[3].gridItems).toEqual([
+      {
+        row: 0,
+        col: 0,
+        value: "A",
+        backgroundColor: "Gray",
+        borderColor: "",
+      },
+      { row: 0, col: 1, value: "B" },
     ]);
+  });
+
+  it("rejects duplicate grid coordinates in one batch", () => {
+    const processor = new BatchProcessor("grid", "grid");
 
     expect(() => processor.applyBatch({
-      step: 3,
+      step: 1,
       gridItems: [
-        { id: "duplicate", row: 0, col: 0 },
-        { id: "duplicate", row: 0, col: 1 },
+        { row: 0, col: 0, value: "A" },
+        { row: 0, col: 0, borderColor: "Orange" },
       ],
-    })).toThrow('Duplicate grid id "duplicate"');
+    })).toThrow("Duplicate grid coordinate row 0, col 0");
+  });
+
+  const unsupportedGridActions = {
+    inserts: [],
+    headInserts: [],
+    tailInserts: [],
+    updates: [],
+    deletes: [],
+    headDeletes: { count: 1 },
+    tailDeletes: { count: 1 },
+    headTakes: { count: 1 },
+    tailTakes: { count: 1 },
+    takes: [],
+    setHeadValues: [],
+    setTailValues: [],
+    setValues: [],
+    highlightLines: [],
+    clearHighlights: [],
+    scrollBottom: 1,
+    graphNodes: [],
+    graphEdges: [],
+    graphNodeDeletes: [],
+    graphEdgeDeletes: [],
+  } satisfies Record<Exclude<keyof Batch, "step" | "gridItems">, unknown>;
+
+  it.each(Object.entries(unsupportedGridActions))(
+    "rejects %s batches for grid controls",
+    (action, value) => {
+      const processor = new BatchProcessor("grid", "grid");
+      const batch = { step: 1, [action]: value } as Batch;
+
+      expect(() => processor.applyBatch(batch)).toThrow(
+        `Grid control "grid" does not support batch action "${action}"; use gridItems.`
+      );
+    }
+  );
+
+  it("rejects unknown batch actions for grid controls", () => {
+    const processor = new BatchProcessor("grid", "grid");
+
+    expect(() => processor.applyBatch({ step: 1, unknownAction: [] } as unknown as Batch)).toThrow(
+      'Grid control "grid" does not support batch action "unknownAction"; use gridItems.'
+    );
+  });
+
+  it("allows gridItems and grid batch metadata", () => {
+    const processor = new BatchProcessor("grid", "grid");
+
+    expect(() => processor.applyBatch({
+      step: 1,
+      gridItems: [{ row: 0, col: 0, value: "A" }],
+      render: { visible: true },
+    } as Batch & { render: { visible: boolean } })).not.toThrow();
+    expect(processor.getHistory()[1].gridItems).toEqual([
+      { row: 0, col: 0, value: "A" },
+    ]);
   });
 
   it("advances animated graph deletion and removes orphaned edges", () => {
