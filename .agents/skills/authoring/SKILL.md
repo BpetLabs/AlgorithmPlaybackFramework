@@ -81,7 +81,7 @@ When a source-code file is provided and the `code` control exists:
 
 Create requested controls with empty `batches` only as temporary scaffolding before authoring their state transitions. Before completion, populate every in-scope control according to its purpose and the executed trace, subject only to the documented intentionally-static or no-relevant-state exception.
 
-For a control created later by the running algorithm rather than supplied as input, initialize it with `"render": { "visible": false }` and make it visible in the batch where the runtime value becomes available.
+For a control created later by the running algorithm rather than supplied as input, initialize it with `"render": { "visible": false }`. Make it visible at the first playback step where its represented variable or object exists in scope, even when it is still empty and has not yet been read or mutated. Do not delay visibility until the control receives its first item or operation. Add a `renderBatches` entry at that step and, when the control otherwise has no state batch at the same step, add an empty batch so the visible render state is materialized in the playback timeline.
 
 Keep these concerns in JSON:
 
