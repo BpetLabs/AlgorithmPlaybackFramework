@@ -19,6 +19,12 @@
 
 <!-- If checked, describe why we need a new version and what will happen if the users dont upgrade -->
 
+
+### Why is this change important?
+
+<!-- Required for public contributions. Otherwise, leave this section blank. -->
+<!-- Describe the specific human need this change addresses. How would it help you, and how would you use it? Provide a concrete experience rather than a hypothetical benefit. -->
+
 ## Testing
 
 <!-- List checks performed and their results: automated tests, build/lint checks, or manual verification steps. --> 
