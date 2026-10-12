@@ -5,22 +5,22 @@
 - Before creating or modifying a playback page, read and follow
   `../.agents/skills/authoring/SKILL.md` completely, including every skill it
   directs you to use.
-- Start new pages from `src/template` and create them under
-  `src/playbackpages/<page-name>`.
 - Do not edit `src/main.tsx` to register a page; pages are discovered
   automatically.
-- Keep `Page.tsx`, `playback.json`, code highlights, narration, and control
-  state synchronized.
 
 ## Build and Validation
 
 - Requires Node.js 20.19 or later.
 - Use npm and preserve `package-lock.json` unless dependencies change.
-- Build the framework from the repository root with `npm run build` before
-  building or running the starter.
+- If framework source changed, run `npm run build` at the repository root
+  before building or previewing the starter. The starter imports the framework
+  through its built `dist` exports.
 - Validate starter or playback changes with `npm run build` in this directory.
 - Run the narrowest validation that covers the change.
 - Documentation-only changes do not require a full build.
+- If a Vite development server was already running when the framework was
+  rebuilt, restart it with `npm run dev -- --force` before visual validation so
+  optimized dependencies cannot remain stale.
 
 ## Generated Files
 

@@ -200,8 +200,3 @@ Child preferences:
 - Use fractional rows or columns when needed to refine node spacing.
 - Choose track sizing and gaps that keep arrows readable.
 - The nodeGraph control container must not render a frame, outline, border, or box shadow. Remove the default apf-renderer-frame styling, for example by setting props.containerClassName = "bg-transparent". This rule does not apply to individual node borders, traversal highlights, or the surrounding playback-visualization-area boundary.
-
-## Build
-- If framework source changed, run `npm.cmd run build` at the repository root before building or previewing the starter. The starter imports the framework package through its built `dist` exports.
-- Run the narrowest starter typecheck, tests, or build that covers the changed files. Do not run multiple commands that validate the same invariant unless an earlier result is inconclusive or project scripts combine distinct required checks.
-- If a starter Vite development server was already running when the framework was rebuilt, restart it with `npm.cmd run dev -- --force` before visual validation so optimized dependency output cannot remain stale.
