@@ -1,0 +1,35 @@
+// Sample points to python code file, Java version also available. 
+// Copy and Paste the below prompt into your favorite Code AI.
+// Tested with Codex, GPT-5.6 Sol Medium, runs approx 5-10 minutes. 
+
+lets create a new playback
+
+Agent Skills Location:
+- .agents/skills
+
+Template: 
+- animated-playback-starter/src/template
+
+Code:
+- animated-playback-starter/src/samples/examplecodefiles/tenniscourtbookings.py
+
+PlaybackControls:
+- Create a minHeap,  input jagged array,  and assigned courts array
+
+Pause at :
+- Each call to heappop and heappush and return
+
+Input: 
+- Pick 7 values that return at least 3 courts - use values 7-20 representing hours.
+
+Rules:
+
+After completion:
+
+- Review and verify that all skills were properly followed; 
+    including but not limited to double checking: 
+        highlighting, 
+        object placement and properties,  
+        text output
+- Report and fix any issues found.
+- Report any contradictions or rules that need additional clarity.

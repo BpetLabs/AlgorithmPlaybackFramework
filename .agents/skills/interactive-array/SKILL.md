@@ -1,0 +1,37 @@
+---
+name: interactive-array
+description: "Create, edit, audit, or synchronize array and jagged-array/matrix controls in AnimatedPlayback JSON. Use when the requested work involves an array or matrix control, its trace, or a directly coupled state change."
+user-invocable: true
+---
+
+# Interactive Array and Matrix Rules
+
+Use these rules when the requested work involves an `array` or `jaggedArray` control, its trace, or a directly coupled state change. Populate the control with the relevant input and runtime state. Preserve the user's explicit animation and color choices when they differ from these defaults.
+
+Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for arrays and matrices.
+
+## Values and mutations
+
+- Initialize node values with `setValues`, not `updates`.
+- Array and matrix nodes may have renderer defaults. When the plan is to preserve a node's default, omit that node from initialization entirely: do not add a `setValues` entry for its value, color, border, or any other property. Use `setValues` only for nodes whose initial state must differ from the default.
+- Set initial values when the array is initialized or in the step where a hidden array becomes visible.
+- Use `updates`, `inserts`, or `deletes` for array mutations. Follow the base skill's pre-animation, completion-step, and `now` timing rules.
+- Preserve update payloads, including the incoming item value needed to render the replacement transition.
+- Treat `array` controls in jagged trees as the only value-bearing arrays. Jagged parents contain ordered child IDs in `children` and retain their container and child-slot borders. Their set family may change parent-slot appearance properties such as `borderColor`; render that highlight on the referenced child's actual renderer frame, not as an inset slot overlay. Parent set actions must not set displayed values or replace `childId`.
+- Insert a jagged-parent child with `childId` and `now: true`. Delete a jagged-parent child by index with `now: true`; the deletion detaches the complete referenced subtree.
+- Require every inserted jagged parent subtree to terminate in a declared leaf array on every branch. Use `initialItemCount: 0` on the leaf to represent an empty row or column.
+
+## Node colors and borders
+
+- Every action that assigns a node value must include a `backgroundColor` in the same input, whether the action initializes the node or changes it later. Use `Teal` by default unless the user requests another color or the value's state has a defined color.
+- When a paused `updates` mutation affects a highlighted index, apply that index's `borderColor` with `setValues` in the same batch. Do not put `borderColor` in `updates.input`: the stationary array node should own the border while the incoming animated node remains unhighlighted.
+- The same-batch stationary highlight addresses the current node. After the update completes, clear the displaced animated node in the next batch with `setValues` at the same index, `target: "outgoing"`, and `borderColor: ""`.
+- When consecutive paused updates move a local to another index, clear the previous current index and set the new current index's border with `setValues` in the next batch. Handle the prior replacement's displaced visual node separately with `target: "outgoing"`. Keep `updates.input` limited to the incoming value, background color, and any non-border presentation properties.
+- Leave default-backed nodes untouched only while their defaults are preserved. The first action that assigns them a value must also assign their background color.
+- An index is relevant when a distinct in-scope local variable refers to it. Preserve that highlight across pauses until the local moves to another index or leaves scope; a pause whose statement does not reference the local does not end the highlight. A local variable may identify at most one highlighted index in a control at a time.
+- If an array or matrix index is accessed during unpaused execution between two pauses, show that access highlight on the destination step. Preserve it under the same scope rules, or clear it on the next step when it has no continuing in-scope owner.
+- Color each relevant index by the role of its local variable, regardless of how many indices are highlighted in the control: use `Orange` for a looping index, `Pink` for a specific index, and `Yellow` for a trailing index. For another role, choose a distinct CSS named color and keep that role-color mapping consistent.
+- If multiple locals refer to the same index, render one border for that index. Resolve standard role-color collisions with this precedence: `Orange`, then `Pink`, then `Yellow`. If only custom role colors collide, choose one consistently.
+- For new playbacks and trace changes, compute local-to-index mappings from the shared execution trace for every step. For a localized edit, recompute only the affected step range plus its preceding and following state boundaries. Keep a border while the same in-scope local continues to refer to that index, including pauses where the local is not directly used. Clear or move it only when the local changes its referenced index or leaves scope. Also carry an access that occurred between pauses into the destination step as described above.
+- For a matrix, apply these rules to the affected row or cell controls at the corresponding indices for the parent and the child.
+- If any array stores boolean values use `Red` for false and `Green` for true.
