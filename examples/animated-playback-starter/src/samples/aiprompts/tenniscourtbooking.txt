@@ -5,13 +5,13 @@
 lets create a new playback
 
 Skills Location:
-- \.agents\skills
+- .agents/skills
 
 Template: 
-- \examples\animated-playback-starter\src\template
+- examples/animated-playback-starter/src/template
 
 Code:
-- \examples\animated-playback-starter\src\pythoncodefiles\tenniscourtbookings.py
+- examples/animated-playback-starter/src/samples/examplecodefiles/tenniscourtbookings.py
 
 PlaybackControls:
 - Create a minHeap,  input jagged array,  and assigned courts array

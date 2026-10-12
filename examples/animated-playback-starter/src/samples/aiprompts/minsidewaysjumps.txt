@@ -5,19 +5,19 @@
 lets create a new playback
 
 Skills Location:
-- \.agents\skills
+- .agents/skills
 
 Template: 
-- \examples\animated-playback-starter\src\template
+- examples/animated-playback-starter/src/template
 
 Code:
-- \examples\animated-playback-starter\src\samples\pythoncodefiles\minsidewaysjumps.py
+- examples/animated-playback-starter/src/samples/examplecodefiles/minsidewaysjumps.py
 
 PlaybackControls:
 - create a jumps array and a grid for the obstacles at least 5 length
 
-Pause at :
-- each jumps assignment other than initialization and the return
+Pause at:
+- Each array assignment other than initialization and the return
 
 Input: 
 - obstacles:

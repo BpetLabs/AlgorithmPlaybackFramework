@@ -5,18 +5,18 @@
 lets create a new playback.
 
 Skills Location:
-- \.agents\skills
+- .agents/skills
 
 Template: 
-- \examples\animated-playback-starter\src\template
+- examples/animated-playback-starter/src/template
 
 Code:
-- \examples\animated-playback-starter\src\samples\pythoncodefiles\lowestcommonancestor.py
+- examples/animated-playback-starter/src/samples/examplecodefiles/lowestcommonancestor.py
 
 PlaybackControls:
 - Create a CallStack and a 3 level deep tree
 
-Pause at :
+Pause at:
 - Each recursive call to LowestCommonAncestor and each return
 
 Input: 

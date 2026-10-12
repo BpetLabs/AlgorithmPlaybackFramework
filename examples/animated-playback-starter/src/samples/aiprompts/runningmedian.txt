@@ -5,13 +5,13 @@
 lets create a new playback
 
 Skills Location:
-- \.agents\skills
+- .agents/skills
 
 Template: 
-- \examples\animated-playback-starter\src\template
+- examples/animated-playback-starter/src/template
 
 Code:
-- \examples\animated-playback-starter\src\pythoncodefiles\runningmedian.py
+- examples/animated-playback-starter/src/samples/examplecodefiles/runningmedian.py
 
 PlaybackControls:
 - Create a min and max heap.
