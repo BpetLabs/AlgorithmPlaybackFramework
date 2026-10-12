@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Node ${{ matrix.node-version }} / React ${{ matrix.react-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node-version: "20.19.x"
+            react-version: "18.2.0"
+            react-types-version: "18"
+          - node-version: "20.19.x"
+            react-version: "19"
+            react-types-version: "19"
+          - node-version: "22.x"
+            react-version: "18.2.0"
+            react-types-version: "18"
+          - node-version: "22.x"
+            react-version: "19"
+            react-types-version: "19"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install React compatibility version
+        run: >
+          npm install --no-save --package-lock=false
+          react@${{ matrix.react-version }}
+          react-dom@${{ matrix.react-version }}
+          @types/react@${{ matrix.react-types-version }}
+          @types/react-dom@${{ matrix.react-types-version }}
+
+      - name: Run checks
+        run: npm run check
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-node-${{ matrix.node-version }}-react-${{ matrix.react-version }}
+          path: coverage
+          if-no-files-found: ignore

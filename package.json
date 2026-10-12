@@ -1,0 +1,67 @@
+{
+  "name": "algorithm-playback-framework",
+  "version": "1.0.0",
+  "description": "React components and utilities for building step-by-step algorithm visualizations.",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "tsup --config tsup.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:package": "node scripts/validate-package.mjs",
+    "check": "npm run typecheck && npm run test:coverage && npm run build && npm run test:package",
+    "prepublishOnly": "npm run check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bpet-dev/AlgorithmPlaybackFramework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bpet-dev/AlgorithmPlaybackFramework/issues"
+  },
+  "homepage": "https://github.com/bpet-dev/AlgorithmPlaybackFramework#readme",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "peerDependencies": {
+    "framer-motion": ">=11 <13",
+    "react": ">=18.2 <20",
+    "react-dom": ">=18.2 <20"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitest/coverage-v8": "^5.0.3",
+    "framer-motion": "^12.0.0",
+    "jsdom": "^29.1.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.3"
+  }
+}
