@@ -35,6 +35,7 @@ This is the base skill for all AnimatedPlayback JSON work. Always apply it along
 ## Pause semantics
 - Treat the paused line as a playback stop before execution.
 - If a pre-animation step exists, it should signal what will happen after the pause.
+- When one paused source statement triggers multiple pre-animation mutations, place all corresponding pre-animation actions on that paused step. Complete each mutation on the next global step according to the standard animation timing rules.
 
 ## Step 0 and first execution step
 - Treat step 0 as the pre-invocation state. Do not initialize state created by the animated method at step 0.
