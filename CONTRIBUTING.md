@@ -16,7 +16,7 @@ Important source locations:
 
 Requirements:
 
-- Node.js 20 or later.
+- Node.js 20.19 or later.
 - npm and the committed `package-lock.json`.
 
 Install dependencies and run the full validation suite:

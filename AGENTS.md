@@ -22,7 +22,7 @@
 
 ## Framework Build and Validation
 
-- Requires Node.js 20 or later.
+- Requires Node.js 20.19 or later.
 - During development, run the narrowest typecheck or test that covers the
   change.
 - Before completing a base-framework change, run `npm run check`. It performs
