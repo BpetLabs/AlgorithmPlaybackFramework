@@ -1,4 +1,4 @@
-# Communication
+## Communication
 
 - Be concise and precise in replies. 
 - Prefer short, direct wording over filler, repetition
@@ -13,12 +13,12 @@
 - Include a short commit body explaining what changed.
 - Do not push unless explicitly asked.
 
-# Pull Requests
+## Pull Requests
 - Open PRs as drafts.
 - Use a concise title describing the overall PR change.
 - Run the relevant tests before opening a PR.
 - Follow .github/pull_request_template.md.
 
-# Tests
+## Tests
 
-Only add tests that protect meaningful behavior, conditional branches, edge cases; avoid tests that merely restate static output, configuration, or implementation details.
+- Only add tests that protect meaningful behavior, conditional branches, edge cases; avoid tests that merely restate static output, configuration, or implementation details.
