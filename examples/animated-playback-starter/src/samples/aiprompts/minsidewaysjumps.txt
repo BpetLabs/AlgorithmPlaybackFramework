@@ -4,7 +4,7 @@
 
 lets create a new playback
 
-Skills Location:
+Agent Skills Location:
 - .agents/skills
 
 Template: 
