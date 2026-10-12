@@ -140,5 +140,24 @@ import "./styles.css";
 No stylesheet changes are required to generate or run a playback. To customize
 the starter page, edit
 `animated-playback-starter/src/styles.css`. To customize framework
-colors or spacing, override its `--apf-*` variables there. Do not edit the
-generated root `dist/styles.css` file.
+colors or spacing, override its public `--apf-*` variables there. Their
+defaults are declared near the top of the framework's
+[`src/styles.css`](../src/styles.css). Treat the other framework selectors as
+implementation details. Do not edit the generated root `dist/styles.css`
+file.
+
+## Customize the Page Template
+
+The default page template is located at:
+
+```text
+animated-playback-starter/src/template/
+```
+
+AI coding agents copy this template when creating a playback page. You can
+adjust its layout, navigation, titles, default controls, or styling hooks to fit
+your application before generating new pages.
+
+To update an existing
+playback page, edit its `Page.tsx` file under
+`animated-playback-starter/src/playbackpages/`.
