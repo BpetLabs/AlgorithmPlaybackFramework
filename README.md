@@ -19,16 +19,19 @@ The available controls and playback JSON format are documented in
 
 ## Install the Framework
 
-The package is not currently published to npm. Build it from a local checkout,
-then install either the checkout or a packed tarball in the consuming React
-application.
+Install the framework and Framer Motion in the consuming React application:
+
+```sh
+npm install algorithm-playback-framework framer-motion
+```
 
 The framework requires React 18.2 or 19, React DOM 18.2 or 19, and Framer Motion
-11 or 12 as peer dependencies.
+11 or 12 as peer dependencies. The consuming application must already include
+compatible `react` and `react-dom` versions.
 
-### Install from a local checkout
+### Install from source
 
-First build the framework:
+To use an unreleased version, clone and build the framework:
 
 ```sh
 git clone https://github.com/bpet-dev/AlgorithmPlaybackFramework.git
@@ -44,9 +47,6 @@ location of the checkout:
 npm install /path/to/AlgorithmPlaybackFramework framer-motion
 ```
 
-The consuming application must already include compatible `react` and
-`react-dom` versions.
-
 ### Install a packed copy
 
 To install an immutable package artifact instead of linking the checkout:
@@ -56,7 +56,7 @@ To install an immutable package artifact instead of linking the checkout:
 npm pack
 
 # In the consuming React application
-npm install /path/to/algorithm-playback-framework-0.1.0.tgz framer-motion
+npm install /path/to/algorithm-playback-framework-1.0.0.tgz framer-motion
 ```
 
 Rebuild and reinstall the package after changing framework source.
