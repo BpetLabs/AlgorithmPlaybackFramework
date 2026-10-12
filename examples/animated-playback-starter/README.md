@@ -6,7 +6,7 @@ This framework is designed for an AI to automatically create the controls and an
 
 Once created, fine tune the styling using AI or manually adjustment.
 
-See [CONTROLS.md](./CONTROLS.md) for the available control types, their behavior, and the conventions used by the authoring skills.
+See [playbackcontrols.md](./playbackcontrols.md) for the available control types, their behavior, and the conventions used by the authoring skills.
 
 ## Start
 
