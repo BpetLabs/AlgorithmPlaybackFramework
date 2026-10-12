@@ -17,7 +17,7 @@ PlaybackControls:
 - create a jumps array and a grid for the obstacles at least 5 length
 
 Pause at:
-- Each array assignment other than initialization and the return
+- Each jumps array assignment other than initialization and the return
 
 Input: 
 - obstacles:
