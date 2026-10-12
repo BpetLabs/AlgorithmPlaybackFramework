@@ -1,4 +1,11 @@
+// Sample points to python code file, Java version also available. 
+// Copy and Paste the below prompt into your favorite Code AI.
+// Tested with Codex, GPT-5.6 Sol Medium, runs approx 5-10 minutes. 
+
 lets create a new playback
+
+Skills Location:
+- \.agents\skills
 
 Template: 
 - \examples\animated-playback-starter\src\template
