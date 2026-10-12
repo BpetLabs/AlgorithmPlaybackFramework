@@ -8,10 +8,10 @@ Agent Skills Location:
 - .agents/skills
 
 Template: 
-- examples/animated-playback-starter/src/template
+- animated-playback-starter/src/template
 
 Code:
-- examples/animated-playback-starter/src/samples/examplecodefiles/runningmedian.py
+- animated-playback-starter/src/samples/examplecodefiles/runningmedian.py
 
 PlaybackControls:
 - Create a min and max heap.

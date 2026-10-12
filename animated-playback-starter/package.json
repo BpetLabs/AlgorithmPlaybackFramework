@@ -8,7 +8,7 @@
     "build": "tsc --noEmit && vite build"
   },
   "dependencies": {
-    "algorithm-playback-framework": "file:../..",
+    "algorithm-playback-framework": "file:..",
     "framer-motion": "^12.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

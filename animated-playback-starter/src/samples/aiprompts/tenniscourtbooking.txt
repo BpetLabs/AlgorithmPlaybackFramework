@@ -8,10 +8,10 @@ Agent Skills Location:
 - .agents/skills
 
 Template: 
-- examples/animated-playback-starter/src/template
+- animated-playback-starter/src/template
 
 Code:
-- examples/animated-playback-starter/src/samples/examplecodefiles/tenniscourtbookings.py
+- animated-playback-starter/src/samples/examplecodefiles/tenniscourtbookings.py
 
 PlaybackControls:
 - Create a minHeap,  input jagged array,  and assigned courts array

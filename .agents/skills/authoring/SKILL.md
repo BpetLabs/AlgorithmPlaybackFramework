@@ -69,12 +69,12 @@ Use the executed pauses, including conditional and fallback pauses, to determine
 
 Skip this section when modifying an existing page.
 
-Copy `examples/animated-playback-starter/src/template` or a provided template by the user to `examples/animated-playback-starter/src/playbackpages/<page-name>`, or to the destination provided by the user. Derive a concise folder name from the algorithm when none is provided.
+Copy `animated-playback-starter/src/template` or a provided template by the user to `animated-playback-starter/src/playbackpages/<page-name>`, or to the destination provided by the user. Derive a concise folder name from the algorithm when none is provided.
 
 When a source-code file is provided and the `code` control exists:
 
 1. Copy the source file into the page folder.
-2. Run `examples/animated-playback-starter/src/tools/ConvertCode.ps1 -InputFile <source-path>`.
+2. Run `animated-playback-starter/src/tools/ConvertCode.ps1 -InputFile <source-path>`.
 3. Put the converted output in the `staticValue` property of the control whose ID is `code`.
 
 ## Create the controls in `playback.json`

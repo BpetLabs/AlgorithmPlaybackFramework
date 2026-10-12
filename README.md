@@ -29,7 +29,7 @@ No additional CSS is required. Every supported theme variable begins with `--apf
 
 ## Starter
 
-The [Animated Playback starter](examples/animated-playback-starter) is a copyable React application.
+The [Animated Playback starter](animated-playback-starter) is a copyable React application.
 
 ## Development
 

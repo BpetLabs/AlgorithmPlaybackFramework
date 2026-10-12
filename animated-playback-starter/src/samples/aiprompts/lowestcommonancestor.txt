@@ -8,10 +8,10 @@ Agent Skills Location:
 - .agents/skills
 
 Template: 
-- examples/animated-playback-starter/src/template
+- animated-playback-starter/src/template
 
 Code:
-- examples/animated-playback-starter/src/samples/examplecodefiles/lowestcommonancestor.py
+- animated-playback-starter/src/samples/examplecodefiles/lowestcommonancestor.py
 
 PlaybackControls:
 - Create a CallStack and a 3 level deep tree
