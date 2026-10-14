@@ -17,12 +17,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - node-version: "20.19.x"
-            react-version: "18.2.0"
-            react-types-version: "18"
-          - node-version: "20.19.x"
-            react-version: "19"
-            react-types-version: "19"
           - node-version: "22.x"
             react-version: "18.2.0"
             react-types-version: "18"
