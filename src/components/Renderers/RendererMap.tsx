@@ -2,7 +2,6 @@ import { StackRenderer } from "./StackRenderer";
 import { StaticTextRenderer } from "./StaticTextRenderer";
 import { ArrayRenderer } from "./ArrayRenderer";
 import { GridRenderer } from "./GridRenderer";
-import { MemoryStackRenderer } from "./MemoryStackRenderer";
 import { NodeGraphRenderer } from "./NodeGraphRenderer";
 import { JaggedArrayRenderer } from "./JaggedArrayRenderer";
 
@@ -86,16 +85,6 @@ const makeJaggedArrayRenderer = () =>
     { renderContent: RendererConfig[RendererType.Array].renderContent }
   );
 
-const makeMemoryStackRenderer = (type: RendererType) =>
-  makeRenderer<
-    AnimatedRendererProps & {
-      gridOffset?: number;
-      startingMemoryAddress?: number;
-      memoryAddressIncrement?: number;
-      stackDirection?: "top-down" | "bottom-up";
-    }
-  >(type, MemoryStackRenderer);
-
 const makeStaticTextRenderer = (type: RendererType) =>
   makeRenderer<
     BaseRendererProps & {
@@ -129,9 +118,7 @@ const makeNodeGraphRenderer = (type: RendererType) =>
 export const RendererMap = {
   [RendererType.Stack]: makeStackRenderer(RendererType.Stack),
   [RendererType.Dictionary]: makeStackRenderer(RendererType.Dictionary),
-  [RendererType.BooleanDictionary]: makeStackRenderer(RendererType.BooleanDictionary),
   [RendererType.Text]: makeStackRenderer(RendererType.Text),
-  [RendererType.MemoryStack]: makeMemoryStackRenderer(RendererType.MemoryStack),
   [RendererType.Array]: makeArrayRenderer(RendererType.Array),
   [RendererType.JaggedArray]: makeJaggedArrayRenderer(),
   [RendererType.Grid]: makeGridRenderer(RendererType.Grid),

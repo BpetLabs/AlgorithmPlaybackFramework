@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { ControlItemState } from "../../common/models/controlItem";
 import { Snapshot } from "../../common/models/snapshot";
 import { GridRenderer } from "./GridRenderer";
-import { MemoryStackRenderer } from "./MemoryStackRenderer";
 import { RendererMap } from "./RendererMap";
 import { RendererType } from "./rendererConfig";
 import { StackRenderer } from "./StackRenderer";
@@ -166,18 +165,4 @@ describe("renderers", () => {
     expect(markup).toContain(">Max<");
   });
 
-  it("renders memory address zero", () => {
-    const markup = renderToStaticMarkup(
-      <MemoryStackRenderer
-        snapshot={snapshot}
-        divWidth={100}
-        divHeight={100}
-        disableAnimations
-        startingMemoryAddress={0}
-      />
-    );
-
-    expect(markup).toContain("0x0");
-    expect(markup).not.toContain("NaN");
-  });
 });

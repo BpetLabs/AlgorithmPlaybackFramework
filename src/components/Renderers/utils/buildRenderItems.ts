@@ -9,6 +9,35 @@ export interface RenderItemWithOffset<T extends ControlItem> {
   frozen?: boolean;
 }
 
+export function getFittedRenderExtent<T extends ControlItem>(
+  renderItems: RenderItemWithOffset<T>[],
+  minimumSlotCount = 0,
+  defaultItemOffset = 0
+): number {
+  const occupiedOffsets = new Set<number>();
+  const contentExtent = renderItems.reduce((extent, renderItem) => {
+    const state = renderItem.item.state;
+    if (
+      state === ControlItemState.PreInsert ||
+      state === ControlItemState.PreHead ||
+      state === ControlItemState.PreTail ||
+      renderItem.itemOffset === 0
+    ) {
+      return extent;
+    }
+
+    occupiedOffsets.add(renderItem.offset);
+
+    return Math.max(
+      extent,
+      renderItem.offset + renderItem.itemOffset
+    );
+  }, 0);
+
+  return contentExtent +
+    Math.max(minimumSlotCount - occupiedOffsets.size, 0) * defaultItemOffset;
+}
+
 export function buildRenderItems<T extends ControlItem>(
   snapshot: T[],
   collapsedIds: Set<string>,
@@ -18,6 +47,11 @@ export function buildRenderItems<T extends ControlItem>(
   const renderItems: RenderItemWithOffset<T>[] = [];
   let nextOffset = 0; // pixel offset for the next new slot
   const linkOffset = new Map<string, number>();
+  const collapsedLinkIds = new Set(
+    snapshot.flatMap((item) =>
+      collapsedIds.has(item.id) && item.linkId ? [item.linkId] : []
+    )
+  );
   const incomingStates = new Set<ControlItemState>([
     ControlItemState.PreInsert,
     ControlItemState.PreUpdate,
@@ -32,6 +66,10 @@ export function buildRenderItems<T extends ControlItem>(
       item.state === ControlItemState.Inserted &&
       isIncomingState(item.previousState)
     );
+  const getItemOffset = (item: T) =>
+    item.state === ControlItemState.Empty
+      ? defaultItemOffset
+      : item.itemOffset ?? defaultItemOffset;
   const activeLinkCounts = new Map<string, number>();
   const incomingReplacementLinks = new Set<string>();
   snapshot.forEach((item) => {
@@ -58,6 +96,40 @@ export function buildRenderItems<T extends ControlItem>(
   const hasSameSlotIncomingReplacement = (index: number) =>
     index + 1 < snapshot.length && isIncomingItem(snapshot[index + 1]);
 
+  const linkedSlotSize = new Map<string, number>();
+  snapshot.forEach((item) => {
+    if (
+      !item.linkId ||
+      item.state === ControlItemState.Removed ||
+      collapsedIds.has(item.id) ||
+      collapsedLinkIds.has(item.linkId) ||
+      (isRemovingState(item.state) &&
+        disableAnimations &&
+        item.collapse !== false) ||
+      (item.state === ControlItemState.Empty &&
+        (activeLinkCounts.get(item.linkId) ?? 0) > 1)
+    ) {
+      return;
+    }
+
+    linkedSlotSize.set(
+      item.linkId,
+      Math.max(
+        linkedSlotSize.get(item.linkId) ?? 0,
+        getItemOffset(item)
+      )
+    );
+  });
+  const consumedLinkedSlots = new Set<string>();
+
+  const getLinkedOffset = (linkId: string) => {
+    const existingOffset = linkOffset.get(linkId);
+    if (existingOffset !== undefined) return existingOffset;
+
+    linkOffset.set(linkId, nextOffset);
+    return nextOffset;
+  };
+
   for (let index = 0; index < snapshot.length; index++) {
     const item = snapshot[index];
     if (item.state === ControlItemState.Removed) continue;
@@ -69,7 +141,9 @@ export function buildRenderItems<T extends ControlItem>(
       continue;
     }
 
-    const collapsed = collapsedIds.has(item.id);
+    const collapsed =
+      collapsedIds.has(item.id) ||
+      Boolean(item.linkId && collapsedLinkIds.has(item.linkId));
     const removing = isRemovingState(item.state);
 
     // collapsed and finished → gone
@@ -80,12 +154,17 @@ export function buildRenderItems<T extends ControlItem>(
 
     // collapsed and still removing → render frozen at current offset (do not advance)
     if (collapsed && removing) {
+      const offset = item.linkId
+        ? getLinkedOffset(item.linkId)
+        : nextOffset;
       renderItems.push({
         item,
         collapsed,
-        collapsedIndex: nextOffset,
-        offset: nextOffset,
-        itemOffset: item.itemOffset ?? defaultItemOffset,
+        collapsedIndex: offset,
+        offset,
+        // Keep the completed removal mounted without letting it determine
+        // the shared slot or control extent.
+        itemOffset: 0,
         frozen: true,
       });
       continue;
@@ -99,12 +178,15 @@ export function buildRenderItems<T extends ControlItem>(
       item.collapse !== false &&
       (hasIncomingReplacementFor(item) || hasSameSlotIncomingReplacement(index))
     ) {
-      const itemOffset = item.itemOffset ?? defaultItemOffset;
+      const itemOffset = getItemOffset(item);
+      const offset = item.linkId
+        ? getLinkedOffset(item.linkId)
+        : nextOffset;
       renderItems.push({
         item,
         collapsed,
-        collapsedIndex: nextOffset,
-        offset: nextOffset,
+        collapsedIndex: offset,
+        offset,
         itemOffset,
         frozen: true,
       });
@@ -112,19 +194,19 @@ export function buildRenderItems<T extends ControlItem>(
     }
 
     // normal / visible item
-    const itemOffset = item.itemOffset ?? defaultItemOffset;
+    const itemOffset = getItemOffset(item);
     let offset: number;
 
     if (item.linkId) {
-      if (linkOffset.has(item.linkId)) {
-        // reuse existing slot for this linkId
-        offset = linkOffset.get(item.linkId)!;
-      } else {
-        // first time we see this linkId -> assign current nextOffset as its slot
-        offset = nextOffset;
-        linkOffset.set(item.linkId, offset);
-        // advance nextOffset because the *owner* slot consumes space
-        nextOffset += itemOffset;
+      offset = getLinkedOffset(item.linkId);
+      if (!consumedLinkedSlots.has(item.linkId)) {
+        // Linked outgoing and incoming nodes occupy one slot. Reserve the
+        // largest active size so following items and the control make room.
+        nextOffset = Math.max(
+          nextOffset,
+          offset + (linkedSlotSize.get(item.linkId) ?? itemOffset)
+        );
+        consumedLinkedSlots.add(item.linkId);
       }
     } else {
       // not linked -> take its own slot

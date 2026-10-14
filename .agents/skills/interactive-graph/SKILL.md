@@ -5,66 +5,58 @@ description: "Create, edit, audit, or synchronize node items in nodeGraph JSON. 
 
 # Interactive Graph Rules
 
-Use these rules when an in-scope AnimatedPlayback control contains a `nodeGraph`. For new playbacks and trace changes, populate the nodes and edges and synchronize traversal state at every pause. For localized edits, limit work to the affected range and adjacent state boundaries.
+Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 
-Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for node-graph grid layout.
+## Graph state
 
-## Edge ownership and arrow direction
+- For new playbacks and trace changes, populate nodes and edges and synchronize traversal state from the shared execution trace.
+- Store displayed node content directly in `graphNodes[].value`. Every graph-node object that assigns `value` must assign `backgroundColor` in the same object. Use a unique background color for each node and prefer colors that remain legible with white text.
 
-- Create graph edges only in the child-to-parent direction; never create an edge from a parent to a child.
-- Store every edge with:
-  - `from`: child node ID
-  - `to`: parent node ID
-- Draw the arrow visually from the parent down to the child.
-- Because the stored edge runs from child to parent, use `"arrow": "prev"` so the arrowhead appears at the child.
+## Tree edge direction and anchors
 
-## Parent anchor
+For parent-child tree visualizations, store each edge from child to parent:
 
-Choose the parent's target anchor from the child's horizontal position:
+- `from`: child node ID
+- `to`: parent node ID
+- `arrow`: `"prev"`, which places the arrowhead at the child and draws the visual direction from parent to child
 
-- Child left of parent: `"toAnchor": "lowerLeft"`
-- Child centered under parent: `"toAnchor": "bottom"`
-- Child right of parent: `"toAnchor": "lowerRight"`
+For non-tree graphs, preserve the graph's semantic edge direction instead of applying the child-to-parent convention.
 
-Treat a child as centered when its horizontal center matches the parent's horizontal center, accounting for `columnSpan`.
+### Parent anchor
 
-## Child anchor
+Choose the parent's `toAnchor` from the child's horizontal position:
 
-Prefer the child's top-center so arrows remain as straight as possible:
+- Child left of parent: `"lowerLeft"`
+- Child centered under parent: `"bottom"`
+- Child right of parent: `"lowerRight"`
+
+Treat a child as centered when its horizontal center matches the parent's horizontal center after accounting for `columnSpan`.
+
+### Child anchor
+
+Use the child's top-center unless a wide horizontal offset makes a corner anchor clearer:
 
 - Default: `"fromAnchor": "top"`
 - Child more than one node width left of its parent: `"fromAnchor": "upperRight"`
 - Child more than one node width right of its parent: `"fromAnchor": "upperLeft"`
 
-Measure horizontal distance between node centers and compare it with one resolved node width. In grid units, use the larger of the child and parent `columnSpan` values, defaulting each missing span to 1. Use a corner anchor only when the center distance is strictly greater than that width; equality still uses `top`.
+Measure the distance between node centers against one resolved node width. In grid units, use the larger of the child and parent `columnSpan` values, defaulting a missing span to 1. Use a corner anchor only when the distance is strictly greater than that width; equality uses `top`.
 
-## Node colors and borders
+## Traversal highlights
 
-- Every action that assigns a node value must include a `backgroundColor` in the same input, whether the action initializes the node or changes it later. Use unique colors for each graph node, perfer colors that would work with white text. 
-- For new playbacks and trace changes, compute node and edge highlights at every step from the shared execution trace. For a localized edit, recompute only the affected range plus its preceding and following state boundaries. Preserve a role's highlight across pauses until its node changes or the role leaves scope; a pause whose statement does not reference the role does not end the highlight.
-- Use `Orange` for the primary current node. Use `Yellow` as a secondary current or focus color when the visualization needs another simultaneous active node. If the secondary node represents a pending traversal, color its incoming edge `Yellow` as well.
-- Use `Pink` for every ancestor node on the active path from the start node to the current node. Color the edges connecting those ancestors `Pink` too. Do not use `Yellow` merely because the active path contains multiple nodes.
-- Use an `Orange` edge only on the destination step immediately after traversal descends into its represented child. On the following pause, change that edge to `Pink` if it remains on the active path, even when the child remains the current node.
-- When traversal descends to a child, change the former current node and its incoming edge to `Pink`, then color the child `Orange` and its incoming edge `Orange` for that destination step. The root has no incoming edge.
-- When traversal enters a null or otherwise unrepresented child, there is no graph node or incoming edge to color `Orange`. Change the former current node and its incoming edge to `Pink` while that call or state is active. When traversal returns, restore the parent node to `Orange` but keep its incoming edge `Pink`.
-- When traversal returns from a represented child, clear both the departed child's border and its incoming edge color. Change the parent node from `Pink` to `Orange`, but keep the parent's incoming edge `Pink`; keep earlier ancestors and their connecting edges `Pink`.
-- If a node is accessed during unpaused execution between two pauses, show that access highlight on the destination step. Preserve it while it has a continuing in-scope role; otherwise clear it on the next step.
-- A role may identify at most one highlighted node in a control at a time. If multiple roles refer to the same node, render one border and resolve standard role-color collisions with this precedence: `Orange`, then `Yellow`, then `Pink`. If only custom role colors collide, choose one consistently.
-- When a node or edge no longer belongs to the active path or another highlighted role, clear its `borderColor` or `color` in that step. Clear all remaining node borders and edge colors when traversal finishes.
+- Use `Orange` for the primary current node. Use `Yellow` for a secondary current or focus node when another simultaneous active node is needed. If it represents a pending traversal, color its incoming edge `Yellow` too.
+- Use `Pink` for each ancestor on the active path from the start node to the current node, including the edges connecting those ancestors. Do not use `Yellow` merely because the path contains multiple nodes.
+- When traversal descends to a represented child, change the former current node and its incoming edge to `Pink`, then color the child and its incoming edge `Orange` on that destination step. On the following pause, change the child's incoming edge to `Pink` if it remains on the active path, even if the child remains current. The root has no incoming edge.
+- When traversal enters a null or otherwise unrepresented child, there is no node or incoming edge to color `Orange`. Change the former current node and its incoming edge to `Pink` while that call or state is active. On return, restore the parent node to `Orange` while keeping its incoming edge `Pink`.
+- When traversal returns from a represented child, clear the departed child's border and incoming edge color. Change the parent from `Pink` to `Orange`, keep its incoming edge `Pink`, and preserve earlier ancestors and their connecting edges as `Pink`.
+- Resolve standard-role color collisions with this precedence: `Orange`, then `Yellow`, then `Pink`. If only custom role colors collide, choose one consistently.
+- When a node or edge leaves the active path and has no other highlighted role, clear its `borderColor` or `color` in that step. Clear all remaining node borders and edge colors when traversal finishes.
 
-## Tree placement
+## Tree layout
 
-- Start at row 0 with the root centered horizontally within the graph container.
-- Use large gaps between the root's children and progressively smaller gaps between children at deeper levels.
+- Place the root at row 0 and center the occupied tree bounds within the graph container.
+- Allocate horizontal space from subtree width, node width, label length, and available container width. Upper rows generally need wider sibling gaps than deeper rows.
 - Center each parent over the horizontal extent of its direct children when practical.
-- Center the complete occupied tree bounds within the graph container, not merely the raw column grid.
-- Reserve balanced left and right margins.
-- Keep nodes and their `columnSpan` inside the configured column count.
+- Keep every node and its `columnSpan` inside the configured column count. Do not alter relative positions merely to make an asymmetric tree appear balanced.
 - Avoid node overlap and edge crossings before optimizing compactness.
-
-## Spacing by depth
-
-- Give upper rows enough horizontal separation to contain their complete subtrees.
-- Reduce sibling column spacing progressively on deeper rows because those subtrees are smaller.
-- Base spacing on node width, label length, and available container width rather than using one fixed gap for every row.
-- Keep row gaps large enough that arrows and arrowheads remain readable without making related levels feel disconnected.
+- Keep row gaps large enough for readable arrows and arrowheads without visually disconnecting related levels.

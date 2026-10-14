@@ -5,41 +5,40 @@ description: Create, edit, audit, or synchronize Play by Play narration, console
 
 # Interactive Text
 
-Apply these rules whenever an in-scope AnimatedPlayback control is a text control, unless the user requests different wording. For new playbacks and trace changes, populate Play by Play at the introduction, every execution pause, and the conclusion. For localized edits, update only the affected messages and adjacent continuity checks. Populate console or other text controls at the steps where their represented text exists.
+Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 
-Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for Play by Play, console output, and other text controls.
+## Text batches
 
-## Content
+- Write each dynamic text message with `setValues` at index 0 and put its content in `input.value`.
+- For new playbacks and trace changes, populate Play by Play with an introduction, narration at every execution pause, and a conclusion. Populate console and other text controls on the steps where their represented text exists.
+- Preserve existing wording and formatting unless the user requests changes or a code or step change makes the text stale. Update stale text in the existing style.
 
-- Every input uses 'setValues' at input 0. 
-- Do not change existing text descriptions or formatting unless asked and instead recommend changes, however do change text that aligns with code or step changes without asking, try to match the same style to existing text.
+## Play by Play
+
 - Describe what the code does, not what the visualization displays.
-- At each paused execution step, preview the pending effect of the current paused statement. Describe relevant operations completed since the previous pause only when they were not already previewed by the preceding narration.
-- Do not restate a completed operation when the previous step already explained what that operation would do; treat that preview as carrying the operation across the transition.
-- State unpreviewed completed operations directly. Describe the current paused statement in future tense, such as "will become" or "will add," because it has not executed yet.
+- At each paused step, state relevant unpreviewed work completed since the preceding pause, then preview the pending effect of the current statement in future tense. A preview carries across the transition; do not restate that action as completed on the next step.
 - When a step contains both unpreviewed completed work and a pending effect, separate them with `\n\n`. Do not use phrases such as "Pause before," "Paused at," or "The visualization shows."
 - Include relevant unpaused control-flow effects between pauses, even when they leave a value unchanged.
 - Keep each step concise and limited to actions relevant to that step.
 - Preserve exact method names, variable names, coordinates, values, and language-specific capitalization from the code.
 - Include `Command:` at the start of the first execution step when an execution input is provided; show the external invocation, not internal method calls.
 - Keep introductory or concluding text separate from execution narration.
-- When there are 5 or less sentences prefer multi line \n\n breaks between sentences.
 - The final conclusion text should read "Hope you learned something!"
-- Introduction step at step 0 should describe what the code does, and not the specific input, and how it could be used. If it is a coding problem, it should very briefly describe the problem being solved and include its time and space complexity in Big O notation.
-- When a calculation happened or will happen at a pause step show the full calculation; do not show the same calculation on the next step, only the result.
+- At step 0, describe what the code does, how it can be used, and not the specific execution input. For a coding problem, briefly describe the problem and include its time and space complexity in Big O notation.
+- When a calculation completed or is pending at a paused step, show the full calculation there. On the next step, show only its result rather than repeating the calculation.
 
 ## Console output
 
 - Treat each console-output call independently; display only the text emitted by that single call and never accumulate or retain earlier output.
 - Do not show the new output while paused on the console-output statement because the paused statement has not executed yet.
 - Show the emitted text on the immediate next step with `setValues` at index 0.
-- Clear index 0 on the following step so the output is visible for only one post-execution step and cannot persist into another call.
+- On the following step, clear index 0 with `setValues` and `input.value: ""` so the output remains visible for only one post-execution step.
 
 ## Formatting
 
-- Use sentence capitalization and correct punctuation.
+- Use sentence capitalization and correct punctuation. Start each paragraph after `\n\n` with a capital letter.
 - Separate distinct code actions or ideas with the literal JSON escape sequence `\n\n`.
+- For a message with five or fewer sentences, prefer `\n\n` between sentences.
 - Within a multiline command, code block, or structured input, use a single `\n` for line breaks and `\n\n` between the command and surrounding prose.
 - Do not use a single `\n` where a paragraph break is intended.
 - Do not add `\n\n` merely to wrap one continuous sentence.
-- Start each paragraph after `\n\n` with a capital letter.

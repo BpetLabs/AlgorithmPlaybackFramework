@@ -108,6 +108,321 @@ describe("InteractiveControlRenderer", () => {
     expect(markup).toContain("height:60px");
   });
 
+  it("blocks item dimensions for arrays", () => {
+    expect(() => renderControl(control({
+      rendererOptions: { itemWidth: 1 },
+    }))).toThrow("itemWidth is not supported for array controls");
+    expect(() => renderControl(control({
+      rendererOptions: { itemHeight: 1 },
+    }))).toThrow("itemHeight is not supported for array controls");
+  });
+
+  it("uses gaps to shrink horizontal-array items without shrinking slots", () => {
+    const markup = renderControl(control({
+      rendererOptions: {
+        itemGap: 10,
+        itemCrossAxisGap: 25,
+      },
+    }));
+
+    expect(markup).toContain("width:300px;height:80px;position:relative");
+    expect(markup).toContain("left:40px;width:40px");
+    expect(markup).toContain("width:20px;height:30px");
+  });
+
+  it("resizes one horizontal slot and restores the control after shrink or deletion", () => {
+    const item = (id: string, itemOffset: number) => ({
+      id,
+      state: ControlItemState.Initial,
+      itemOffset,
+    });
+    const snapshots = [
+      {
+        ...snapshot,
+        step: 1,
+        items: [item("a", 10), item("b", 10), item("c", 10)],
+      },
+      {
+        ...snapshot,
+        step: 3,
+        items: [
+          item("a", 10),
+          {
+            ...item("b-outgoing", 10),
+            state: ControlItemState.RemovingUpdate,
+            linkId: "b",
+          },
+          {
+            ...item("b-incoming", 30),
+            state: ControlItemState.PreUpdate,
+            linkId: "b",
+          },
+          item("c", 10),
+        ],
+      },
+      {
+        ...snapshot,
+        step: 4,
+        items: [item("a", 10), item("b", 10), item("c", 10)],
+      },
+      {
+        ...snapshot,
+        step: 5,
+        items: [
+          item("a", 10),
+          {
+            ...item("b", 30),
+            state: ControlItemState.Removed,
+          },
+          item("c", 10),
+        ],
+      },
+    ];
+    const currentControl = control({
+      snapshots,
+      rendererOptions: { itemCrossAxisGap: 25 },
+    });
+    const renderStep = (step: number) => renderControl(
+      currentControl,
+      { items: snapshots.find((entry) => entry.step === step)! },
+      { currentStep: step }
+    );
+
+    expect(renderStep(1)).toContain("width:30px");
+    expect(renderStep(3)).toContain("width:50px");
+    expect(renderStep(3)).toContain("left:10px;width:30px");
+    expect(
+      renderStep(3).match(/width:30px;height:30px;background-color/g)
+    ).toHaveLength(2);
+    expect(renderStep(4)).toContain("width:30px");
+    expect(renderStep(5)).toContain("width:60px");
+  });
+
+  it("keeps the larger outgoing stack slot until a smaller update moves into place", () => {
+    const transitioningSnapshot = {
+      ...snapshot,
+      type: "stack",
+      step: 1,
+      items: [
+        {
+          id: "outgoing",
+          linkId: "slot",
+          state: ControlItemState.RemovingUpdate,
+          itemOffset: 30,
+        },
+        {
+          id: "incoming",
+          linkId: "slot",
+          state: ControlItemState.PreUpdate,
+          itemOffset: 10,
+        },
+      ],
+    };
+    const completedSnapshot = {
+      ...snapshot,
+      type: "stack",
+      step: 2,
+      items: [
+        {
+          id: "incoming",
+          linkId: "slot",
+          state: ControlItemState.Inserted,
+          itemOffset: 10,
+        },
+      ],
+    };
+    const currentControl = control({
+      type: "stack",
+      snapshots: [transitioningSnapshot, completedSnapshot],
+    });
+
+    const transitionMarkup = renderControl(
+      currentControl,
+      { items: transitioningSnapshot },
+      { currentStep: 1 }
+    );
+
+    expect(transitionMarkup).toContain(
+      "top:60px;left:20px;width:300px;height:30px"
+    );
+    expect(
+      transitionMarkup.match(/height:30px;background-color/g)
+    ).toHaveLength(2);
+    expect(
+      renderControl(
+        currentControl,
+        { items: completedSnapshot },
+        { currentStep: 2 }
+      )
+    ).toContain("top:80px;left:20px;width:300px;height:10px");
+  });
+
+  it("moves following stack items past a larger incoming update slot", () => {
+    const transitioningSnapshot = {
+      ...snapshot,
+      type: "stack",
+      step: 1,
+      items: [
+        {
+          id: "bottom",
+          state: ControlItemState.Initial,
+          itemOffset: 70,
+        },
+        {
+          id: "outgoing",
+          linkId: "slot",
+          state: ControlItemState.RemovingUpdate,
+          itemOffset: 70,
+        },
+        {
+          id: "incoming",
+          linkId: "slot",
+          state: ControlItemState.PreUpdate,
+          itemOffset: 140,
+        },
+        {
+          id: "following",
+          state: ControlItemState.Initial,
+          itemOffset: 70,
+        },
+      ],
+    };
+    const currentControl = control({
+      type: "stack",
+      snapshots: [transitioningSnapshot],
+    });
+
+    const markup = renderControl(
+      currentControl,
+      { items: transitioningSnapshot },
+      { currentStep: 1 }
+    );
+
+    expect(markup).toContain("top:-190px;left:20px;width:300px;height:280px");
+    expect(markup.match(/height:140px;background-color/g)).toHaveLength(2);
+    expect(markup).toContain("bottom:210px;left:0");
+  });
+
+  it("does not include a staged tail insert in fitted stack height", () => {
+    const stagedSnapshot = {
+      ...snapshot,
+      type: "stack",
+      step: 6,
+      items: [
+        {
+          id: "bottom",
+          state: ControlItemState.Initial,
+          itemOffset: 70,
+        },
+        {
+          id: "top",
+          state: ControlItemState.Initial,
+          itemOffset: 70,
+        },
+        {
+          id: "pending-tail",
+          state: ControlItemState.PreTail,
+          itemOffset: 70,
+        },
+      ],
+    };
+    const currentControl = control({
+      type: "stack",
+      snapshots: [stagedSnapshot],
+      rendererOptions: { fitContent: true },
+    });
+
+    const markup = renderControl(
+      currentControl,
+      { items: stagedSnapshot },
+      { currentStep: 6 }
+    );
+
+    expect(markup).toContain("top:-50px;left:20px;width:300px;height:140px");
+    expect(markup).toContain("bottom:140px;left:0");
+  });
+
+  it("uses gaps to shrink vertical-array items without shrinking slots", () => {
+    const markup = renderControl(control({
+      rendererOptions: {
+        orientation: "vertical",
+        itemGap: 5,
+        itemCrossAxisGap: 50,
+      },
+    }));
+
+    expect(markup).toContain("width:300px");
+    expect(markup).toContain("height:80px");
+    expect(markup).toContain("top:40px;height:40px");
+    expect(markup).toContain("width:200px;height:30px");
+    expect(markup).toContain("position:absolute;top:45px;left:50px");
+  });
+
+  it.each(["stack", "dictionary"])(
+    "uses gaps to shrink %s items without shrinking slots",
+    (type) => {
+      const typedSnapshot = { ...snapshot, type };
+      const markup = renderControl(
+        control({
+          type,
+          snapshots: [typedSnapshot],
+          rendererOptions: {
+            itemGap: 5,
+            itemCrossAxisGap: 50,
+          },
+        }),
+        { items: typedSnapshot }
+      );
+
+      expect(markup).toContain("width:200px");
+      expect(markup).toContain("width:300px;height:80px");
+      expect(markup).toContain("height:30px");
+      expect(markup).toContain("bottom:40px");
+    }
+  );
+
+  it.each(["stack", "dictionary"])(
+    "blocks %s item dimensions",
+    (type) => {
+      const typedSnapshot = { ...snapshot, type };
+      expect(() => renderControl(
+        control({
+          type,
+          snapshots: [typedSnapshot],
+          rendererOptions: { itemWidth: 1 },
+        }),
+        { items: typedSnapshot }
+      )).toThrow(`itemWidth is not supported for ${type} controls`);
+      expect(() => renderControl(
+        control({
+          type,
+          snapshots: [typedSnapshot],
+          rendererOptions: { itemHeight: 1 },
+        }),
+        { items: typedSnapshot }
+      )).toThrow(`itemHeight is not supported for ${type} controls`);
+    }
+  );
+
+  it("keeps text control sizing independent from custom item dimensions", () => {
+    const textSnapshot = { ...snapshot, type: "text" };
+    const markup = renderControl(
+      control({
+        type: "text",
+        snapshots: [textSnapshot],
+        rendererOptions: {
+          itemWidth: 200,
+          itemHeight: 30,
+        },
+      }),
+      { items: textSnapshot }
+    );
+
+    expect(markup).toContain("width:300px");
+    expect(markup).toContain("height:80px");
+    expect(markup).toContain("bottom:40px");
+  });
+
   it("fits jagged arrays to recursively measured child content", () => {
     const jaggedSnapshot = {
       id: "items",

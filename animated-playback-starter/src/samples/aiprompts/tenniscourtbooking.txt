@@ -4,6 +4,9 @@
 
 lets create a new playback
 
+Playback Name:
+- sample-java-tenniscourtbookings
+
 Agent Skills Location:
 - .agents/skills
 
@@ -11,13 +14,13 @@ Template:
 - animated-playback-starter/src/template
 
 Code:
-- animated-playback-starter/src/samples/examplecodefiles/tenniscourtbookings.py
+- animated-playback-starter/src/samples/examplecodefiles/tenniscourtbookings.java
 
 PlaybackControls:
 - Create a minHeap,  input jagged array,  and assigned courts array
 
 Pause at :
-- Each call to heappop and heappush and return
+- Each call to heappop and heappush and return.
 
 Input: 
 - Pick 7 values that return at least 3 courts - use values 7-20 representing hours.
@@ -26,10 +29,8 @@ Rules:
 
 After completion:
 
-- Review and verify that all skills were properly followed; 
-    including but not limited to double checking: 
-        highlighting, 
-        object placement and properties,  
-        text output
-- Report and fix any issues found.
-- Report any contradictions or rules that need additional clarity.
+- Replay the canonical trace and audit every applicable skill rule and prompt request.
+- Independently compare expected and resulting state at every step.
+- Provide evidence for each review category; fix and re-audit discrepancies.
+- Do not treat authored batches or successful compilation as verification.
+- Report any assumptions made, contradictions, or rules that need additional clarity.

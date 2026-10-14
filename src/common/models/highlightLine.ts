@@ -12,7 +12,7 @@ export interface HighlightRange {
 
 export const Highlight = {
   Return: "var(--_apf-highlight-return, rgba(90, 160, 90, 0.3))",
-  Unused: "var(--_apf-highlight-unused, rgba(128, 128, 128, 0.1))",
+  Unused: "var(--_apf-highlight-unused, rgba(128, 128, 128, 0.2))",
   ReturnLocation:
     "var(--_apf-highlight-return-location, rgba(200, 200, 200, 0.35))",
   False: "var(--_apf-highlight-false, rgba(175, 0, 0, 0.1))",

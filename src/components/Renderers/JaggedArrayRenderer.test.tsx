@@ -21,7 +21,7 @@ const child = (overrides: Record<string, unknown> = {}) => ({
     step: 2,
     items: [{ id: "child-0", state: ControlItemState.RemovingInPlace, value: "Child" }],
   },
-  options: { orientation: "horizontal" },
+  options: { orientation: "horizontal" as const },
   render: {},
   ...overrides,
 });
@@ -41,7 +41,6 @@ const renderJagged = (
   <JaggedArrayRenderer
     snapshot={parentSnapshot}
     childArrays={children}
-    childDefaults={{ itemHeight: 20 }}
     currentStep={currentStep}
     navigationDisableAnimations={false}
     disableAnimations
@@ -107,6 +106,67 @@ describe("JaggedArrayRenderer", () => {
 
     expect(markup).toContain("width:35px;height:25px");
     expect(markup).toContain("width:45px;height:35px");
+  });
+
+  it("blocks item dimensions on jagged leaves", () => {
+    expect(() => getJaggedArrayDimensions({
+      snapshot: parentSnapshot,
+      childArrays: [child({ options: { itemWidth: 1 } })],
+      disableAnimations: true,
+      divWidth: 1,
+      divHeight: 1,
+      childGap: 5,
+      childWidth: 30,
+      childHeight: 20,
+    })).toThrow("itemWidth is not supported for array controls");
+    expect(() => getJaggedArrayDimensions({
+      snapshot: parentSnapshot,
+      childArrays: [child({ options: { itemHeight: 1 } })],
+      disableAnimations: true,
+      divWidth: 1,
+      divHeight: 1,
+      childGap: 5,
+      childWidth: 30,
+      childHeight: 20,
+    })).toThrow("itemHeight is not supported for array controls");
+  });
+
+  it("uses gaps to shrink jagged leaf items without shrinking their layout", () => {
+    const markup = renderJagged([
+      child({ options: { itemGap: 5, itemCrossAxisGap: 5 } }),
+    ]);
+
+    expect(markup).toContain("width:40px;height:30px");
+    expect(markup).toContain("width:20px;height:10px");
+  });
+
+  it("uses itemOffset alone to resize jagged leaf layout", () => {
+    const dimensionsForOffset = (itemOffset: number) =>
+      getJaggedArrayDimensions({
+        snapshot: parentSnapshot,
+        childArrays: [child({
+          snapshot: {
+            id: "matrix-0",
+            type: "array",
+            step: 2,
+            items: [{
+              id: "child-0",
+              state: ControlItemState.Initial,
+              itemOffset,
+            }],
+          },
+        })],
+        disableAnimations: true,
+        divWidth: 1,
+        divHeight: 1,
+        orientation: "vertical",
+        childGap: 5,
+        childWidth: 30,
+        childHeight: 20,
+      });
+
+    expect(dimensionsForOffset(10)).toEqual({ width: 20, height: 30 });
+    expect(dimensionsForOffset(60)).toEqual({ width: 70, height: 30 });
   });
 
   it("hides stale removing children by disabling their animations", () => {

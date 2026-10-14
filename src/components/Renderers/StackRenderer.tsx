@@ -2,9 +2,15 @@
 import StackItem from "../Items/StackItem";
 import { ControlItem } from "../../common/models/controlItem";
 import { Snapshot } from "../../common/models/snapshot";
-import { buildRenderItems } from "./utils/buildRenderItems";
+import {
+  buildRenderItems,
+  getFittedRenderExtent,
+} from "./utils/buildRenderItems";
 import { DEFAULT_RENDERER_CONTAINER_CLASS_NAME, RendererProps, resolveContainerClassName } from "./rendererConfig";
-import { requirePositiveDimension } from "./utils/dimensions";
+import {
+  requirePositiveDimension,
+  rejectItemDimensions,
+} from "./utils/dimensions";
 import { useCollapsedItems } from "../../hooks/useCollapsedItems";
 import { buildGridCells } from "./utils/buildGridCells";
 
@@ -18,6 +24,7 @@ interface StackRendererProps extends RendererProps {
   itemCrossAxisGap?: number;
   itemWidth?: number;
   itemHeight?: number;
+  fitContent?: boolean;
   preInsertGap?: number;
   splitColumnWidths?: number[];
   showCellBorders?: boolean;
@@ -33,16 +40,20 @@ export function StackRenderer({
   itemCrossAxisGap = 0,
   itemWidth,
   itemHeight,
+  fitContent = false,
   preInsertGap,
   splitColumnWidths,
-  showCellBorders =
-    snapshot.type !== "dictionary" && snapshot.type !== "booleanDictionary",
+  showCellBorders = snapshot.type !== "dictionary",
   renderContent,
   borderWidth,
   containerClassName,
   containerStyle,
 }: StackRendererProps) {
   const snapshotItems = snapshot.items;
+  const usesConfigurableItemSizing = snapshot.type !== "text";
+  if (usesConfigurableItemSizing) {
+    rejectItemDimensions(itemWidth, itemHeight, snapshot.type);
+  }
   const resolvedDefaultItemOffset = requirePositiveDimension(
     defaultItemOffset,
     "defaultItemOffset"
@@ -55,9 +66,14 @@ export function StackRenderer({
     disableAnimations,
     resolvedDefaultItemOffset
   );
+  const renderedContentExtent = getFittedRenderExtent(renderItems);
+  const shouldFitContent = fitContent && usesConfigurableItemSizing;
+  const resolvedDivHeight = shouldFitContent
+    ? renderedContentExtent || resolvedDefaultItemOffset
+    : divHeight;
   const resolvedItemGap = Math.max(itemGap, 0);
   const resolvedCrossAxisGap = Math.max(itemCrossAxisGap, 0);
-  const baseItemWidth = itemWidth ?? divWidth;
+  const baseItemWidth = divWidth;
   const resolvedItemWidth = Math.max(
     baseItemWidth - resolvedCrossAxisGap * 2,
     0
@@ -65,14 +81,23 @@ export function StackRenderer({
   const itemLeftOffset = resolvedCrossAxisGap;
   const gridCells = buildGridCells(
     renderItems,
-    divHeight,
+    resolvedDivHeight,
     resolvedDefaultItemOffset
+  );
+  const slotSizeByOffset = new Map(
+    gridCells.map((cell) => [cell.offset, cell.size])
   );
 
   return (
     // position relative must be in the div or it gets lost as a package reference
     <div
-      style={{ width: divWidth, height: divHeight, position: 'relative', ...containerStyle }}
+      style={{
+        width: divWidth,
+        height: resolvedDivHeight,
+        position: shouldFitContent ? "absolute" : "relative",
+        bottom: shouldFitContent ? 0 : undefined,
+        ...containerStyle,
+      }}
       className={resolveContainerClassName(
         "rounded flex flex-col",
         DEFAULT_RENDERER_CONTAINER_CLASS_NAME,
@@ -95,8 +120,8 @@ export function StackRenderer({
       </div>
       <div className="relative flex-grow flex items-center justify-center">
         {renderItems.map(({ item, collapsedIndex, offset, itemOffset }) => {
-          const baseItemHeight =
-            item.itemOffset ?? itemHeight ?? itemOffset;
+          const slotHeight = slotSizeByOffset.get(offset) ?? itemOffset;
+          const baseItemHeight = slotHeight;
 
           return (
             <StackItem
@@ -107,8 +132,8 @@ export function StackRenderer({
                 0
               )}
               itemWidth={resolvedItemWidth}
-              slotHeight={itemOffset}
-              slotWidth={baseItemWidth}
+              slotHeight={slotHeight}
+              slotWidth={divWidth}
               collapsedIndex={collapsedIndex}
               bottomOffset={
                 offset + resolvedItemGap

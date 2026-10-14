@@ -98,23 +98,9 @@ export function useAnimatePreInsert(
       controls.stop();
     };
   }, [
-    isPreInsert,
-    isPreUpdate,
-    isPreHead,
-    isPreTail,
+    item.id,
+    item.state,
     disableAnimations,
     controls,
-    xPreInsert,
-    yPreInsert,
-    xPreHead,
-    yPreHead,
-    xPreTail,
-    yPreTail,
-    scaleXInsert,
-    scaleYInsert,
-    scaleXHeadTail,
-    scaleYHeadTail,
-    preInsertGap,
-    zIndex,
   ]);
 }

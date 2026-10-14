@@ -10,7 +10,7 @@ describe("loadControls", () => {
         type: "jaggedArray",
         orientation: "vertical",
         childDefaults: {
-          itemWidth: 80,
+          itemCrossAxisGap: 8,
           render: {
             visible: false,
             layout: { width: 80, height: 40 },
@@ -19,7 +19,7 @@ describe("loadControls", () => {
       },
       {
         id: "matrix-0",
-        itemHeight: 30,
+        itemGap: 5,
         render: {
           visible: true,
           layout: { width: 100 },
@@ -45,14 +45,38 @@ describe("loadControls", () => {
       parentIndex: 0,
       rendererOptions: {
         orientation: "horizontal",
-        itemWidth: 80,
-        itemHeight: 30,
+        itemGap: 5,
+        itemCrossAxisGap: 8,
       },
       render: {
         visible: true,
         layout: { width: 100, height: 40 },
       },
     });
+  });
+
+  it.each(["array", "jaggedArray", "stack", "dictionary"])(
+    "blocks item dimensions for %s controls",
+    (type) => {
+      expect(() => loadControls([{
+        id: "items",
+        type,
+        itemWidth: 20,
+      }])).toThrow(`cannot set itemWidth for type "${type}"`);
+      expect(() => loadControls([{
+        id: "items",
+        type,
+        itemHeight: 20,
+      }])).toThrow(`cannot set itemHeight for type "${type}"`);
+    }
+  );
+
+  it("blocks item dimensions in jagged child defaults", () => {
+    expect(() => loadControls([{
+      id: "matrix",
+      type: "jaggedArray",
+      childDefaults: { itemWidth: 20 },
+    }])).toThrow('Control "matrix.childDefaults" cannot set itemWidth');
   });
 
   it("loads recursively nested jagged arrays", () => {

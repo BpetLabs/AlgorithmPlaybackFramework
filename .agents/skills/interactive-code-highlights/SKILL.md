@@ -7,7 +7,7 @@ description: "Create, edit, audit, or synchronize code controls and code-highlig
 
 Use this skill when the requested work involves an AnimatedPlayback code control, source embedding, pause flow, highlights, or a directly coupled trace change. Populate `staticValue` with the supplied source and synchronize highlights with the in-scope pauses.
 
-Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for code highlights.
+Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 
 ## Governing rule
 
@@ -51,6 +51,10 @@ Never infer execution from lexical position. A line above or below the pause can
 
 ## When to pause
 - Use the pause statements supplied by the user.
+- Interpret call-based pause requests as dynamic call events. If one source statement contains multiple selected calls, including nested calls, pause separately before each call in language evaluation order. Do not coalesce them into one pause merely because they share a line.
+- Count pauses by runtime occurrences of the selected pause triggers. Multiple control mutations caused by one trigger occurrence remain on that occurrence's pause.
+- Consecutive call pauses may therefore keep `Highlight.Pause` on the same source line. Use the trace, narration, and affected controls to distinguish which call is pending at each step.
+- Count every dynamic pause event, including multiple events on the same source line, when applying the 50-step limit.
 - When creating or changing pause locations and the user has not specified them, ask which statements should pause.
 - If the total pause steps would be over 50, immediately stop processing and inform user of total pauses that would implemented and ask the user for permission. Do not do this if the total existing pause steps do not change or reduces even if over 50.
 - Preserve existing pause locations unless the user requests changes.

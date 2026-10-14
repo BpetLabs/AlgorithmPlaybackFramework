@@ -112,6 +112,30 @@ describe("buildRenderItems", () => {
     ]);
   });
 
+  it("restores a preserved empty slot to the default size", () => {
+    const result = buildRenderItems(
+      [
+        item("empty", ControlItemState.Empty, {
+          itemOffset: 120,
+          collapse: false,
+        }),
+        item("next", ControlItemState.Initial, { itemOffset: 60 }),
+      ],
+      new Set(),
+      false,
+      60
+    );
+
+    expect(result.map(({ item: entry, offset, itemOffset }) => [
+      entry.id,
+      offset,
+      itemOffset,
+    ])).toEqual([
+      ["empty", 0, 60],
+      ["next", 60, 60],
+    ]);
+  });
+
   it("reuses a linked slot for non-adjacent items", () => {
     const result = buildRenderItems(
       [
@@ -127,9 +151,64 @@ describe("buildRenderItems", () => {
 
     expect(result.map(({ item: entry, offset }) => [entry.id, offset])).toEqual([
       ["linked-a", 0],
-      ["middle", 30],
+      ["middle", 80],
       ["linked-b", 0],
-      ["last", 80],
+      ["last", 130],
+    ]);
+  });
+
+  it("reserves the larger linked size for following items", () => {
+    const items = [
+      item("outgoing", ControlItemState.RemovingUpdate, {
+        linkId: "slot-a",
+        itemOffset: 30,
+      }),
+      item("incoming", ControlItemState.PreUpdate, {
+        linkId: "slot-a",
+        itemOffset: 80,
+      }),
+      item("following", ControlItemState.Initial, { itemOffset: 20 }),
+    ];
+
+    const result = buildRenderItems(items, new Set(), false, 50);
+
+    expect(result.map(({ item: entry, offset }) => [entry.id, offset])).toEqual([
+      ["outgoing", 0],
+      ["incoming", 0],
+      ["following", 80],
+    ]);
+  });
+
+  it("collapses every remnant of a deleted linked slot", () => {
+    const items = [
+      item("surviving", ControlItemState.RemovingUpdate, {
+        linkId: "slot-a",
+        itemOffset: 30,
+      }),
+      item("collapsed", ControlItemState.RemovingInsert, {
+        linkId: "slot-a",
+        itemOffset: 80,
+      }),
+      item("following", ControlItemState.Initial, { itemOffset: 20 }),
+    ];
+
+    const result = buildRenderItems(
+      items,
+      new Set(["collapsed"]),
+      false,
+      50
+    );
+
+    expect(
+      result.map(({ item: entry, offset, itemOffset }) => [
+        entry.id,
+        offset,
+        itemOffset,
+      ])
+    ).toEqual([
+      ["surviving", 0, 0],
+      ["collapsed", 0, 0],
+      ["following", 0, 20],
     ]);
   });
 

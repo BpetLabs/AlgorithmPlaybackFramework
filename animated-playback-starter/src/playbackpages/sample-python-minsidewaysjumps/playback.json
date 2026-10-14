@@ -1,0 +1,1726 @@
+{
+  "controls": [
+    {
+      "id": "code",
+      "type": "staticText",
+      "staticValue": "def min_sideways_jumps(obstacles: list[int]) -> int:\n    # Minimum jumps to reach the current position in each lane.\n    jumps = [1, 0, 1]\n\n    for obstacle in obstacles:\n        if obstacle != 0:\n            jumps[obstacle - 1] = float(\"inf\")\n\n        # Jump sideways from the cheapest available lane.\n        minimum = min(jumps)\n\n        for lane in range(3):\n            if lane + 1 != obstacle:\n                jumps[lane] = min(jumps[lane], minimum + 1)\n\n    return min(jumps)",
+      "batches": [
+        {
+          "step": 0,
+          "scrollBottom": 0
+        },
+        {
+          "step": 1,
+          "highlightLines": [
+            {
+              "range": "1-16",
+              "borderColor": "Orange"
+            },
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "7",
+              "backgroundColor": "Highlight.False"
+            },
+            {
+              "range": "15-16",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "highlightLines": [
+            {
+              "range": "1-11",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 3
+        },
+        {
+          "step": 4,
+          "clearHighlights": [
+            {
+              "range": "5-6,14-15",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "7",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "13",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "clearHighlights": [
+            {
+              "range": "7-11,13",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "15",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.False"
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "highlightLines": [
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "5-11,15",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 7
+        },
+        {
+          "step": 8,
+          "clearHighlights": [
+            {
+              "range": "5-6,14-15",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "7",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "13",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "clearHighlights": [
+            {
+              "range": "7-11,13",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "5-6,15",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "highlightLines": [
+            {
+              "range": "15",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.False"
+            },
+            {
+              "range": "7-11",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "highlightLines": [
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "15",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "clearHighlights": [
+            {
+              "range": "5-6,14-15",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "7",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "13",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "clearHighlights": [
+            {
+              "range": "7-11,13",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "5-6,15",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "highlightLines": [
+            {
+              "range": "7-11",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "highlightLines": [
+            {
+              "range": "15",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.False"
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "clearHighlights": [
+            {
+              "range": "5-6,8-11,15",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "14",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "7",
+              "backgroundColor": "Highlight.False"
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "highlightLines": [
+            {
+              "range": "5-11,15",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 18
+        },
+        {
+          "step": 19,
+          "clearHighlights": [
+            {
+              "range": "5,14-15",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "16",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "13",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 20,
+          "highlightLines": [
+            {
+              "range": "1-16",
+              "borderColor": "Pink"
+            },
+            {
+              "range": "16",
+              "backgroundColor": "Highlight.Return"
+            },
+            {
+              "range": "5,12,14-15",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 21,
+          "clearHighlights": [
+            {
+              "range": "1-16"
+            }
+          ],
+          "scrollBottom": 0
+        }
+      ]
+    },
+    {
+      "id": "playbyplay",
+      "type": "text",
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Minimum Sideways Jumps tracks the cheapest cost of reaching each of three lanes while avoiding blocked positions. It runs in O(n) time and uses O(1) auxiliary space."
+              }
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Command:\nmin_sideways_jumps([0, 1, 2, 3, 0])\n\njumps starts as [1, 0, 1]. Position 0 has no obstacle, so minimum is 0 and lane is 0. min(jumps[0], minimum + 1) = min(1, 1) = 1; jumps[0] will remain 1."
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane advances to 1. min(jumps[1], minimum + 1) = min(0, 1) = 0; jumps[1] will remain 0."
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane advances to 2. min(jumps[2], minimum + 1) = min(1, 1) = 1; jumps[2] will remain 1."
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Position 1 has an obstacle in lane 1. jumps[obstacle - 1] = jumps[0] will be set to MAX."
+              }
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane is 0, which is blocked by the current obstacle, so this inner-loop pass makes no jumps assignment. The loop will continue with lane 1."
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "minimum is 0, and lane advances to 1. min(jumps[1], minimum + 1) = min(0, 1) = 0; jumps[1] will remain 0."
+              }
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane advances to 2. min(jumps[2], minimum + 1) = min(1, 1) = 1; jumps[2] will remain 1."
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Position 2 has an obstacle in lane 2. jumps[obstacle - 1] = jumps[1] will be set to MAX."
+              }
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "minimum is 1 and lane is 0. min(jumps[0], minimum + 1) = min(MAX, 2) = 2; jumps[0] will become 2."
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane is 1, which is blocked by the current obstacle, so this inner-loop pass makes no jumps assignment. The loop will continue with lane 2."
+              }
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane advances to 2. min(jumps[2], minimum + 1) = min(1, 2) = 1; jumps[2] will remain 1."
+              }
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Position 3 has an obstacle in lane 3. jumps[obstacle - 1] = jumps[2] will be set to MAX."
+              }
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "minimum is 2 and lane is 0. min(jumps[0], minimum + 1) = min(2, 3) = 2; jumps[0] will remain 2."
+              }
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane advances to 1. min(jumps[1], minimum + 1) = min(MAX, 3) = 3; jumps[1] will become 3."
+              }
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane is 2, which is blocked by the current obstacle, so this inner-loop pass makes no jumps assignment. The inner loop will finish."
+              }
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Position 4 has no obstacle, minimum remains 2, and lane is 0. min(jumps[0], minimum + 1) = min(2, 3) = 2; jumps[0] will remain 2."
+              }
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane advances to 1. min(jumps[1], minimum + 1) = min(3, 3) = 3; jumps[1] will remain 3."
+              }
+            }
+          ]
+        },
+        {
+          "step": 18,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lane advances to 2. min(jumps[2], minimum + 1) = min(MAX, 3) = 3; jumps[2] will become 3."
+              }
+            }
+          ]
+        },
+        {
+          "step": 19,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "All five positions are processed and jumps is [2, 3, 3]. min(jumps) = min([2, 3, 3]) = 2; return will yield 2."
+              }
+            }
+          ]
+        },
+        {
+          "step": 20,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "The minimum sideways jump count is 2."
+              }
+            }
+          ]
+        },
+        {
+          "step": 21,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Hope you learned something!"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "locals",
+      "type": "dictionary",
+      "batches": [
+        {
+          "step": 1,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "obstacles | [0, 1, 2, 3, 0]",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "obstacle | 0",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "minimum | 0",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 0",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 1"
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 2"
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "value": "obstacle | 1",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 0",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 1"
+              }
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 2"
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "value": "obstacle | 2",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "minimum | 1",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 0",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 1"
+              }
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 2"
+              }
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "value": "obstacle | 3",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "minimum | 2",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 0",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "setValues": [
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 1"
+              }
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 2"
+              }
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "value": "obstacle | 0",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 0"
+              }
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 1"
+              }
+            }
+          ]
+        },
+        {
+          "step": 18,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "value": "lane | 2"
+              }
+            }
+          ]
+        },
+        {
+          "step": 19,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 20,
+          "deletes": [
+            {
+              "index": 3,
+              "now": true
+            },
+            {
+              "index": 2,
+              "now": true
+            },
+            {
+              "index": 1,
+              "now": true
+            },
+            {
+              "index": 0,
+              "now": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obstacles",
+      "type": "grid",
+      "rows": 3,
+      "cols": 5,
+      "emptyItemText": "0",
+      "showCellBorders": true,
+      "rowDescription": "Lane",
+      "columnDescription": "Position",
+      "rowLabels": [
+        "1",
+        "2",
+        "3"
+      ],
+      "columnLabels": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "batches": [
+        {
+          "step": 0,
+          "gridItems": [
+            {
+              "row": 0,
+              "col": 1,
+              "value": "1",
+              "backgroundColor": "Gray",
+              "textColor": "Black"
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "value": "2",
+              "backgroundColor": "Gray",
+              "textColor": "Black"
+            },
+            {
+              "row": 2,
+              "col": 3,
+              "value": "3",
+              "backgroundColor": "Gray",
+              "textColor": "Black"
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "gridItems": [
+            {
+              "row": 0,
+              "col": 0,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "gridItems": [
+            {
+              "row": 0,
+              "col": 0,
+              "borderColor": ""
+            },
+            {
+              "row": 1,
+              "col": 0,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "gridItems": [
+            {
+              "row": 1,
+              "col": 0,
+              "borderColor": ""
+            },
+            {
+              "row": 2,
+              "col": 0,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "gridItems": [
+            {
+              "row": 2,
+              "col": 0,
+              "borderColor": ""
+            },
+            {
+              "row": 0,
+              "col": 1,
+              "borderColor": "Pink"
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "gridItems": [
+            {
+              "row": 0,
+              "col": 1,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "gridItems": [
+            {
+              "row": 0,
+              "col": 1,
+              "borderColor": ""
+            },
+            {
+              "row": 1,
+              "col": 1,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "gridItems": [
+            {
+              "row": 1,
+              "col": 1,
+              "borderColor": ""
+            },
+            {
+              "row": 2,
+              "col": 1,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "gridItems": [
+            {
+              "row": 2,
+              "col": 1,
+              "borderColor": ""
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "borderColor": "Pink"
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "gridItems": [
+            {
+              "row": 1,
+              "col": 2,
+              "borderColor": ""
+            },
+            {
+              "row": 0,
+              "col": 2,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "gridItems": [
+            {
+              "row": 0,
+              "col": 2,
+              "borderColor": ""
+            },
+            {
+              "row": 1,
+              "col": 2,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "gridItems": [
+            {
+              "row": 1,
+              "col": 2,
+              "borderColor": ""
+            },
+            {
+              "row": 2,
+              "col": 2,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "gridItems": [
+            {
+              "row": 2,
+              "col": 2,
+              "borderColor": ""
+            },
+            {
+              "row": 2,
+              "col": 3,
+              "borderColor": "Pink"
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "gridItems": [
+            {
+              "row": 2,
+              "col": 3,
+              "borderColor": ""
+            },
+            {
+              "row": 0,
+              "col": 3,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "gridItems": [
+            {
+              "row": 0,
+              "col": 3,
+              "borderColor": ""
+            },
+            {
+              "row": 1,
+              "col": 3,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "gridItems": [
+            {
+              "row": 1,
+              "col": 3,
+              "borderColor": ""
+            },
+            {
+              "row": 2,
+              "col": 3,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "gridItems": [
+            {
+              "row": 2,
+              "col": 3,
+              "borderColor": ""
+            },
+            {
+              "row": 0,
+              "col": 4,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "gridItems": [
+            {
+              "row": 0,
+              "col": 4,
+              "borderColor": ""
+            },
+            {
+              "row": 1,
+              "col": 4,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 18,
+          "gridItems": [
+            {
+              "row": 1,
+              "col": 4,
+              "borderColor": ""
+            },
+            {
+              "row": 2,
+              "col": 4,
+              "borderColor": "Orange"
+            }
+          ]
+        },
+        {
+          "step": 19,
+          "gridItems": [
+            {
+              "row": 2,
+              "col": 4,
+              "borderColor": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jumps",
+      "type": "array",
+      "emptyItemText": "0",
+      "render": {
+        "visible": false
+      },
+      "renderBatches": [
+        {
+          "step": 1,
+          "render": {
+            "visible": true
+          }
+        }
+      ],
+      "batches": [
+        {
+          "step": 1,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "0",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 0,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 1,
+              "input": {
+                "value": "0",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 1,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 2,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 2,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Pink"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 0,
+              "input": {
+                "value": "MAX",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 1,
+              "input": {
+                "value": "0",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 1,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 2,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 2,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Pink"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 1,
+              "input": {
+                "value": "MAX",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 1,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 0,
+              "input": {
+                "value": "2",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 2,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "setValues": [
+            {
+              "index": 2,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": "Pink"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 2,
+              "input": {
+                "value": "MAX",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "setValues": [
+            {
+              "index": 2,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 0,
+              "input": {
+                "value": "2",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 1,
+              "input": {
+                "value": "3",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "setValues": [
+            {
+              "index": 1,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "setValues": [
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 0,
+              "input": {
+                "value": "2",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 1,
+              "input": {
+                "value": "3",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 18,
+          "setValues": [
+            {
+              "index": 1,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "updates": [
+            {
+              "index": 2,
+              "input": {
+                "value": "3",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 19,
+          "setValues": [
+            {
+              "index": 2,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

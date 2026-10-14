@@ -406,7 +406,7 @@ Items in arrays, stacks, dictionaries, text controls, grids, jagged arrays, and 
 | `borderWidth` | Highlight border thickness in pixels. It is visible only when `borderColor` is set. | All item-based controls |
 | `leftAlignedValue` | Auxiliary text displayed in the left region. | Arrays, jagged arrays, stacks, and graph nodes |
 | `rightAlignedValue` | Auxiliary text displayed in the right region. | Arrays, jagged arrays, stacks, and graph nodes |
-| `itemOffset` | Overrides the item's slot size along the control's main axis. | Arrays, jagged arrays, stacks, dictionaries, and text controls |
+| `itemOffset` | Overrides the item's slot size along the control's main axis. Will grow or shrink the control. | Arrays, jagged arrays, stacks, and dictionaries |
 | `shake` | Starts or stops a manual shake effect when set to `true` or `false`. | Arrays, jagged arrays, stacks, dictionaries, and text controls |
 
 Colors accept normal CSS color values, including named colors, hexadecimal values, `rgb()`/`rgba()`, and CSS variables.
@@ -497,22 +497,16 @@ Set these layout options at the top level of a control in JSON or assign them in
 | --- | --- |
 | `orientation` | Uses `"horizontal"` or `"vertical"` layout. Arrays and root jagged arrays support both; jagged descendants alternate automatically and stacks remain vertical. |
 | `childGap` | Jagged arrays: padding on every side between a parent slot and its fitted child. |
+| `itemWidth`, `itemHeight` | Overrides `itemWidth` and `itemHeight`. Arrays, jagged arrays, stacks, and dictionaries are not supported |
 | `childWidth`, `childHeight` | Jagged arrays: rendered width and height of leaf items used for recursive sizing. |
 | `defaultItemOffset` | Default slot size and distance between consecutive item positions. |
-| `itemWidth`, `itemHeight` | Default rendered size of each item box. |
 | `itemGap` | Inset on both sides of an item along the main axis. |
 | `itemCrossAxisGap` | Inset on both sides of an item across the main axis. |
 | `preInsertGap` | Additional distance between an indexed insert/update pre-state and the control. |
-| `itemLabels` | Labels displayed beside array slots. |
+| `itemLabels` | Labels displayed beside array and jagged arrays slots. |
 | `showCellBorders` | Shows or hides structural slot borders. |
 | `emptyItemText` | Configured value displayed in array slots without item text, such as `"0"`. |
-| `fitContent` | Sets an array or stack's main-axis size to its occupied content size while keeping its title at the original layout height. Jagged arrays always fit recursively in both dimensions. |
-
-`defaultItemOffset` controls both the spacing between item positions and the background grid. A horizontal array divides its width into slots; a vertical array or stack divides its height into slots. Grid lines continue through unused space unless `showCellBorders` is `false`.
-
-`itemLabels` applies to arrays and jagged arrays.
-
-An individual item's `itemOffset` overrides `defaultItemOffset` for that slot. `itemWidth` and `itemHeight` change the rendered box; they do not change the distance between consecutive positions unless `defaultItemOffset` or `itemOffset` also changes.
+| `fitContent` | Sets an array, stack, or dictionary's main-axis size to its occupied content size while keeping its title at the original layout height. Jagged arrays always fit recursively in both dimensions. |
 
 ## Initial state and playback steps
 
@@ -523,6 +517,8 @@ Every control starts with a snapshot at step `0`. If a control has no batch on a
 - Omitting `initialItemCount` starts the control with no items.
 - Omitting `type` defaults the control to `array`.
 - Batch `step` values are non-negative integers shared across all controls.
+- Each control's batches must have unique resolved `step` values. The framework
+  throws an error when two batches for the same control resolve to the same step.
 
 ```json
 {
