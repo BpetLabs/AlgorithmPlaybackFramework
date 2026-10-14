@@ -4,6 +4,9 @@
 
 lets create a new playback
 
+Playback Name:
+- sample-python-runningmedian
+
 Agent Skills Location:
 - .agents/skills
 
@@ -20,15 +23,13 @@ Pause at :
 - Each call to heappush and heappop and each return.
 
 Input: 
-call add(...) - 8 times with random inputs 1-9
-call median(...) at the end
+call add(...) - 8 times with random inputs 1-9.
+call median(...) at the end.
 
 After completion:
 
-- Review and verify that all skills were properly followed; 
-    including but not limited to double checking: 
-        highlighting, 
-        object placement and properties,  
-        text output
-- Report and fix any issues found.
-- Report any contradictions or rules that need additional clarity.
+- Replay the canonical trace and audit every applicable skill rule and prompt request.
+- Independently compare expected and resulting state at every step.
+- Provide evidence for each review category; fix and re-audit discrepancies.
+- Do not treat authored batches or successful compilation as verification.
+- Report any assumptions made, contradictions, or rules that need additional clarity.

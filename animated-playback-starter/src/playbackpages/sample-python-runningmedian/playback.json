@@ -1,0 +1,660 @@
+{
+  "controls": [
+    {
+      "id": "code",
+      "type": "staticText",
+      "staticValue": "import heapq\n\n\nclass RunningMedian:\n    def __init__(self):\n        self.lower = []  # Max heap using negative values.\n        self.upper = []  # Min heap.\n\n    def add(self, value: int) -> None:\n        if not self.lower or value <= -self.lower[0]:\n            heapq.heappush(self.lower, -value)\n        else:\n            heapq.heappush(self.upper, value)\n\n        # Lower holds either the same count or one extra value.\n        if len(self.lower) > len(self.upper) + 1:\n            heapq.heappush(self.upper, -heapq.heappop(self.lower))\n        elif len(self.upper) > len(self.lower):\n            heapq.heappush(self.lower, -heapq.heappop(self.upper))\n\n    def median(self) -> float:\n        if not self.lower:\n            raise ValueError(\"No values have been added.\")\n\n        if len(self.lower) == len(self.upper):\n            return (-self.lower[0] + self.upper[0]) / 2\n\n        return float(-self.lower[0])",
+      "batches": [
+        {
+          "step": 0,
+          "scrollBottom": 0
+        },
+        {
+          "step": 1,
+          "highlightLines": [
+            { "range": "5-7", "borderColor": "Pink" },
+            { "range": "9-19", "borderColor": "Orange" },
+            { "range": "11", "backgroundColor": "Highlight.Pause" },
+            { "range": "13", "backgroundColor": "Highlight.False" },
+            { "range": "14-19", "backgroundColor": "Highlight.Unused" }
+          ]
+        },
+        {
+          "step": 2,
+          "clearHighlights": [
+            { "range": "5-7", "borderColor": true },
+            { "range": "14-19", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "17,19", "backgroundColor": "Highlight.False" }
+          ]
+        },
+        {
+          "step": 3,
+          "clearHighlights": [
+            { "range": "11", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "17", "backgroundColor": "Highlight.Pause" },
+            { "range": "18-19", "backgroundColor": "Highlight.Unused" }
+          ]
+        },
+        {
+          "step": 5,
+          "clearHighlights": [
+            { "range": "17-18", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "11,19", "backgroundColor": "Highlight.False" },
+            { "range": "13", "backgroundColor": "Highlight.Pause" }
+          ]
+        },
+        {
+          "step": 6,
+          "clearHighlights": [
+            { "range": "13", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "17", "backgroundColor": "Highlight.False" },
+            { "range": "19", "backgroundColor": "Highlight.Pause" }
+          ]
+        },
+        {
+          "step": 8,
+          "clearHighlights": [
+            { "range": "19", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "13", "backgroundColor": "Highlight.Pause" }
+          ]
+        },
+        {
+          "step": 9,
+          "highlightLines": [
+            { "range": "19", "backgroundColor": "Highlight.False" }
+          ]
+        },
+        {
+          "step": 10,
+          "clearHighlights": [
+            { "range": "13", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "19", "backgroundColor": "Highlight.Pause" }
+          ]
+        },
+        {
+          "step": 12,
+          "highlightLines": [
+            { "range": "11", "backgroundColor": "Highlight.Pause" },
+            { "range": "13,19", "backgroundColor": "Highlight.False" }
+          ]
+        },
+        {
+          "step": 13,
+          "clearHighlights": [
+            { "range": "11", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "17", "backgroundColor": "Highlight.Pause" },
+            { "range": "18-19", "backgroundColor": "Highlight.Unused" }
+          ]
+        },
+        {
+          "step": 15,
+          "clearHighlights": [
+            { "range": "17-18", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "11", "backgroundColor": "Highlight.Pause" },
+            { "range": "19", "backgroundColor": "Highlight.False" }
+          ]
+        },
+        {
+          "step": 16,
+          "highlightLines": [
+            { "range": "11,17", "backgroundColor": "Highlight.False" },
+            { "range": "13", "backgroundColor": "Highlight.Pause" }
+          ]
+        },
+        {
+          "step": 17,
+          "clearHighlights": [
+            { "range": "13", "backgroundColor": true }
+          ],
+          "highlightLines": [
+            { "range": "9-19", "borderColor": "Pink" },
+            { "range": "21-28", "borderColor": "Orange" },
+            { "range": "23", "backgroundColor": "Highlight.False" },
+            { "range": "26", "backgroundColor": "Highlight.Pause" },
+            { "range": "27-28", "backgroundColor": "Highlight.Unused" }
+          ]
+        },
+        {
+          "step": 18,
+          "clearHighlights": [
+            { "range": "9-19" }
+          ],
+          "highlightLines": [
+            { "range": "21-28", "borderColor": "Pink" },
+            { "range": "21-25", "backgroundColor": "Highlight.Unused" },
+            { "range": "26", "backgroundColor": "Highlight.Return" }
+          ]
+        },
+        {
+          "step": 19,
+          "clearHighlights": [
+            { "range": "1-28" }
+          ],
+          "scrollBottom": 0
+        }
+      ]
+    },
+    {
+      "id": "playbyplay",
+      "type": "text",
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "RunningMedian keeps the lower half of a stream in a max heap and the upper half in a min heap. add runs in O(log n) time, median runs in O(1) time, and the heaps use O(n) space."
+              }
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Command:\ntracker = RunningMedian()\nfor value in [2, 1, 5, 4, 4, 3, 2, 9]: tracker.add(value)\ntracker.median()\n\nThe empty heaps are ready. heapq.heappush(self.lower, -value) will store -2, representing 2 in the max heap."
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "For add(1), 1 <= 2 selects lower. heapq.heappush(self.lower, -value) will store -1."
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lower now has two more items than upper. heapq.heappop(self.lower) will remove -2, the largest lower-half value 2."
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "The popped value is 2. heapq.heappush(self.upper, 2) will move it into upper."
+              }
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "For add(5), 5 > 1 selects upper. heapq.heappush(self.upper, value) will add 5."
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "upper now has more items than lower. heapq.heappop(self.upper) will remove its minimum value, 2."
+              }
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "The popped value is 2. heapq.heappush(self.lower, -2) will move it into lower."
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "For add(4), 4 > 2 selects upper. heapq.heappush(self.upper, value) will add 4 before 5."
+              }
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "For the next add(4), 4 > 2 again selects upper. heapq.heappush(self.upper, value) will add the new 4 after the existing equal value."
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "upper now has one more item than lower. heapq.heappop(self.upper) will remove the first minimum value, 4."
+              }
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "The popped value is 4. heapq.heappush(self.lower, -4) will move it into lower."
+              }
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "For add(3), 3 <= 4 selects lower. heapq.heappush(self.lower, -value) will store -3."
+              }
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "lower now has two more items than upper. heapq.heappop(self.lower) will remove -4, representing 4."
+              }
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "The popped value is 4. heapq.heappush(self.upper, 4) will move it into upper after the existing equal value."
+              }
+            }
+          ]
+        },
+        {
+          "step": 15,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "For add(2), 2 <= 3 selects lower. heapq.heappush(self.lower, -value) will store the new -2 after the existing equal value."
+              }
+            }
+          ]
+        },
+        {
+          "step": 16,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "For add(9), 9 > 3 selects upper. heapq.heappush(self.upper, value) will add 9."
+              }
+            }
+          ]
+        },
+        {
+          "step": 17,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Both heaps contain four values. (-self.lower[0] + self.upper[0]) / 2 = (3 + 4) / 2 = 3.5; return will yield 3.5."
+              }
+            }
+          ]
+        },
+        {
+          "step": 18,
+          "setValues": [
+            {
+              "index": 0,
+              "input": { "value": "The median result is 3.5." }
+            }
+          ]
+        },
+        {
+          "step": 19,
+          "setValues": [
+            {
+              "index": 0,
+              "input": { "value": "Hope you learned something!" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "locals",
+      "type": "dictionary",
+      "batches": [
+        {
+          "step": 1,
+          "setValues": [
+            { "index": 0, "input": { "value": "value | 2", "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            { "index": 0, "input": { "value": "value | 1", "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            { "index": 0, "input": { "value": "value | 5", "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            { "index": 0, "input": { "value": "value | 4", "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 12,
+          "setValues": [
+            { "index": 0, "input": { "value": "value | 3", "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 13,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 15,
+          "setValues": [
+            { "index": 0, "input": { "value": "value | 2", "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 16,
+          "setValues": [
+            { "index": 0, "input": { "value": "value | 9", "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 17,
+          "deletes": [
+            { "index": 0, "now": true }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "maxHeap",
+      "type": "stack",
+      "render": { "visible": false },
+      "renderBatches": [
+        { "step": 1, "render": { "visible": true } }
+      ],
+      "batches": [
+        {
+          "step": 1,
+          "inserts": [
+            { "index": 0, "input": { "value": "2", "backgroundColor": "RoyalBlue" } }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange" } }
+          ],
+          "inserts": [
+            { "index": 1, "input": { "value": "1", "backgroundColor": "RoyalBlue" } }
+          ]
+        },
+        {
+          "step": 3,
+          "takes": [
+            { "index": 0 }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            { "index": 0, "target": "outgoing", "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 7,
+          "inserts": [
+            { "index": 0, "input": { "value": "2", "backgroundColor": "RoyalBlue" } }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 11,
+          "inserts": [
+            { "index": 0, "input": { "value": "4", "backgroundColor": "RoyalBlue" } }
+          ]
+        },
+        {
+          "step": 12,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange" } }
+          ],
+          "inserts": [
+            { "index": 1, "input": { "value": "3", "backgroundColor": "RoyalBlue" } }
+          ]
+        },
+        {
+          "step": 13,
+          "takes": [
+            { "index": 0 }
+          ]
+        },
+        {
+          "step": 14,
+          "setValues": [
+            { "index": 0, "target": "outgoing", "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 15,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange" } }
+          ],
+          "inserts": [
+            { "index": 2, "input": { "value": "2", "backgroundColor": "RoyalBlue" } }
+          ]
+        },
+        {
+          "step": 16
+        },
+        {
+          "step": 18,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minHeap",
+      "type": "stack",
+      "render": { "visible": false },
+      "renderBatches": [
+        { "step": 1, "render": { "visible": true } }
+      ],
+      "batches": [
+        {
+          "step": 1
+        },
+        {
+          "step": 4,
+          "inserts": [
+            { "index": 0, "input": { "value": "2", "backgroundColor": "DarkGreen" } }
+          ]
+        },
+        {
+          "step": 5,
+          "inserts": [
+            { "index": 1, "input": { "value": "5", "backgroundColor": "DarkGreen" } }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange" } }
+          ],
+          "takes": [
+            { "index": 0 }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            { "index": 0, "target": "outgoing", "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 8,
+          "inserts": [
+            { "index": 0, "input": { "value": "4", "backgroundColor": "DarkGreen" } }
+          ]
+        },
+        {
+          "step": 9,
+          "inserts": [
+            { "index": 1, "input": { "value": "4", "backgroundColor": "DarkGreen" } }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange" } }
+          ],
+          "takes": [
+            { "index": 0 }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            { "index": 0, "target": "outgoing", "input": { "borderColor": "" } }
+          ]
+        },
+        {
+          "step": 14,
+          "inserts": [
+            { "index": 1, "input": { "value": "4", "backgroundColor": "DarkGreen" } }
+          ]
+        },
+        {
+          "step": 15
+        },
+        {
+          "step": 16,
+          "inserts": [
+            { "index": 3, "input": { "value": "9", "backgroundColor": "DarkGreen" } }
+          ]
+        },
+        {
+          "step": 17,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "Orange" } }
+          ]
+        },
+        {
+          "step": 18,
+          "setValues": [
+            { "index": 0, "input": { "borderColor": "" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

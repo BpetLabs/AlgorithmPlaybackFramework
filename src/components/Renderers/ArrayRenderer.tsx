@@ -2,10 +2,16 @@
 import ArrayItem from "../Items/ArrayItem";
 import { ControlItem } from "../../common/models/controlItem";
 import { Snapshot } from "../../common/models/snapshot";
-import { buildRenderItems } from "./utils/buildRenderItems";
+import {
+  buildRenderItems,
+  getFittedRenderExtent,
+} from "./utils/buildRenderItems";
 import { DEFAULT_RENDERER_CONTAINER_CLASS_NAME, RendererProps, resolveContainerClassName } from "./rendererConfig";
 import { ArrayOrientation } from "../../common/models/arrayControl";
-import { requirePositiveDimension } from "./utils/dimensions";
+import {
+  requirePositiveDimension,
+  rejectItemDimensions,
+} from "./utils/dimensions";
 import { useCollapsedItems } from "../../hooks/useCollapsedItems";
 import { buildGridCells } from "./utils/buildGridCells";
 
@@ -19,6 +25,9 @@ interface ArrayRendererProps extends RendererProps {
   itemCrossAxisGap?: number;
   itemWidth?: number;
   itemHeight?: number;
+  fitContent?: boolean;
+  minimumSlotCount?: number;
+  minimumSlotOffset?: number;
   preInsertGap?: number;
   emptyItemText?: string
   itemLabels?: string[];
@@ -41,6 +50,9 @@ export function ArrayRenderer({
   itemCrossAxisGap = 0,
   itemWidth,
   itemHeight,
+  fitContent = false,
+  minimumSlotCount = 0,
+  minimumSlotOffset,
   preInsertGap,
   emptyItemText,
   itemLabels = [],
@@ -55,6 +67,7 @@ export function ArrayRenderer({
 }: ArrayRendererProps) {
   const snapshotItems = snapshot.items;
   const isHorizontal = orientation === "horizontal";
+  rejectItemDimensions(itemWidth, itemHeight, snapshot.type);
   const resolvedDefaultItemOffset = requirePositiveDimension(
     defaultItemOffset,
     "defaultItemOffset"
@@ -69,6 +82,27 @@ export function ArrayRenderer({
     disableAnimations,
     resolvedDefaultItemOffset
   );
+  const hasCustomItemOffsets = snapshotItems.some(
+    (item) => typeof item.itemOffset === "number"
+  );
+  const shouldFitMainAxis =
+    fitContent ||
+    hasCustomItemOffsets;
+  const renderedContentExtent = getFittedRenderExtent(
+    renderItems,
+    fitContent ? 0 : minimumSlotCount,
+    minimumSlotOffset ?? resolvedDefaultItemOffset
+  );
+  const resolvedMainAxisSize = shouldFitMainAxis
+    ? renderedContentExtent || resolvedDefaultItemOffset
+    : isHorizontal
+      ? divWidth
+      : divHeight;
+  const resolvedDivWidth = isHorizontal ? resolvedMainAxisSize : divWidth;
+  const resolvedDivHeight = isHorizontal ? divHeight : resolvedMainAxisSize;
+  const gridDefaultItemOffset = fitContent
+    ? resolvedDefaultItemOffset
+    : minimumSlotOffset ?? resolvedDefaultItemOffset;
   const slotIndexByOffset = new Map<number, number>();
   const slotOwnerIdByOffset = new Map<number, string>();
   renderItems.forEach(({ offset }) => {
@@ -83,14 +117,22 @@ export function ArrayRenderer({
   });
   const gridCells = buildGridCells(
     renderItems,
-    isHorizontal ? divWidth : divHeight,
-    resolvedDefaultItemOffset
+    resolvedMainAxisSize,
+    gridDefaultItemOffset
+  );
+  const slotSizeByOffset = new Map(
+    gridCells.map((cell) => [cell.offset, cell.size])
   );
 
   return (
     // position relative must be in the div or it gets lost as a package reference
     <div
-      style={{ width: divWidth, height: divHeight, position: 'relative', ...containerStyle }}
+      style={{
+        width: resolvedDivWidth,
+        height: resolvedDivHeight,
+        position: "relative",
+        ...containerStyle,
+      }}
       className={resolveContainerClassName(
         `rounded flex ${isHorizontal ? "flex-row" : "flex-col"}`,
         DEFAULT_RENDERER_CONTAINER_CLASS_NAME,
@@ -164,12 +206,15 @@ export function ArrayRenderer({
             index: itemIndex,
             isSlotOwner,
           });
+          const slotMainSize = slotSizeByOffset.get(offset) ?? itemOffset;
           const baseItemWidth = isHorizontal
-            ? resolvedSize?.width ?? item.itemOffset ?? itemWidth ?? itemOffset
-            : resolvedSize?.width ?? itemWidth ?? divWidth;
+            ? resolvedSize?.width ??
+              slotMainSize
+            : resolvedSize?.width ?? divWidth;
           const baseItemHeight = isHorizontal
-            ? resolvedSize?.height ?? itemHeight ?? divHeight
-            : resolvedSize?.height ?? item.itemOffset ?? itemHeight ?? itemOffset;
+            ? resolvedSize?.height ?? divHeight
+            : resolvedSize?.height ??
+              slotMainSize;
           const resolvedItemWidth = isHorizontal
             ? Math.max(baseItemWidth - resolvedItemGap * 2, 0)
             : Math.max(baseItemWidth - resolvedCrossAxisGap * 2, 0);
@@ -183,8 +228,8 @@ export function ArrayRenderer({
               item={item}
               itemHeight={resolvedItemHeight}
               itemWidth={resolvedItemWidth}
-              slotHeight={isHorizontal ? baseItemHeight : itemOffset}
-              slotWidth={isHorizontal ? itemOffset : baseItemWidth}
+              slotHeight={isHorizontal ? divHeight : slotMainSize}
+              slotWidth={isHorizontal ? slotMainSize : divWidth}
               collapsedIndex={collapsedIndex}
               itemIndex={itemIndex}
               isSlotOwner={isSlotOwner}

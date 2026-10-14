@@ -178,6 +178,7 @@ function mergeHighlightLines(
 
 export class BatchProcessor<T extends ControlItem> {
   private snapshots: Snapshot<T>[] = [];
+  private batchSteps = new Set<number>();
   private uniqueIdCounter = 0;
 
   private validateGridBatch(batch: Batch<T>): void {
@@ -802,6 +803,9 @@ export class BatchProcessor<T extends ControlItem> {
     if (!Number.isInteger(step) || step < 0) {
       throw new Error(`Control "${this.id}" has an invalid batch step ${step}.`);
     }
+    if (this.batchSteps.has(step)) {
+      throw new Error(`Control "${this.id}" has duplicate batch step ${step}.`);
+    }
     if (step < previousStep) {
       throw new Error(
         `Control "${this.id}" batch step ${step} cannot follow step ${previousStep}.`
@@ -821,6 +825,7 @@ export class BatchProcessor<T extends ControlItem> {
     this.applyUpdates(snapshot, batch, prevStateAlreadySet);
     this.applyInserts(snapshot, batch);
     this.finalizeSnapshot(snapshot, batch, step);
+    this.batchSteps.add(step);
   }
 
   getHistory(): Snapshot<T>[] {

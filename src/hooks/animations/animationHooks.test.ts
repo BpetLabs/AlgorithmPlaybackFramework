@@ -52,6 +52,28 @@ describe("animation state hooks", () => {
     expect(effects.warpIn).toHaveBeenCalledWith(controls, 1);
   });
 
+  it("does not replay a pre-insert when collapse changes its layout", () => {
+    const { rerender } = renderHook(
+      ({ collapsedIndex, itemHeight }) =>
+        useAnimatePreInsert(
+          item(ControlItemState.PreTail),
+          collapsedIndex,
+          itemHeight,
+          30,
+          false,
+          controls,
+          false
+        ),
+      { initialProps: { collapsedIndex: 2, itemHeight: 70 } }
+    );
+
+    expect(effects.warpIn).toHaveBeenCalledTimes(1);
+
+    rerender({ collapsedIndex: 1, itemHeight: 90 });
+
+    expect(effects.warpIn).toHaveBeenCalledTimes(1);
+  });
+
   it("snaps pre-insert items into their staged position when animations are disabled", () => {
     renderHook(() => useAnimatePreInsert(item(ControlItemState.PreHead), 0, 20, 30, true, controls, false));
 

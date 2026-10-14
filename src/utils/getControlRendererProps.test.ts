@@ -15,7 +15,7 @@ const control = (overrides: Partial<LoadedControl<ControlItem>> = {}): LoadedCon
   type: "array",
   staticValue: "static",
   snapshots: [],
-  rendererOptions: { orientation: "vertical", itemWidth: 40 },
+  rendererOptions: { orientation: "vertical", itemGap: 4 },
   ...overrides,
 });
 
@@ -40,7 +40,7 @@ describe("getControlRendererProps", () => {
       borderWidth: 3,
       staticValue: "static",
       orientation: "vertical",
-      itemWidth: 40,
+      itemGap: 4,
     });
     expect(props).not.toHaveProperty("childArrays");
   });
@@ -60,7 +60,7 @@ describe("getControlRendererProps", () => {
         control({
           id: "child",
           parentIndex: 1,
-          rendererOptions: { itemHeight: 30 },
+          rendererOptions: { itemCrossAxisGap: 3 },
           render: { title: "Default" },
           renderByStep: { 2: { title: "Current" } },
         }),
@@ -87,7 +87,7 @@ describe("getControlRendererProps", () => {
         index: 1,
         parentItemId: "parent-item-1",
         snapshot: childSnapshot,
-        options: { itemHeight: 30 },
+        options: { itemCrossAxisGap: 3 },
         render: { title: "Current" },
       },
     ]);

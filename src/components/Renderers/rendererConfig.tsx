@@ -30,10 +30,8 @@ export const DEFAULT_RENDERER_CONTAINER_CLASS_NAME =
 export enum RendererType {
   Dictionary = "dictionary",
   Stack = "stack",
-  BooleanDictionary = "booleanDictionary",
   StaticText = "staticText",
   Text = "text",
-  MemoryStack = "memoryStack",
   Array = "array",
   JaggedArray = "jaggedArray",
   Grid = "grid",
@@ -79,48 +77,6 @@ export const RendererConfig: Record<RendererType, RendererProps> = {
           </div>
         )}
 
-      </div>
-    ),
-  },
-
-  [RendererType.MemoryStack]: {
-    renderContent: (it: ControlItem) => (
-      <div className="relative w-full h-full font-normal">
-
-        {/* Top left-aligned */}
-        {it.leftAlignedValue && (
-          <div className="absolute top-0 left-0 ml-1">
-            <span className="text-xs">
-              {it.leftAlignedValue?.split("\n").map((line, idx) => (
-                <div key={idx}>
-                  {renderLineWithInlineBold(line)}
-                </div>
-              ))}
-            </span>
-          </div>
-        )}
-
-        {/* Middle centered */}
-        <div className="absolute inset-0 flex justify-center items-center flex-col text-sm">
-          {it.value?.split("\n").map((line, idx) => (
-            <div key={idx}>
-              {renderLineWithInlineBold(line)}
-            </div>
-          ))}
-        </div>
-
-        {/* right-aligned */}
-        {it.rightAlignedValue && (
-          <div className="absolute right-0 mr-2">
-            <span className="text-sm">
-              {it.rightAlignedValue?.split("\n").map((line, idx) => (
-                <div key={idx}>
-                  {renderLineWithInlineBold(line)}
-                </div>
-              ))}
-            </span>
-          </div>
-        )}
       </div>
     ),
   },
@@ -209,16 +165,6 @@ export const RendererConfig: Record<RendererType, RendererProps> = {
         ))}
       </div>
     ),
-  },
-
-  [RendererType.BooleanDictionary]: {
-    renderContent: (it: ControlItem) => {
-      return (
-        <div className="text-start font-normal items-center justify-center">
-          {renderLineWithInlineBold(it.value ?? "")}
-        </div>
-      );
-    },
   },
 
   [RendererType.StaticText]: {

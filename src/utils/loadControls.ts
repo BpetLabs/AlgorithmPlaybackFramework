@@ -61,6 +61,31 @@ const jaggedImmediateActions = new Set([
   "tailTakes",
 ]);
 
+const itemDimensionBlockedTypes = new Set([
+  "array",
+  "jaggedArray",
+  "stack",
+  "dictionary",
+]);
+
+function validateBlockedItemDimensions(
+  options: Pick<ArrayRendererOptions, "itemWidth" | "itemHeight">,
+  controlType: string,
+  controlId: string
+) {
+  if (!itemDimensionBlockedTypes.has(controlType)) return;
+  if (options.itemWidth !== undefined) {
+    throw new Error(
+      `Control "${controlId}" cannot set itemWidth for type "${controlType}"; use itemGap, itemCrossAxisGap, or itemOffset.`
+    );
+  }
+  if (options.itemHeight !== undefined) {
+    throw new Error(
+      `Control "${controlId}" cannot set itemHeight for type "${controlType}"; use itemGap, itemCrossAxisGap, or itemOffset.`
+    );
+  }
+}
+
 function validateJaggedArrayBatches<T extends ControlItem>(
   control: ControlDefinition<T>,
   isJaggedContainer: boolean
@@ -348,6 +373,15 @@ export function loadControls<T extends ControlItem = ControlItem>(
     }
     if (controlIds.has(control.id)) {
       throw new Error(`Duplicate control id "${control.id}".`);
+    }
+    const type = control.type ?? "array";
+    validateBlockedItemDimensions(control, type, control.id);
+    if (type === "jaggedArray" && control.childDefaults) {
+      validateBlockedItemDimensions(
+        control.childDefaults,
+        "array",
+        `${control.id}.childDefaults`
+      );
     }
     if (
       control.type === "jaggedArray" &&

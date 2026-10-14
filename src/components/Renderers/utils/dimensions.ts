@@ -9,6 +9,23 @@ export function requirePositiveDimension(
   return value;
 }
 
+export function rejectItemDimensions(
+  itemWidth: number | undefined,
+  itemHeight: number | undefined,
+  controlType: string
+) {
+  if (itemWidth !== undefined) {
+    throw new Error(
+      `itemWidth is not supported for ${controlType} controls; use itemGap, itemCrossAxisGap, or itemOffset.`
+    );
+  }
+  if (itemHeight !== undefined) {
+    throw new Error(
+      `itemHeight is not supported for ${controlType} controls; use itemGap, itemCrossAxisGap, or itemOffset.`
+    );
+  }
+}
+
 export function requirePositiveInteger(
   value: number | undefined,
   name: string

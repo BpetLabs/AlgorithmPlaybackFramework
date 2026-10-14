@@ -145,4 +145,30 @@ describe("NodeGraphRenderer", () => {
     expect(markup).toContain("top:25px;left:25px;width:50px;height:50px");
     expect(markup).toContain("top:25px;left:225px;width:50px;height:50px");
   });
+
+  it("allows node graph items to exceed their calculated track size", () => {
+    const markup = renderToStaticMarkup(
+      <NodeGraphRenderer
+        snapshot={{
+          id: "large-node",
+          type: "nodeGraph",
+          step: 0,
+          items: [],
+          graphNodes: [{
+            id: "node",
+            row: 0,
+            column: 0,
+            value: "Large",
+            itemWidthScale: 1.5,
+            itemHeightScale: 2,
+          }],
+        }}
+        divWidth={100}
+        divHeight={80}
+        graphLayout={{ columns: 1, rows: 1, colGap: 0, rowGap: 0 }}
+      />
+    );
+
+    expect(markup).toContain("top:-40px;left:-25px;width:150px;height:160px");
+  });
 });

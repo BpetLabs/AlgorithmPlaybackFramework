@@ -6,17 +6,15 @@ user-invocable: true
 
 # Interactive Stack, Queue, and Priority Queue Rules
 
-Use these rules when the requested work involves an AnimatedPlayback stack, call stack, FIFO queue, priority queue, or a directly coupled trace change. Populate its initial and runtime state and synchronize each in-scope mutation or call transition.
-
-Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for stacks, queues, and priority queues.
+Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 
 ## Choose the data-structure mode
+
+Determine the represented data structure and its visual orientation; do not choose operations from the control's `type` alone.
 
 - Stack: add and remove at the same visual top end.
 - FIFO queue: add at the enqueue end and remove at the opposite dequeue end.
 - Priority queue: keep entries visibly sorted by priority and mutate them by index.
-
-Do not choose operations from the control's `type` alone. Determine the represented data structure and its visual orientation first.
 
 ## Head and tail placement
 
@@ -34,11 +32,15 @@ For a horizontal control, index 0 and the head are at the left; the tail is at t
 
 When the stack represents a call stack:
 
-- The current active stack frame should be highlighted with an `orange` border.
+- Highlight the current active frame with an `Orange` border.
 - On a return pause that will pop a frame, add `**Return:** value` to that outgoing frame in the same pre-removal batch only when the method returns a value. Keep the return on its own final line and preserve tuple or structured return values accurately. Do not add a return line for `void` methods.
-- Use the shared execution trace to determine what ran since the previous pause. For new playbacks and trace changes, check every pause. For a localized edit, check only the affected range plus its preceding and following state boundaries. If that code changed relevant local variables in a displayed frame, use `setValues` on that frame in the current batch so it reflects the destination pause state. This includes updating the resumed caller after a callee returns; target the caller's current logical index, not the outgoing callee.
-- Include only arguments and local values relevant to understanding the active call and its return. Do not copy every in-scope variable into the frame.
-- Format values as `name | value`. Put short, closely related values on one comma-separated line when space permits, such as `rob | 22, skip | 20`; use separate lines when grouping would reduce readability.
+- When the temporary return line needs more vertical space, increase that frame's `itemOffset` in the same pre-removal batch by only the amount required to fit the complete value. Keep the larger offset while the outgoing frame remains visible; the slot returns to its normal resolved size after removal completes.
+- Include method names only when two or more distinct methods can appear on the logical stack at the same time.
+- At each destination pause, use `setValues` to update relevant displayed frame variables changed since the preceding pause. After a callee returns, update the resumed caller at its current logical index, not the outgoing callee.
+- Before authoring frames for a represented method, choose the smallest ordered property schema that distinguishes simultaneous calls and explains their next action or return. Do not copy every in-scope variable into the frame.
+- Omit invocation-wide arguments that remain constant across every recursive frame when the command, narration, or another control already establishes them. Keep an invariant argument only when a frame would otherwise be ambiguous or its control flow could not be understood.
+- Every frame for the same represented method must use the same property names in the same order. When a selected property has not received its value yet, display the literal value `_pending`. The temporary `**Return:**` annotation is not part of this shared schema.
+- Format properties as `name | value`. Put short, closely related properties on one comma-separated line when space permits; otherwise use separate lines.
 - Keep the same background color for a logical frame throughout its lifetime. When a frame corresponds to a node or item shown in another control, prefer that control's existing named color so the same entity is visually consistent across controls.
 
 ## Priority queues
@@ -49,13 +51,3 @@ When the stack represents a call stack:
 - For a min-priority queue, sort priorities ascending and keep the minimum at index 0. Insert at the appropriate sorted index and take index 0.
 - For a max-priority queue, sort priorities descending and keep the maximum at index 0. Insert at the appropriate sorted index and take index 0.
 - Preserve insertion order among equal priorities unless the algorithm or API defines another tie-breaker.
-
-## Animation timing
-
-- Follow the base skill's pre-animation, completion-step, and `now` timing rules for the mutation selected above.
-- When an insertion assigns a value, include its intended `backgroundColor` in the same input.
-
-## Targeting nodes during mutations
-
-- Apply the base skill's generic set, insert, and delete mutation model and its control-agnostic `current`/`outgoing`/`all` target model.
-- Choose indexed, head, or tail addressing only after identifying the required mutation effect and logical position.

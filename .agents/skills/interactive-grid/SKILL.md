@@ -6,37 +6,36 @@ user-invocable: true
 
 # Interactive Grid Rules
 
-Use these rules when the requested work involves an AnimatedPlayback `grid` control, its cells, or a directly coupled trace change. Populate the relevant cells and synchronize their values and highlights with the execution trace.
+Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 
-Before editing, apply [interactive-generic](../interactive-generic/SKILL.md) as the base skill. These rules extend it for fixed-coordinate grids.
+## Grid shape and semantics
 
-## Grid configuration and cells
+- Before setting `rows` and `cols`, define what each axis represents and map the algorithm's conceptual domain to grid coordinates using the request, code, and canonical trace.
+- Derive `rows` and `cols` from the complete conceptual domain, including meaningful empty cells, rather than only the occupied cells or the storage shape of the source input.
+- A grid may represent a rectangular two-dimensional array or matrix when the conceptual domain is a fixed set of coordinate-addressed cells and cell state is the relevant behavior. Do not substitute a grid when the user explicitly requires an array or jagged-array control, or when nested-array identity, row mutations, or jagged structure must be represented.
+- If the axis meanings or domain size remain ambiguous and plausible interpretations produce materially different grids, ask what the grid should represent before authoring it.
+
+## Cells and state
 
 - Set positive integer `rows` and `cols`; grid coordinates are zero-based and must remain within those bounds.
-- Address every cell by `row` and `col`; the coordinate is the cell's state identity.
-- Use `gridItems` to initialize or change grid cells.
-- For grid-cell state, `gridItems` overrides the base skill's generic mutation and targeting model.
-- Each `gridItems` entry is a persistent partial update. Put only the properties that change on the entry; all omitted properties retain their values on the current and future steps.
+- Address each cell by `row` and `col`; that coordinate is its state identity.
+- Use `gridItems` for all cell initialization and changes. Grid cells do not use the generic `setValues`, `updates`, `inserts`, `deletes`, or target model.
+- Store displayed cell content directly in `gridItems[].value`.
+- Each `gridItems` entry is a persistent partial update. Include only changed properties; omitted properties retain their current values in that and later steps.
 - Put at most one `gridItems` entry for a coordinate in the same batch.
 - Use `borderColor: ""` to clear a highlight without changing that cell's value, background, text color, or other properties.
 
-## Values and pause timing
+## Value timing
 
-- Show caller-supplied grid input at step 0 when it should be visible before invocation. Initialize method-created grid state at step 1 or the first destination step after its creation.
-- A paused statement has not executed. For a paused cell assignment, keep the old value on that step and apply the new value through `gridItems` on the next global step.
-- Border highlighting is the exception to value timing: show the accessed or targeted cell's border on the paused step while retaining its pre-execution value.
-- Apply reads or writes that execute during an unpaused transition to the destination step.
+- For a paused cell assignment, keep the old value on that step and apply the new value through `gridItems` on the first following global step after the assignment executes.
 - Preserve established semantic background and text colors when changing a value. Assign a new color only when the algorithm gives the cell a distinct visual state.
 
 ## Border highlighting
 
 - Keep `showCellBorders` enabled; omit it to use the default `true` or set it to `true` explicitly. Do not toggle it to represent execution state.
 - Use a cell's `borderColor` for algorithmic highlighting.
-- Derive highlights from the shared execution trace. Highlight cells identified by active coordinate variables or accessed by the code executed since the preceding pause.
+- A grid highlight requires a complete cell position. Combine all relevant execution state, such as the current iteration position and lane, to identify one cell, then highlight only that cell.
+- Do not expand a cell reference into sibling cells, an entire row, or an entire column. Highlight an aggregate only when the algorithm explicitly addresses that aggregate.
 - Use `Orange` for the primary current cell or loop cursor, `Pink` for a fixed or specifically tracked cell, and `Yellow` for a trailing or previous cell. For another semantic role, choose a distinct CSS named color and keep that role-color mapping consistent.
-- Preserve a role's border while the same in-scope role continues to identify that cell, including pauses that do not directly reference it. Move or clear the border only when the role's coordinate changes or the role leaves scope.
-- If a cell is accessed during unpaused execution between pauses, show that access on the destination step. Keep it if an in-scope role continues to own it; otherwise clear it on the next step.
-- A logical role may identify at most one cell in the same grid at a time. When the role moves, set the destination border and clear the former cell in the same batch.
-- If multiple roles identify one cell, render one border. Resolve standard color collisions with this precedence: `Orange`, then `Pink`, then `Yellow`. If only custom colors collide, choose one consistently.
-- Keep a write highlight separate from value timing: the paused write may highlight the current cell while it still displays the old value; the new value appears on the following step.
-- Clear all remaining algorithmic borders when their roles leave scope or the grid is no longer active. Do not leave stale highlights at the end of playback.
+- Resolve standard-role color collisions with this precedence: `Orange`, then `Pink`, then `Yellow`. If only custom colors collide, choose one consistently.
+- Clear all remaining algorithmic borders when their roles leave scope or the grid is no longer active, including at the end of playback.

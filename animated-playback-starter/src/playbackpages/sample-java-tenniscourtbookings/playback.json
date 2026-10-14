@@ -1,0 +1,1717 @@
+{
+  "controls": [
+    {
+      "id": "code",
+      "type": "staticText",
+      "staticValue": "import java.util.Arrays;\nimport java.util.Comparator;\nimport java.util.PriorityQueue;\n\npublic class TennisCourtBookings {\n    public static int[] assignCourts(int[][] bookings) {\n        Integer[] bookingOrder = new Integer[bookings.length];\n        for (int index = 0; index < bookings.length; index++) {\n            bookingOrder[index] = index;\n        }\n\n        Arrays.sort(\n            bookingOrder,\n            Comparator.comparingInt(index -> bookings[index][0])\n        );\n\n        // Priority queue of (end time, court number).\n        PriorityQueue<int[]> courtEndTimes = new PriorityQueue<>(\n            Comparator.<int[]>comparingInt(entry -> entry[0])\n                .thenComparingInt(entry -> entry[1])\n        );\n        int[] assignedCourts = new int[bookings.length];\n        int courtCount = 0;\n\n        for (int index : bookingOrder) {\n            int start = bookings[index][0];\n            int end = bookings[index][1];\n            int court;\n\n            if (\n                !courtEndTimes.isEmpty()\n                    && courtEndTimes.peek()[0] <= start\n            ) {\n                court = courtEndTimes.poll()[1];\n            } else {\n                courtCount++;\n                court = courtCount;\n            }\n\n            assignedCourts[index] = court;\n            courtEndTimes.offer(new int[] {end, court});\n        }\n\n        return assignedCourts;\n    }\n}",
+      "batches": [
+        {
+          "step": 0,
+          "scrollBottom": 0
+        },
+        {
+          "step": 1,
+          "highlightLines": [
+            {
+              "range": "6-45",
+              "borderColor": "Orange"
+            },
+            {
+              "range": "41",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "34",
+              "backgroundColor": "Highlight.False"
+            },
+            {
+              "range": "42-45",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ],
+          "scrollBottom": 46
+        },
+        {
+          "step": 2,
+          "clearHighlights": [
+            {
+              "range": "42",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "6-24",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 3
+        },
+        {
+          "step": 4,
+          "clearHighlights": [
+            {
+              "range": "41",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "34",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "35-40",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "clearHighlights": [
+            {
+              "range": "34-35,38-40",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "41",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "36-37",
+              "backgroundColor": "Highlight.False"
+            },
+            {
+              "range": "25-33,42",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "clearHighlights": [
+            {
+              "range": "25-33,41-42",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "34",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "35-40",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "clearHighlights": [
+            {
+              "range": "34-35,38-40",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "41",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "36-37",
+              "backgroundColor": "Highlight.False"
+            },
+            {
+              "range": "25-33,42",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "clearHighlights": [
+            {
+              "range": "25-33,41-42",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "34",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "35-40",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "clearHighlights": [
+            {
+              "range": "34-35,38-40",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "41",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "36-37",
+              "backgroundColor": "Highlight.False"
+            },
+            {
+              "range": "25-33,42",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "clearHighlights": [
+            {
+              "range": "25-33,41-42",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "34",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "35-40",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "clearHighlights": [
+            {
+              "range": "34-35,38-40",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "41",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "36-37",
+              "backgroundColor": "Highlight.False"
+            },
+            {
+              "range": "25-33,42",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "clearHighlights": [
+            {
+              "range": "25,41-43",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "44",
+              "backgroundColor": "Highlight.Pause"
+            },
+            {
+              "range": "34-40",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "clearHighlights": [
+            {
+              "range": "45",
+              "backgroundColor": true
+            }
+          ],
+          "highlightLines": [
+            {
+              "range": "6-45",
+              "borderColor": "Pink"
+            },
+            {
+              "range": "44",
+              "backgroundColor": "Highlight.Return"
+            },
+            {
+              "range": "25,41-43",
+              "backgroundColor": "Highlight.Unused"
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "clearHighlights": [
+            {
+              "range": "6-45"
+            }
+          ],
+          "scrollBottom": 0
+        }
+      ]
+    },
+    {
+      "id": "playbyplay",
+      "type": "text",
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "TennisCourtBookings sorts bookings by start time and uses a min-priority queue to reuse the court that becomes available first. Sorting and heap operations take O(n log n) time, and the auxiliary arrays and heap use O(n) space."
+              }
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Command:\nTennisCourtBookings.assignCourts(new int[][] {{9, 12}, {7, 10}, {8, 11}, {12, 14}, {10, 13}, {15, 18}, {14, 20}})\n\nBooking 1 starts at 7, so court 1 is assigned. courtEndTimes.offer(new int[] {10, 1}) will add its end time and court."
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Booking 2 starts at 8 before court 1 is free, so court 2 is assigned. courtEndTimes.offer(new int[] {11, 2}) will add the booking."
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Booking 0 starts at 9 before either court is free, so court 3 is assigned. courtEndTimes.offer(new int[] {12, 3}) will add the booking."
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Booking 4 starts at 10, and 10 <= 10 means court 1 can be reused. courtEndTimes.poll() will remove (10, 1)."
+              }
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "court is 1, and assignedCourts[4] is 1. courtEndTimes.offer(new int[] {13, 1}) will add the replacement booking."
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Booking 3 starts at 12, and the earliest end time is 11. courtEndTimes.poll() will remove (11, 2)."
+              }
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "court is 2, and assignedCourts[3] is 2. courtEndTimes.offer(new int[] {14, 2}) will add the replacement booking."
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Booking 6 starts at 14, and the earliest end time is 12. courtEndTimes.poll() will remove (12, 3)."
+              }
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "court is 3, and assignedCourts[6] is 3. courtEndTimes.offer(new int[] {20, 3}) will add the replacement booking."
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Booking 5 starts at 15, and the earliest end time is 13. courtEndTimes.poll() will remove (13, 1)."
+              }
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "court is 1, and assignedCourts[5] is 1. courtEndTimes.offer(new int[] {18, 1}) will add the replacement booking."
+              }
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "All seven bookings are assigned using three courts. return assignedCourts will yield [3, 1, 2, 2, 1, 1, 3]."
+              }
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "The assignment result is [3, 1, 2, 2, 1, 1, 3]."
+              }
+            }
+          ]
+        },
+        {
+          "step": 14,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "Hope you learned something!"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "locals",
+      "type": "dictionary",
+      "batches": [
+        {
+          "step": 1,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "index | 1",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "start | 7",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 10",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | 1",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "value": "courtCount | 1",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "index | 2",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "start | 8",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 11",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | 2",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "value": "courtCount | 2",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "index | 0",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "start | 9",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 12",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | 3",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "value": "courtCount | 3",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "index | 4",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "start | 10",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 13",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | _pending",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | 1",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "index | 3",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "start | 12",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 14",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | _pending",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | 2",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "index | 6",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "start | 14",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 20",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | _pending",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | 3",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "index | 5",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "start | 15",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 18",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | _pending",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 3,
+              "input": {
+                "value": "court | 1",
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "deletes": [
+            {
+              "index": 3,
+              "now": true
+            },
+            {
+              "index": 2,
+              "now": true
+            },
+            {
+              "index": 1,
+              "now": true
+            },
+            {
+              "index": 0,
+              "now": true
+            }
+          ]
+        },
+        {
+          "step": 13,
+          "deletes": [
+            {
+              "index": 0,
+              "now": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bookings",
+      "type": "jaggedArray",
+      "orientation": "horizontal",
+      "children": [
+        "booking0",
+        "booking1",
+        "booking2",
+        "booking3",
+        "booking4",
+        "booking5",
+        "booking6"
+      ],
+  "batches": []
+    },
+    {
+      "id": "booking0",
+      "type": "array",
+      "initialItemCount": 2,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "9",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "12",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "booking1",
+      "type": "array",
+      "initialItemCount": 2,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "7",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "10",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "booking2",
+      "type": "array",
+      "initialItemCount": 2,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "8",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "11",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "booking3",
+      "type": "array",
+      "initialItemCount": 2,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "12",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "14",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "booking4",
+      "type": "array",
+      "initialItemCount": 2,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "10",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "13",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "booking5",
+      "type": "array",
+      "initialItemCount": 2,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "15",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "18",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "booking6",
+      "type": "array",
+      "initialItemCount": 2,
+      "batches": [
+        {
+          "step": 0,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "value": "14",
+                "backgroundColor": "Teal"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "value": "20",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "assignedCourts",
+      "type": "array",
+      "initialItemCount": 7,
+      "emptyItemText": "0",
+      "render": {
+        "visible": false
+      },
+      "renderBatches": [
+        {
+          "step": 1,
+          "render": {
+            "visible": true
+          }
+        }
+      ],
+      "batches": [
+        {
+          "step": 1,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "setValues": [
+            {
+              "index": 1,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 2,
+              "input": {
+                "value": "2",
+                "backgroundColor": "Teal",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "setValues": [
+            {
+              "index": 2,
+              "input": {
+                "borderColor": ""
+              }
+            },
+            {
+              "index": 0,
+              "input": {
+                "value": "3",
+                "backgroundColor": "Teal",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 4,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 4,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "value": "2",
+                "backgroundColor": "Teal",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 3,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 6,
+              "input": {
+                "value": "3",
+                "backgroundColor": "Teal",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 6,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 5,
+              "input": {
+                "value": "1",
+                "backgroundColor": "Teal",
+                "borderColor": "Orange"
+              }
+            }
+          ]
+        },
+        {
+          "step": 12,
+          "setValues": [
+            {
+              "index": 5,
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minHeap",
+      "type": "stack",
+      "render": {
+        "visible": false
+      },
+      "renderBatches": [
+        {
+          "step": 1,
+          "render": {
+            "visible": true
+          }
+        }
+      ],
+      "batches": [
+        {
+          "step": 1,
+          "inserts": [
+            {
+              "index": 0,
+              "input": {
+                "value": "end | 10\ncourt | 1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "inserts": [
+            {
+              "index": 1,
+              "input": {
+                "value": "end | 11\ncourt | 2",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "inserts": [
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 12\ncourt | 3",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 4,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "takes": [
+            {
+              "index": 0
+            }
+          ]
+        },
+        {
+          "step": 5,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ],
+          "inserts": [
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 13\ncourt | 1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 6,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "takes": [
+            {
+              "index": 0
+            }
+          ]
+        },
+        {
+          "step": 7,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ],
+          "inserts": [
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 14\ncourt | 2",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 8,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "takes": [
+            {
+              "index": 0
+            }
+          ]
+        },
+        {
+          "step": 9,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ],
+          "inserts": [
+            {
+              "index": 2,
+              "input": {
+                "value": "end | 20\ncourt | 3",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 10,
+          "setValues": [
+            {
+              "index": 0,
+              "input": {
+                "borderColor": "Orange"
+              }
+            }
+          ],
+          "takes": [
+            {
+              "index": 0
+            }
+          ]
+        },
+        {
+          "step": 11,
+          "setValues": [
+            {
+              "index": 0,
+              "target": "outgoing",
+              "input": {
+                "borderColor": ""
+              }
+            }
+          ],
+          "inserts": [
+            {
+              "index": 1,
+              "input": {
+                "value": "end | 18\ncourt | 1",
+                "backgroundColor": "Teal"
+              }
+            }
+          ]
+        },
+        {
+          "step": 12
+        }
+      ]
+    }
+  ]
+}

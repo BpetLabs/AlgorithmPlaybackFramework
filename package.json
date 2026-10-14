@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/bpet-dev/AlgorithmPlaybackFramework#readme",
   "engines": {
-    "node": ">=20.19"
+    "node": ">=22"
   },
   "peerDependencies": {
     "framer-motion": ">=11 <13",

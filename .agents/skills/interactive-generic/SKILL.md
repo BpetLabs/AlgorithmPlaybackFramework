@@ -6,79 +6,89 @@ user-invocable: true
 
 # Interactive Generic Control Rules
 
-This is the base skill for all AnimatedPlayback JSON work. Always apply it alongside any specialized interactive skill. Specialized skills extend these rules and take precedence only for their scoped control-specific behavior; the user's explicit instructions take precedence over both.
+Apply this base skill to all AnimatedPlayback JSON work. Specialized skills override only their control-specific behavior; the user's explicit instructions take precedence.
 
-## Declared-control completeness
-- When updating a playback, treat every declared control—including default or preexisting controls—as part of the playback. Preserve controls the user did not specify unless the requested update affects them or requires changes to keep them synchronized.
-- For new playbacks and trace-changing edits, populate and synchronize every control whose purpose is represented by the input or trace. For a localized edit, limit changes and validation to the requested controls, directly coupled controls, and the adjacent steps needed to prove state continuity. Do not expand a localized edit merely because unrelated controls exist.
-- Use one canonical execution trace for all applicable controls. Reuse it across specialized skills instead of independently replaying the program for each control.
+## Scope and canonical trace
 
-## Primary objective
-- Keep control state consistent across steps, especially around pauses and transitions.
-- Prefer minimal, stateful edits that preserve the intended animation.
+- Treat every declared control, including default and preexisting controls, as part of the playback.
+- Use full-playback scope for new playbacks, trace or execution-flow changes, schema-wide transformations, and explicit audits. Populate and synchronize every control represented by the input or trace.
+- For localized edits, change and validate only the requested controls, directly coupled controls, and adjacent steps needed to prove state continuity. Preserve unrelated controls and report observed out-of-scope issues without changing them.
+- Use one canonical execution trace across all controls and specialized skills.
 
-## Generic mutation model
-- Describe control mutations by effect: set, insert, or delete. Treat index, head, and tail as addressing modes, not different mutation semantics.
-- Select the mutation effect first, then use the addressing mode that identifies the intended logical position.
-- In JSON, the set family is `setValues`, `setHeadValues`, and `setTailValues`; the insert family is `inserts`, `headInserts`, and `tailInserts`; and the delete family is `deletes`, `headDeletes`, and `tailDeletes`.
-- Apply the same timing, targeting, highlighting, and cleanup rules to every member of a mutation family.
+## Initial state and visibility
 
-## Pre-animation rules
-- Pre-animation actions are allowed for insert and delete operations, replacements, takes, and graph-node deletes.
-- Put the pre-animation action on the step where the mutating statement is paused.
-- It represents the pending state and should not be treated as already completed.
-- The next global step must contain a batch for that same control to complete the pending animation.
-- If that next global step has no other action for the control, add an empty completion batch at `step + 1`.
-- If the final step has such an action, add one final empty global step.
-- Use now: true only when the mutation completes during an unpaused transition and is not the paused statement.
+- Step 0 is the pre-invocation state. Caller-supplied input controls may appear there when they should be visible before the call, but method-created runtime state must not.
+- Initialize method-created controls, collections, locals, counters, and other derived state at step 1 when setup creates them during the transition from step 0. State created later belongs on its first destination step.
+- Put the external command and narration about completed setup at step 1. Introductory narration and the code control's initial scroll state belong at step 0.
+- Initialize item values with the control's non-animated state-setting action, such as `setValues`; do not use an animated replacement action such as `updates`. A specialized control may define another initialization action.
+- When preserving a renderer default, omit that item from initialization entirely. Do not emit a state-setting action merely to duplicate its default value, color, border, or another property.
+- Set initial values when the represented control is initialized, or on the step where a hidden control becomes visible.
+- If the first paused statement mutates state also initialized at step 1, order its batches so completed initialization runs first with `now: true` when required, followed by the paused statement's pending pre-animation. Verify that the renderer selects the later same-step snapshot.
+- Verify that step 0 contains no method-created runtime values and step 1 contains the complete pre-state required by its paused statement.
 
-## Pause semantics
-- Treat the paused line as a playback stop before execution.
-- If a pre-animation step exists, it should signal what will happen after the pause.
-- When one paused source statement triggers multiple pre-animation mutations, place all corresponding pre-animation actions on that paused step. Complete each mutation on the next global step according to the standard animation timing rules.
+## Mutation model and timing
 
-## Step 0 and first execution step
-- Treat step 0 as the pre-invocation state. Do not initialize state created by the animated method at step 0.
-- Caller-supplied input visualizations may appear at step 0 when they should be visible before the call, such as an input objects. Introductory narration and the code control's initial scroll state should appear at step 0.
-- Initialize method-created arrays, collections, locals, counters, and other derived runtime state at step 1, after the call and unpaused setup code have executed on the transition from step 0.
-- Put the external command and any narration about completed setup at step 1 rather than step 0.
-- If the first paused statement mutates a structure that is also initialized at step 1, use ordered batches at step 1: first apply the completed initialization with `now: true` when required, then apply the paused statement's pending pre-animation. Verify that the renderer selects the later same-step snapshot.
-- Validate that step 0 contains no method-created runtime values and that step 1 contains the complete pre-state required by its paused statement.
+- A global pause corresponds to one runtime occurrence of a user-selected pause trigger. Source lines do not determine pause identity: one line can contain multiple trigger occurrences, and one trigger can span multiple lines.
+- Use indexed `updates`, `inserts`, and `deletes` by default.
+- Use head or tail mutation variants only when the user or a specialized skill explicitly requires their endpoint-specific animation behavior. Do not substitute them merely because they address the same logical item.
+- Whenever an insert or update assigns `input.value`, include the intended `backgroundColor` in the same `input`.
+- For initial state, use `setValues` as needed to address the intended item.
+- The current pause trigger has not executed. Put its pending pre-animation action on that paused step for inserts, deletes, replacements, takes, and graph-node deletes.
+- Put every pending action caused by the current trigger occurrence on that paused step.
+- Complete each pending animation in a batch for the same control on the next global step. Add an empty completion batch when the control has no other action there; if the pending action occurs on the final step, add one final empty global step.
+- Use `now: true` only when a mutation completes during an unpaused transition and is not the current pause trigger.
 
 ## Targeting current and outgoing nodes
-- Set operations accept `target: "current" | "outgoing" | "all"`. Omitting `target` is equivalent to `"current"`.
-- `"current"` addresses the node that presently owns the logical index, head, or tail. The incoming replacement becomes the current node; there is no separate `"incoming"` target.
-- `"outgoing"` addresses a node that remains alive only to finish its removal animation. Use it when a property must be changed on that animated node after it stops owning the current logical position.
-- `"all"` applies the value change to both current and outgoing nodes. Use it only when both visual nodes intentionally need the same property change.
-- Keep ordinary logical-state changes on `"current"`. Do not use `"outgoing"` merely because a node moved to a different logical position.
-- When a highlighted node becomes outgoing during an insert, delete, or replacement transition, use a set operation to put the destination node's border on `"current"` and clear the animated node's border with `"outgoing"` in the completion batch. This rule applies to every control type and addressing mode.
+
+- Set operations accept `target: "current" | "outgoing" | "all"`; omitting `target` means `"current"`.
+- `"current"` addresses the node that owns the logical index, head, or tail. An incoming replacement becomes current; there is no `"incoming"` target.
+- `"outgoing"` addresses a node retained only to complete its removal animation. Use it when changing that visual node after it no longer owns the logical position, not merely because a current node moved.
+- `"all"` changes both current and outgoing nodes and is valid only when both intentionally need the same property.
+- When a highlighted node becomes outgoing during an insert, delete, or replacement, set the destination border on `"current"` and clear the animated node's border with `"outgoing"` in the completion batch.
+
+## Item highlights
+
+- For controls with addressable items, derive exact item references and accesses from the canonical execution trace.
+- An active item reference is program state that identifies one exact item, such as an array index, a complete grid-cell position, a node ID, or a nested-collection access path.
+- Highlight only the individual item identified by an active item reference or read/write, including on paused steps. Do not expand a reference to sibling items, an entire row, an entire column, or another aggregate unless the algorithm explicitly addresses that aggregate.
+- Preserve the highlight while the item reference remains in scope and continues to identify the same item. A paused statement that does not reference it does not clear the highlight.
+- When an item reference moves, set the destination highlight and clear the former item in the same batch. Clear the highlight when the reference leaves scope.
+- For a paused read or write, highlight the accessed item on the paused step while retaining its pre-execution state. For an access during an unpaused transition, show the highlight on the destination step.
+- Use item borders for existing addressed items and active item references; do not use a border as a generic mutation marker.
+- Any item in a `Pre*` animation state is already identified by that animation. Do not add a highlight border solely because the item is in a pre-animation state; add one only when the trace independently identifies the item through an access or active item reference.
+- For a paused removal, highlight the existing item at the addressed position while retaining its pre-execution value and position.
+- For a paused replacement, highlight the existing target rather than the incoming replacement unless another active item reference independently identifies the incoming item.
+- Preserve an access highlight when an active item reference continues to identify the item; otherwise clear it on the next step.
+- An item reference identifies at most one item in the same control at a time. If multiple active item references identify one item, render one border and use the specialized skill's color precedence.
 
 ## Values
+
 - Put all displayed item content in `input.value`.
-- Do not use `leftAlignedValue` or `rightAlignedValue` unless the user explicitly requests those exact aligned fields. When requested, treat them as supplemental presentation fields; they never replace `value`.
-- When a specialized control encodes multiple displayed fields in one item, use that control's documented `value` format.
-- If a control value will be set as a number Max value or number Min value, set the node value to the text `MAX` or `MIN` instead unless otherwise specified.
+- Treat `emptyItemText` as the displayed value of every otherwise-empty item or cell. Include it in trace mapping, access highlighting, narration, sizing, and validation; do not add `setValues` merely to duplicate it.
+- Do not use `leftAlignedValue` or `rightAlignedValue` unless the user explicitly requests those fields. They supplement presentation and never replace `value`.
+- When a specialized control encodes several displayed fields in one item, use its documented `value` format.
+- Render numeric maximum and minimum sentinels as `MAX` and `MIN` unless the user specifies otherwise.
+
+## Color contrast
+
+- Resolve the effective text and background colors for every displayed item state, including pending, incoming, and outgoing items.
+- When `textColor` is omitted, inspect the renderer or theme default rather than assuming a foreground color.
+- Require at least a 4.5:1 contrast ratio for normal text and 3:1 only when the rendered text qualifies as large text under WCAG.
+- Do not infer accessibility from CSS color names. Calculate contrast from the resolved color values.
+- Preserve semantic color consistency across related controls, but choose a darker or lighter variant when needed to satisfy contrast.
 
 ## Cleanup and minimization
-- For new playbacks, trace changes, and explicit audits, replay each affected control across the full trace. For localized edits, replay only the affected range plus the immediately preceding and following state boundaries. Remove duplicate, stale, or no-op actions found within that scope.
-- Stick to cleanup actions, if you find other changes that mismatch to the skills mention the issue and the step that they occurs on without changing.  
-- Treat an action's addressing mode, logical position, and resolved target as its identity. Actions for `"current"` and `"outgoing"` at the same index, head, or tail affect different nodes and are not duplicates.
-- Within one batch, avoid repeated actions for the same identity when one final action can represent the result.
-- Do not clear a property immediately before setting the same property again on the same resolved target.
-- Evaluate no-ops against the addressed target. Missing `borderColor` or `backgroundColor` and an empty string are equivalent only on that same target; clearing an outgoing border is not a no-op merely because the current node has no border.
-- Preserve mutation payloads required to render transitions.
-- Remove unnecessary empty batches, but preserve empty batches required to complete pending animations.
 
-## Cross-control validation
-- Perform full-playback cross-control validation only for new playbacks, changes to pause locations or execution flow, schema-wide transformations, or an explicit audit request. Otherwise preserve unrelated controls and report observed out-of-scope issues without auditing or changing them.
-- After any change, verify that affected state updates are reflected consistently across directly coupled controls and steps.
-- Within the selected validation scope, verify each control has the required initial and runtime state for its purpose; reject unexplained empty scaffolds.
-- Verify every item intended to display content has a nonempty `value`. Reject `leftAlignedValue` or `rightAlignedValue` unless the user explicitly requested those exact aligned fields, and never accept them as substitutes for `value`.
-- Ensure that a change to one control’s step progression is not left inconsistent with the others.
-- If a mutation or transition affects multiple controls, update each control’s corresponding state rather than only one.
-- When a transition leaves an outgoing node visible, verify that cleanup intended for that old visual node explicitly uses `target: "outgoing"` rather than accidentally changing the current node.
-- Verify that a transition does not leave both the current and outgoing visual nodes with a border intended only for the current logical value.
+- Within the selected scope, replay affected controls and remove duplicate, stale, or no-op actions. Include the preceding and following state boundaries for localized work.
+- During cleanup-only work, report other skill mismatches with their control and step without changing them.
+- Identify an action by its addressing mode, logical position, and resolved target. Actions for `"current"` and `"outgoing"` at the same position affect different nodes and are not duplicates.
+- Within one batch, avoid repeated actions for the same identity when one final action represents the result.
+- Do not clear a property immediately before setting it again on the same resolved target.
+- Evaluate no-ops against the addressed target. A missing color and `""` are equivalent only on that target; clearing an outgoing color is not a no-op because the current node lacks one.
+- Preserve mutation payloads required to render transitions.
+- Remove unnecessary empty batches, but preserve those required to complete pending animations.
 
 ## Formatting
+
 - Preserve nearby JSON style, 2-space indentation, object-key order, and unrelated files.
-- Avoid extra indentation inside batches, highlightLines, clearHighlights, or nested action arrays.
+- Avoid extra indentation inside batches, `highlightLines`, `clearHighlights`, or nested action arrays.

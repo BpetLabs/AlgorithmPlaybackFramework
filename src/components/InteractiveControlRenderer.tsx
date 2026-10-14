@@ -16,14 +16,22 @@ import {
   RendererMap,
 } from "./Renderers/RendererMap";
 import { RendererType } from "./Renderers/rendererConfig";
-import { buildRenderItems } from "./Renderers/utils/buildRenderItems";
+import {
+  buildRenderItems,
+  getFittedRenderExtent,
+} from "./Renderers/utils/buildRenderItems";
 import {
   getJaggedArrayDimensions,
   type JaggedArrayRendererProps,
 } from "./Renderers/JaggedArrayRenderer";
+import { requirePositiveDimension } from "./Renderers/utils/dimensions";
 
 const CONTROL_TITLE_OFFSET = 30;
 const CONTROL_TITLE_GAP = 10;
+const VERTICAL_ITEM_SIZING_TYPES = new Set<RendererType>([
+  RendererType.Stack,
+  RendererType.Dictionary,
+]);
 
 export interface InteractiveControlRendererProps {
   control: LoadedControl<ControlItem>;
@@ -96,6 +104,10 @@ export function InteractiveControlRenderer({
   let resolvedHeight = height;
   let resolvedTop = top;
 
+  const isVerticalArray =
+    type === RendererType.Array && props.orientation === "vertical";
+  const usesVerticalItemSizing = VERTICAL_ITEM_SIZING_TYPES.has(type);
+
   if (type === RendererType.JaggedArray) {
     const fitted = getJaggedArrayDimensions(
       props as unknown as JaggedArrayRendererProps
@@ -104,40 +116,56 @@ export function InteractiveControlRenderer({
     resolvedHeight = fitted.height;
     props.divWidth = fitted.width;
     props.divHeight = fitted.height;
-  } else if (
-    props.fitContent === true &&
-    (type === RendererType.Array ||
-      type === RendererType.Stack)
-  ) {
-    const defaultItemOffset =
-      typeof props.defaultItemOffset === "number"
-        ? props.defaultItemOffset
-        : 40;
-    const renderItems = buildRenderItems(
-      snapshot.items,
-      new Set(),
-      Boolean(props.disableAnimations),
-      defaultItemOffset
+  } else if (type === RendererType.Array || usesVerticalItemSizing) {
+    const hasCustomItemOffsets = snapshot.items.some(
+      (item) => typeof item.itemOffset === "number"
     );
-    const mainAxisSize = Math.max(
-      renderItems.reduce(
-        (extent, item) =>
-          Math.max(extent, item.offset + item.itemOffset),
-        0
-      ),
-      defaultItemOffset
-    );
+    const shouldFitMainAxis =
+      props.fitContent === true ||
+      hasCustomItemOffsets;
 
-    if (type === RendererType.Stack) {
-      resolvedHeight = mainAxisSize;
-      resolvedTop = top + height - mainAxisSize;
-      props.divHeight = mainAxisSize;
-    } else if (props.orientation === "vertical") {
-      resolvedHeight = mainAxisSize;
-      props.divHeight = mainAxisSize;
-    } else {
-      resolvedWidth = mainAxisSize;
-      props.divWidth = mainAxisSize;
+    if (shouldFitMainAxis) {
+      const baseItemOffset =
+        typeof props.defaultItemOffset === "number"
+          ? requirePositiveDimension(props.defaultItemOffset, "defaultItemOffset")
+          : 40;
+      const defaultItemOffset = baseItemOffset;
+      const renderItems = buildRenderItems(
+        snapshot.items,
+        new Set(),
+        Boolean(props.disableAnimations),
+        defaultItemOffset
+      );
+      const preserveArraySlotCapacity =
+        type === RendererType.Array && props.fitContent !== true;
+      const minimumSlotCount = preserveArraySlotCapacity
+        ? control.snapshots[0]?.items.length ?? 0
+        : 0;
+      const minimumSlotOffset = preserveArraySlotCapacity
+        ? baseItemOffset
+        : defaultItemOffset;
+      const contentExtent = getFittedRenderExtent(
+        renderItems,
+        minimumSlotCount,
+        minimumSlotOffset
+      );
+      if (type === RendererType.Array) {
+        props.minimumSlotCount = minimumSlotCount;
+        props.minimumSlotOffset = minimumSlotOffset;
+      }
+      const mainAxisSize = contentExtent || defaultItemOffset;
+
+      if (usesVerticalItemSizing) {
+        resolvedHeight = mainAxisSize;
+        resolvedTop = top + height - mainAxisSize;
+        props.divHeight = mainAxisSize;
+      } else if (isVerticalArray) {
+        resolvedHeight = mainAxisSize;
+        props.divHeight = mainAxisSize;
+      } else {
+        resolvedWidth = mainAxisSize;
+        props.divWidth = mainAxisSize;
+      }
     }
   }
 

@@ -308,6 +308,15 @@ describe("BatchProcessor", () => {
     );
   });
 
+  it("rejects duplicate steps for a control", () => {
+    const processor = new BatchProcessor("items", "array");
+    processor.applyBatch({ step: 1 });
+
+    expect(() => processor.applyBatch({ step: 1 })).toThrow(
+      'Control "items" has duplicate batch step 1.'
+    );
+  });
+
   it("preserves graph order when updating an existing node", () => {
     const processor = new BatchProcessor("graph", "nodeGraph");
     processor.applyBatch({
@@ -518,19 +527,20 @@ describe("BatchProcessor", () => {
     const processor = new BatchProcessor("items", "array");
     processor.applyBatch({
       step: 1,
-      headInserts: [{ input: { value: "head" } }],
-      tailInserts: [{ input: { value: "tail" }, now: true }],
+      headInserts: [{ input: { value: "head", itemOffset: 30 } }],
+      tailInserts: [{ input: { value: "tail", itemOffset: 70 }, now: true }],
       inserts: [{ index: 1, input: { value: "middle" }, animateNow: true }],
     });
 
-    expect(processor.getHistory()[1].items.map(({ value, state, previousState }) => ({
+    expect(processor.getHistory()[1].items.map(({ value, state, previousState, itemOffset }) => ({
       value,
       state,
       previousState,
+      itemOffset,
     }))).toEqual([
-      { value: "head", state: ControlItemState.PreHead, previousState: undefined },
-      { value: "middle", state: ControlItemState.Inserted, previousState: ControlItemState.PreInsert },
-      { value: "tail", state: ControlItemState.Initial, previousState: undefined },
+      { value: "head", state: ControlItemState.PreHead, previousState: undefined, itemOffset: 30 },
+      { value: "middle", state: ControlItemState.Inserted, previousState: ControlItemState.PreInsert, itemOffset: undefined },
+      { value: "tail", state: ControlItemState.Initial, previousState: undefined, itemOffset: 70 },
     ]);
   });
 

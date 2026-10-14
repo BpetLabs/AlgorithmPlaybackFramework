@@ -12,7 +12,10 @@ import {
 import { ArrayRenderer } from "./ArrayRenderer";
 import { RendererProps } from "./rendererConfig";
 import { buildRenderItems } from "./utils/buildRenderItems";
-import { requirePositiveDimension } from "./utils/dimensions";
+import {
+  requirePositiveDimension,
+  rejectItemDimensions,
+} from "./utils/dimensions";
 
 export interface JaggedArrayChild {
   childId?: string;
@@ -59,8 +62,6 @@ interface MeasuredChild {
   orientation: NonNullable<ArrayRendererOptions["orientation"]>;
   width: number;
   height: number;
-  itemWidth: number;
-  itemHeight: number;
   defaultItemOffset: number;
   sizing: JaggedSizing;
 }
@@ -80,19 +81,18 @@ function contentExtent(
   defaultItemOffset: number,
   disableAnimations: boolean
 ) {
-  return Math.max(
-    buildRenderItems(
-      snapshot.items,
-      new Set(),
-      disableAnimations,
-      defaultItemOffset
-    ).reduce(
-      (extent, item) =>
-        Math.max(extent, item.offset + item.itemOffset),
-      0
-    ),
+  const extent = buildRenderItems(
+    snapshot.items,
+    new Set(),
+    disableAnimations,
     defaultItemOffset
+  ).reduce(
+    (maximum, item) =>
+      Math.max(maximum, item.offset + item.itemOffset),
+    0
   );
+
+  return extent || defaultItemOffset;
 }
 
 function measureJaggedArray(
@@ -105,11 +105,21 @@ function measureJaggedArray(
   currentStep?: number,
   navigationDisableAnimations = false
 ): MeasuredJaggedArray {
+  rejectItemDimensions(
+    childDefaults.itemWidth,
+    childDefaults.itemHeight,
+    "jagged-array child default"
+  );
   const children = new Map<number, MeasuredChild>();
   const childrenById = new Map<string, MeasuredChild>();
   const childrenByParentItemId = new Map<string, MeasuredChild>();
 
   childArrays.forEach((child) => {
+    rejectItemDimensions(
+      child.options.itemWidth,
+      child.options.itemHeight,
+      child.snapshot.type
+    );
     const render = {
       ...childDefaults.render,
       ...child.render,
@@ -159,8 +169,6 @@ function measureJaggedArray(
         orientation: childOrientation,
         width: nested.width,
         height: nested.height,
-        itemWidth: childSizing.width,
-        itemHeight: childSizing.height,
         defaultItemOffset: nested.defaultItemOffset,
         sizing: childSizing,
       };
@@ -172,10 +180,10 @@ function measureJaggedArray(
       return;
     }
 
-    const itemWidth = childSizing.width;
-    const itemHeight = childSizing.height;
     const defaultItemOffset =
-      childOrientation === "horizontal" ? itemWidth : itemHeight;
+      childOrientation === "horizontal"
+        ? childSizing.width
+        : childSizing.height;
     const mainSize = contentExtent(
       child.snapshot,
       defaultItemOffset,
@@ -184,10 +192,8 @@ function measureJaggedArray(
     const measuredChild = {
       child,
       orientation: childOrientation,
-      width: childOrientation === "horizontal" ? mainSize : itemWidth,
-      height: childOrientation === "vertical" ? mainSize : itemHeight,
-      itemWidth,
-      itemHeight,
+      width: childOrientation === "horizontal" ? mainSize : childSizing.width,
+      height: childOrientation === "vertical" ? mainSize : childSizing.height,
       defaultItemOffset,
       sizing: childSizing,
     };
@@ -236,12 +242,13 @@ function measureJaggedArray(
     const child = resolveChild(item, index);
     return child ? [child] : [];
   });
-  const childCrossSize = Math.max(
-    ...activeChildren.map((child) =>
-      orientation === "horizontal" ? child.height : child.width
-    ),
-    fallbackChildCross
-  );
+  const childCrossSize = activeChildren.length
+    ? Math.max(
+        ...activeChildren.map((child) =>
+          orientation === "horizontal" ? child.height : child.width
+        )
+      )
+    : fallbackChildCross;
   const crossSize = childCrossSize + sizing.gap * 2;
 
   return {
@@ -279,9 +286,12 @@ export function getJaggedArrayDimensions({
   childGap,
   childWidth,
   childHeight,
+  itemWidth,
+  itemHeight,
   currentStep,
   navigationDisableAnimations,
 }: JaggedArrayRendererProps) {
+  rejectItemDimensions(itemWidth, itemHeight, snapshot.type);
   const measured = measureJaggedArray(
     snapshot,
     childArrays,
@@ -304,6 +314,8 @@ export function JaggedArrayRenderer({
   childGap,
   childWidth,
   childHeight,
+  itemWidth,
+  itemHeight,
   currentStep,
   navigationDisableAnimations = false,
   preInsertGap,
@@ -316,6 +328,7 @@ export function JaggedArrayRenderer({
   containerClassName,
   containerStyle,
 }: JaggedArrayRendererProps) {
+  rejectItemDimensions(itemWidth, itemHeight, snapshot.type);
   const sizing = resolveSizing({ childGap, childWidth, childHeight });
   const measured = measureJaggedArray(
     snapshot,
@@ -391,10 +404,11 @@ export function JaggedArrayRenderer({
       defaultItemOffset: measuredChild.defaultItemOffset,
       divHeight: dimensions.height,
       divWidth: dimensions.width,
-      itemGap: 0,
-      itemCrossAxisGap: 0,
-      itemWidth: measuredChild.itemWidth,
-      itemHeight: measuredChild.itemHeight,
+      itemGap: child.options.itemGap ?? childDefaults.itemGap ?? 0,
+      itemCrossAxisGap:
+        child.options.itemCrossAxisGap ??
+        childDefaults.itemCrossAxisGap ??
+        0,
       preInsertGap:
         child.options.preInsertGap ?? childDefaults.preInsertGap,
       emptyItemText:
