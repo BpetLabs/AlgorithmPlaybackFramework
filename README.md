@@ -37,7 +37,7 @@ compatible `react` and `react-dom` versions.
 To use an unreleased version, clone and build the framework:
 
 ```sh
-git clone https://github.com/bpet-dev/AlgorithmPlaybackFramework.git
+git clone https://github.com/BpetLabs/AlgorithmPlaybackFramework.git
 cd AlgorithmPlaybackFramework
 npm install
 npm run build
