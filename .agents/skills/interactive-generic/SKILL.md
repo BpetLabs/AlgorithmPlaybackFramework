@@ -28,14 +28,15 @@ Apply this base skill to all AnimatedPlayback JSON work. Specialized skills over
 
 ## Mutation model and timing
 
-- A global pause corresponds to one runtime occurrence of a user-selected pause trigger. Source lines do not determine pause identity: one line can contain multiple trigger occurrences, and one trigger can span multiple lines.
+- Use the code control's paused-line timeline as the authoritative global-step timeline.
+- Put every pending control action caused by a paused line on that same global step, ordered by runtime evaluation order.
+- Do not split same-line actions across steps because they use different mutation types or target different controls.
 - Use indexed `updates`, `inserts`, and `deletes` by default.
 - Use head or tail mutation variants only when the user or a specialized skill explicitly requires their endpoint-specific animation behavior. Do not substitute them merely because they address the same logical item.
 - Whenever an insert or update assigns `input.value`, include the intended `backgroundColor` in the same `input`.
 - For initial state, use `setValues` as needed to address the intended item.
 - The current pause trigger has not executed. Put its pending pre-animation action on that paused step for inserts, deletes, replacements, takes, and graph-node deletes.
-- Put every pending action caused by the current trigger occurrence on that paused step.
-- Complete each pending animation in a batch for the same control on the next global step. Add an empty completion batch when the control has no other action there; if the pending action occurs on the final step, add one final empty global step.
+- Complete all pending actions from that paused step on the next global step. Add an empty completion batch for each affected control that has no other action there; if the pending actions occur on the final step, add one final empty global step.
 - Use `now: true` only when a mutation completes during an unpaused transition and is not the current pause trigger.
 
 ## Targeting current and outgoing nodes

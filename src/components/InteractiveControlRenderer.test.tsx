@@ -456,15 +456,18 @@ describe("InteractiveControlRenderer", () => {
       { items: jaggedSnapshot, row: rowSnapshot },
       {
         configureProps: (_, props) => {
-          props.childGap = 5;
-          props.childWidth = 40;
-          props.childHeight = 40;
+          props.arrayGap = 5;
+          props.defaultItemOffset = 40;
+          props.divWidth = 40;
+          props.divHeight = 40;
+          props.fitContent = true;
         },
       }
     );
 
-    expect(markup).toContain("width:50px");
-    expect(markup).toContain("height:90px");
+    expect(markup).toContain("width:90px");
+    expect(markup).toContain("height:50px");
+    expect(markup).toContain("width:80px;height:40px");
   });
 
   it("fits stacks to their occupied height while preserving the bottom edge and title position", () => {

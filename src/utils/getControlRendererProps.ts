@@ -42,6 +42,7 @@ function getJaggedChildren(
         index: child.parentIndex,
         ...(parentItemId ? { parentItemId } : {}),
         snapshot: childSnapshot,
+        minimumSlotCount: child.snapshots[0]?.items.length ?? 0,
         options: child.rendererOptions ?? {},
         render:
           child.renderByStep?.[childSnapshot.step] ?? child.render ?? {},

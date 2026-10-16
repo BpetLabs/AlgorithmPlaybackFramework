@@ -44,11 +44,11 @@ const renderJagged = (
     currentStep={currentStep}
     navigationDisableAnimations={false}
     disableAnimations
-    childGap={5}
-    childWidth={30}
-    childHeight={20}
-    divWidth={100}
-    divHeight={80}
+    arrayGap={5}
+    defaultItemOffset={30}
+    divWidth={30}
+    divHeight={20}
+    orientation="horizontal"
     renderContent={(item) => <span data-value={item.value}>{item.value}</span>}
     {...overrides}
   />
@@ -98,46 +98,78 @@ describe("JaggedArrayRenderer", () => {
     expect(markup.match(/box-shadow:0 0 0 4px Orange/g)).toHaveLength(1);
   });
 
-  it("uses configured child width and height", () => {
+  it("uses the configured leaf control width and height", () => {
     const markup = renderJagged([child()], 2, {
-      childWidth: 35,
-      childHeight: 25,
+      divWidth: 35,
+      divHeight: 25,
     });
 
     expect(markup).toContain("width:35px;height:25px");
     expect(markup).toContain("width:45px;height:35px");
   });
 
-  it("blocks item dimensions on jagged leaves", () => {
-    expect(() => getJaggedArrayDimensions({
-      snapshot: parentSnapshot,
-      childArrays: [child({ options: { itemWidth: 1 } })],
+  it("reconstructs the dimensions from leaf controls", () => {
+    const items = Array.from({ length: 7 }, (_, index) => ({
+      id: `booking-slot-${index}`,
+      state: ControlItemState.Initial,
+    }));
+    const children = items.map((_, index) => child({
+      index,
+      snapshot: {
+        id: `booking-${index}`,
+        type: "array",
+        step: 2,
+        items: childItems(2),
+      },
+    }));
+
+    expect(getJaggedArrayDimensions({
+      snapshot: { ...parentSnapshot, items },
+      childArrays: children,
       disableAnimations: true,
-      divWidth: 1,
-      divHeight: 1,
-      childGap: 5,
-      childWidth: 30,
-      childHeight: 20,
-    })).toThrow("itemWidth is not supported for array controls");
-    expect(() => getJaggedArrayDimensions({
-      snapshot: parentSnapshot,
-      childArrays: [child({ options: { itemHeight: 1 } })],
-      disableAnimations: true,
-      divWidth: 1,
-      divHeight: 1,
-      childGap: 5,
-      childWidth: 30,
-      childHeight: 20,
-    })).toThrow("itemHeight is not supported for array controls");
+      orientation: "vertical",
+      defaultItemOffset: 40,
+      divWidth: 40,
+      divHeight: 40,
+      arrayGap: 5,
+      fitContent: true,
+    })).toEqual({ width: 350, height: 90 });
   });
 
   it("uses gaps to shrink jagged leaf items without shrinking their layout", () => {
-    const markup = renderJagged([
-      child({ options: { itemGap: 5, itemCrossAxisGap: 5 } }),
-    ]);
+    const markup = renderJagged([child()], 2, {
+      itemGap: 5,
+      itemCrossAxisGap: 5,
+    });
 
     expect(markup).toContain("width:40px;height:30px");
     expect(markup).toContain("width:20px;height:10px");
+  });
+
+  it("inherits item sizing and gaps through nested jagged arrays", () => {
+    const markup = renderJagged([
+      child({
+        snapshot: {
+          id: "matrix-0",
+          type: "jaggedArray",
+          step: 2,
+          items: [{ id: "nested-row-0", state: ControlItemState.Initial }],
+        },
+        childArrays: [child({
+          snapshot: {
+            id: "matrix-0-0",
+            type: "array",
+            step: 2,
+            items: childItems(1),
+          },
+        })],
+      }),
+    ], 2, {
+      itemGap: 3,
+      itemCrossAxisGap: 4,
+    });
+
+    expect(markup).toContain("width:24px;height:12px");
   });
 
   it("uses itemOffset alone to resize jagged leaf layout", () => {
@@ -157,16 +189,16 @@ describe("JaggedArrayRenderer", () => {
           },
         })],
         disableAnimations: true,
-        divWidth: 1,
-        divHeight: 1,
+        divWidth: 30,
+        divHeight: 20,
         orientation: "vertical",
-        childGap: 5,
-        childWidth: 30,
-        childHeight: 20,
+        arrayGap: 5,
+        defaultItemOffset: 20,
+        fitContent: true,
       });
 
-    expect(dimensionsForOffset(10)).toEqual({ width: 20, height: 30 });
-    expect(dimensionsForOffset(60)).toEqual({ width: 70, height: 30 });
+    expect(dimensionsForOffset(10)).toEqual({ width: 40, height: 20 });
+    expect(dimensionsForOffset(60)).toEqual({ width: 40, height: 70 });
   });
 
   it("hides stale removing children by disabling their animations", () => {
@@ -232,7 +264,7 @@ describe("JaggedArrayRenderer", () => {
     expect(markup).toContain('data-value="Child"');
   });
 
-  it("fits vertical children from their item count", () => {
+  it("fits vertical leaves from their item count", () => {
     const markup = renderJagged(
       [
         child({
@@ -242,9 +274,15 @@ describe("JaggedArrayRenderer", () => {
             step: 2,
             items: childItems(2),
           },
-          options: { orientation: "vertical" },
+          options: { orientation: "horizontal" },
         }),
-      ]
+      ],
+      2,
+      {
+        orientation: "vertical",
+        defaultItemOffset: 20,
+        fitContent: true,
+      }
     );
 
     expect(markup).toContain("width:30px;height:40px");
@@ -263,14 +301,14 @@ describe("JaggedArrayRenderer", () => {
         }),
       ],
       2,
-      { orientation: "vertical" }
+      { orientation: "horizontal", fitContent: true }
     );
 
     expect(markup).toContain("width:60px;height:20px");
     expect(markup.match(/width:60px;height:20px/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("ignores a child orientation and alternates from the parent", () => {
+  it("uses the root orientation for leaves", () => {
     const markup = renderJagged(
       [
         child({
@@ -287,10 +325,10 @@ describe("JaggedArrayRenderer", () => {
       ]
     );
 
-    expect(markup).toContain("width:30px;height:40px");
+    expect(markup).toContain("width:30px;height:20px");
   });
 
-  it("alternates the child orientation when none is configured", () => {
+  it("uses the leaf orientation when a child has none configured", () => {
     const markup = renderJagged([
       child({
         snapshot: {
@@ -303,7 +341,7 @@ describe("JaggedArrayRenderer", () => {
       }),
     ]);
 
-    expect(markup).toContain("width:30px;height:40px");
+    expect(markup).toContain("width:30px;height:20px");
   });
 
   it("uses the child size plus gap on all sides for an empty parent", () => {
@@ -312,11 +350,10 @@ describe("JaggedArrayRenderer", () => {
         snapshot: { ...parentSnapshot, items: [] },
         childArrays: [],
         disableAnimations: true,
-        divWidth: 1,
-        divHeight: 1,
-        childGap: 5,
-        childWidth: 30,
-        childHeight: 20,
+        divWidth: 30,
+        divHeight: 20,
+        arrayGap: 5,
+        defaultItemOffset: 30,
       })
     ).toEqual({ width: 40, height: 30 });
   });
@@ -363,13 +400,42 @@ describe("JaggedArrayRenderer", () => {
         },
         childArrays: [matrix(0, [2, 3]), matrix(1, [4, 1, 2])],
         disableAnimations: true,
-        divWidth: 1,
-        divHeight: 1,
-        childGap: 5,
-        childWidth: 40,
-        childHeight: 40,
+        divWidth: 40,
+        divHeight: 40,
+        arrayGap: 5,
+        defaultItemOffset: 40,
+        fitContent: true,
+        orientation: "horizontal",
       })
     ).toEqual({ width: 320, height: 160 });
+  });
+
+  it("rejects branches with different nesting depths", () => {
+    expect(() => getJaggedArrayDimensions({
+      snapshot: {
+        ...parentSnapshot,
+        items: [
+          { id: "leaf-slot", state: ControlItemState.Initial },
+          { id: "nested-slot", state: ControlItemState.Initial },
+        ],
+      },
+      childArrays: [
+        child({ index: 0 }),
+        child({
+          index: 1,
+          snapshot: {
+            id: "nested",
+            type: "jaggedArray",
+            step: 2,
+            items: [{ id: "nested-leaf-slot", state: ControlItemState.Initial }],
+          },
+          childArrays: [child({ index: 0 })],
+        }),
+      ],
+      disableAnimations: true,
+      divWidth: 30,
+      divHeight: 20,
+    })).toThrow("requires every branch to have the same nesting depth");
   });
 
   it("renders nested jagged children recursively", () => {

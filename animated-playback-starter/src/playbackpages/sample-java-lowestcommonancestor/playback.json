@@ -5,838 +5,247 @@
       "type": "staticText",
       "staticValue": "public class LowestCommonAncestor {\n    public static class TreeNode {\n        int value;\n        TreeNode left;\n        TreeNode right;\n\n        TreeNode(int value) {\n            this(value, null, null);\n        }\n\n        TreeNode(int value, TreeNode left, TreeNode right) {\n            this.value = value;\n            this.left = left;\n            this.right = right;\n        }\n    }\n\n    public static TreeNode lowestCommonAncestor(\n        TreeNode root,\n        TreeNode first,\n        TreeNode second\n    ) {\n        if (root == null || root == first || root == second) {\n            return root;\n        }\n\n        TreeNode left = lowestCommonAncestor(\n            root.left,\n            first,\n            second\n        );\n        TreeNode right = lowestCommonAncestor(\n            root.right,\n            first,\n            second\n        );\n\n        // Targets were found in separate branches.\n        if (left != null && right != null) {\n            return root;\n        }\n\n        return left != null ? left : right;\n    }\n}",
       "batches": [
-        {
-          "step": 0,
-          "scrollBottom": 0
-        },
-        {
-          "step": 1,
+        { "step": 0, "scrollBottom": 0 },
+        { "step": 1, "highlightLines": [
+          { "range": "18-44", "borderColor": "Orange" },
+          { "range": "24", "backgroundColor": "Highlight.False" },
+          { "range": "27", "backgroundColor": "Highlight.Pause" },
+          { "range": "32-44", "backgroundColor": "Highlight.Unused" }
+        ] },
+        { "step": 2, "highlightLines": [
+          { "range": "24", "backgroundColor": "Highlight.Pause" },
+          { "range": "25-26", "backgroundColor": "Highlight.Unused" },
+          { "range": "27", "backgroundColor": "Highlight.Branch" }
+        ] },
+        { "step": 3,
+          "clearHighlights": [{ "range": "33-36", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "18-44",
-              "borderColor": "Orange"
-            },
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.False"
-            },
-            {
-              "range": "32-44",
-              "backgroundColor": "Highlight.Unused"
-            }
+            { "range": "18-23", "backgroundColor": "Highlight.Unused" },
+            { "range": "24", "backgroundColor": "Highlight.Return" },
+            { "range": "27", "backgroundColor": "Highlight.ReturnLocation" },
+            { "range": "32", "backgroundColor": "Highlight.Pause" }
           ]
         },
-        {
-          "step": 2,
+        { "step": 4,
+          "clearHighlights": [{ "range": "18-23,25-26", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.Branch"
-            },
-            {
-              "range": "25-26",
-              "backgroundColor": "Highlight.Unused"
-            }
+            { "range": "24", "backgroundColor": "Highlight.False" },
+            { "range": "27", "backgroundColor": "Highlight.Pause" },
+            { "range": "32", "backgroundColor": "Highlight.Branch" }
           ]
         },
-        {
-          "step": 3,
+        { "step": 6, "highlightLines": [
+          { "range": "24", "backgroundColor": "Highlight.Pause" },
+          { "range": "25-26", "backgroundColor": "Highlight.Unused" },
+          { "range": "27", "backgroundColor": "Highlight.Branch" }
+        ] },
+        { "step": 7,
+          "clearHighlights": [{ "range": "33-36", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "32-36",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Return"
-            },
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.ReturnLocation"
-            },
-            {
-              "range": "18-23",
-              "backgroundColor": "Highlight.Unused"
-            }
+            { "range": "18-23", "backgroundColor": "Highlight.Unused" },
+            { "range": "24", "backgroundColor": "Highlight.Return" },
+            { "range": "27", "backgroundColor": "Highlight.ReturnLocation" },
+            { "range": "32", "backgroundColor": "Highlight.Pause" }
           ]
         },
-        {
-          "step": 4,
-          "clearHighlights": [
-            {
-              "range": "18-23,25-26",
-              "backgroundColor": true
-            }
-          ],
+        { "step": 8,
+          "clearHighlights": [{ "range": "18-23", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "32-36",
-              "backgroundColor": "Highlight.Branch"
-            },
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.False"
-            }
+            { "range": "24", "backgroundColor": "Highlight.Pause" },
+            { "range": "27-31", "backgroundColor": "Highlight.Unused" },
+            { "range": "32", "backgroundColor": "Highlight.Branch" }
           ]
         },
-        {
-          "step": 5,
+        { "step": 9,
+          "clearHighlights": [{ "range": "37-39,41-42", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.Branch"
-            },
-            {
-              "range": "25-26",
-              "backgroundColor": "Highlight.Unused"
-            }
+            { "range": "18-23", "backgroundColor": "Highlight.Unused" },
+            { "range": "24", "backgroundColor": "Highlight.Return" },
+            { "range": "32", "backgroundColor": "Highlight.ReturnLocation" },
+            { "range": "40", "backgroundColor": "Highlight.False" },
+            { "range": "43", "backgroundColor": "Highlight.Pause" }
           ]
         },
-        {
-          "step": 6,
+        { "step": 10,
+          "clearHighlights": [{ "range": "28-31", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "32-36",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Return"
-            },
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.ReturnLocation"
-            },
-            {
-              "range": "18-23",
-              "backgroundColor": "Highlight.Unused"
-            }
+            { "range": "24", "backgroundColor": "Highlight.Unused" },
+            { "range": "27", "backgroundColor": "Highlight.ReturnLocation" },
+            { "range": "32", "backgroundColor": "Highlight.Pause" },
+            { "range": "37-42", "backgroundColor": "Highlight.Unused" },
+            { "range": "43", "backgroundColor": "Highlight.Return" }
           ]
         },
-        {
-          "step": 7,
-          "clearHighlights": [
-            {
-              "range": "18-23,25-26",
-              "backgroundColor": true
-            }
-          ],
+        { "step": 11,
+          "clearHighlights": [{ "range": "18-23,25-26", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "32-36",
-              "backgroundColor": "Highlight.Branch"
-            },
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.False"
-            }
+            { "range": "24", "backgroundColor": "Highlight.False" },
+            { "range": "27", "backgroundColor": "Highlight.Pause" },
+            { "range": "32", "backgroundColor": "Highlight.Branch" },
+            { "range": "43", "backgroundColor": "Highlight.Unused" }
           ]
         },
-        {
-          "step": 8,
+        { "step": 12, "highlightLines": [
+          { "range": "24", "backgroundColor": "Highlight.Pause" },
+          { "range": "25-26", "backgroundColor": "Highlight.Unused" },
+          { "range": "27", "backgroundColor": "Highlight.Branch" }
+        ] },
+        { "step": 13,
+          "clearHighlights": [{ "range": "33-36", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.Branch"
-            },
-            {
-              "range": "25-26",
-              "backgroundColor": "Highlight.Unused"
-            }
+            { "range": "18-23", "backgroundColor": "Highlight.Unused" },
+            { "range": "24", "backgroundColor": "Highlight.Return" },
+            { "range": "27", "backgroundColor": "Highlight.ReturnLocation" },
+            { "range": "32", "backgroundColor": "Highlight.Pause" }
           ]
         },
-        {
-          "step": 9,
+        { "step": 14,
+          "clearHighlights": [{ "range": "18-23", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "32-36",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Return"
-            },
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.ReturnLocation"
-            },
-            {
-              "range": "18-23",
-              "backgroundColor": "Highlight.Unused"
-            }
+            { "range": "24", "backgroundColor": "Highlight.Pause" },
+            { "range": "27-31", "backgroundColor": "Highlight.Unused" },
+            { "range": "32", "backgroundColor": "Highlight.Branch" }
           ]
         },
-        {
-          "step": 10,
-          "clearHighlights": [
-            {
-              "range": "18-23",
-              "backgroundColor": true
-            }
-          ],
+        { "step": 15,
+          "clearHighlights": [{ "range": "37-39,41-42", "backgroundColor": true }],
           "highlightLines": [
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "32-36",
-              "backgroundColor": "Highlight.Branch"
-            },
-            {
-              "range": "27-31",
-              "backgroundColor": "Highlight.Unused"
-            }
+            { "range": "18-23", "backgroundColor": "Highlight.Unused" },
+            { "range": "24", "backgroundColor": "Highlight.Return" },
+            { "range": "32", "backgroundColor": "Highlight.ReturnLocation" },
+            { "range": "40", "backgroundColor": "Highlight.False" },
+            { "range": "43", "backgroundColor": "Highlight.Pause" }
           ]
         },
-        {
-          "step": 11,
-          "clearHighlights": [
-            {
-              "range": "39,41-42",
-              "backgroundColor": true
-            }
-          ],
-          "highlightLines": [
-            {
-              "range": "43",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Return"
-            },
-            {
-              "range": "32-36",
-              "backgroundColor": "Highlight.ReturnLocation"
-            },
-            {
-              "range": "40",
-              "backgroundColor": "Highlight.False"
-            },
-            {
-              "range": "18-23",
-              "backgroundColor": "Highlight.Unused"
-            }
-          ]
-        },
-        {
-          "step": 12,
-          "highlightLines": [
-            {
-              "range": "24",
-              "backgroundColor": "Highlight.Unused"
-            }
-          ]
-        },
-        {
-          "step": 13,
-          "highlightLines": [
-            {
-              "range": "40",
-              "backgroundColor": "Highlight.Pause"
-            },
-            {
-              "range": "41-43",
-              "backgroundColor": "Highlight.Unused"
-            }
-          ]
-        },
-        {
-          "step": 14,
-          "clearHighlights": [
-            {
-              "range": "44",
-              "backgroundColor": true
-            }
-          ],
-          "highlightLines": [
-            {
-              "range": "18-44",
-              "borderColor": "Pink"
-            },
-            {
-              "range": "40",
-              "backgroundColor": "Highlight.Return"
-            },
-            {
-              "range": "32-36,39",
-              "backgroundColor": "Highlight.Unused"
-            }
-          ]
-        },
-        {
-          "step": 15,
-          "clearHighlights": [
-            {
-              "range": "18-44"
-            }
-          ],
-          "scrollBottom": 0
-        }
+        { "step": 16, "highlightLines": [
+          { "range": "24", "backgroundColor": "Highlight.Unused" }
+        ] },
+        { "step": 18, "clearHighlights": [{ "range": "18-44" }], "scrollBottom": 0 }
       ]
     },
     {
       "id": "playbyplay",
       "type": "text",
       "batches": [
-        {
-          "step": 0,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "LowestCommonAncestor recursively searches both subtrees and returns the lowest node that contains both targets. It runs in O(n) time and uses O(h) call-stack space, where h is the tree height."
-              }
-            }
-          ]
-        },
-        {
-          "step": 1,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "Command:\nLowestCommonAncestor.lowestCommonAncestor(n3, n5, n0)\n\nThe tree has root 3, with children 5 and 1; the third row is 6, 2, 0, and 8. The call on root.left will search from node 5."
-              }
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root == first at node 5. return root will yield node 5."
-              }
-            }
-          ]
-        },
-        {
-          "step": 3,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "left is 5. The call on root.right will search from node 1."
-              }
-            }
-          ]
-        },
-        {
-          "step": 4,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "At node 1, no base case matched. The call on root.left will search from node 0."
-              }
-            }
-          ]
-        },
-        {
-          "step": 5,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root == second at node 0. return root will yield node 0."
-              }
-            }
-          ]
-        },
-        {
-          "step": 6,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "left is 0 at node 1. The call on root.right will search from node 8."
-              }
-            }
-          ]
-        },
-        {
-          "step": 7,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "At node 8, no base case matched. The call on root.left will search a null child."
-              }
-            }
-          ]
-        },
-        {
-          "step": 8,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root == null. return root will yield null."
-              }
-            }
-          ]
-        },
-        {
-          "step": 9,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "left is null at node 8. The call on root.right will search the other null child."
-              }
-            }
-          ]
-        },
-        {
-          "step": 10,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root == null. return root will yield null."
-              }
-            }
-          ]
-        },
-        {
-          "step": 11,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "At node 8, left and right are null, so left != null && right != null is false. return left != null ? left : right will yield null."
-              }
-            }
-          ]
-        },
-        {
-          "step": 12,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "At node 1, left is 0 and right is null, so the condition is false. return left != null ? left : right will yield node 0."
-              }
-            }
-          ]
-        },
-        {
-          "step": 13,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "At node 3, left is 5 and right is 0, so both are non-null. return root will yield node 3."
-              }
-            }
-          ]
-        },
-        {
-          "step": 14,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "The lowest common ancestor is node 3."
-              }
-            }
-          ]
-        },
-        {
-          "step": 15,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "Hope you learned something!"
-              }
-            }
-          ]
-        }
+        { "step": 0, "setValues": [{ "index": 0, "input": { "value": "LowestCommonAncestor finds the lowest tree node containing both targets in its subtree.\n\nIt can identify the nearest shared ancestor of two nodes in a binary tree.\n\nIt runs in O(n) time and uses O(h) call-stack space, where h is the tree height." } }] },
+        { "step": 1, "setValues": [{ "index": 0, "input": { "value": "Command:\nLowestCommonAncestor.lowestCommonAncestor(root, node5, node2)\n\nThe value of root is 3, which is neither target.\n\nlowestCommonAncestor(root.left, first, second) will search from node 5." } }] },
+        { "step": 2, "setValues": [{ "index": 0, "input": { "value": "The recursive call reached node 5.\n\nBecause root == first, return root will yield node 5." } }] },
+        { "step": 3, "setValues": [{ "index": 0, "input": { "value": "The left subtree produced node 5.\n\nlowestCommonAncestor(root.right, first, second) will search from node 1." } }] },
+        { "step": 4, "setValues": [{ "index": 0, "input": { "value": "Node 1 is neither target.\n\nlowestCommonAncestor(root.left, first, second) will search from node 0." } }] },
+        { "step": 5, "setValues": [{ "index": 0, "input": { "value": "Node 0 is neither target.\n\nlowestCommonAncestor(root.left, first, second) will search its null left child." } }] },
+        { "step": 6, "setValues": [{ "index": 0, "input": { "value": "The recursive call reached null.\n\nreturn root will yield null." } }] },
+        { "step": 7, "setValues": [{ "index": 0, "input": { "value": "Node 0's left search produced null.\n\nlowestCommonAncestor(root.right, first, second) will search its null right child." } }] },
+        { "step": 8, "setValues": [{ "index": 0, "input": { "value": "The recursive call reached null.\n\nreturn root will yield null." } }] },
+        { "step": 9, "setValues": [{ "index": 0, "input": { "value": "Both searches from node 0 produced null.\n\nreturn left != null ? left : right will yield null." } }] },
+        { "step": 10, "setValues": [{ "index": 0, "input": { "value": "Node 1's left search produced null.\n\nlowestCommonAncestor(root.right, first, second) will search from node 8." } }] },
+        { "step": 11, "setValues": [{ "index": 0, "input": { "value": "Node 8 is neither target.\n\nlowestCommonAncestor(root.left, first, second) will search its null left child." } }] },
+        { "step": 12, "setValues": [{ "index": 0, "input": { "value": "The recursive call reached null.\n\nreturn root will yield null." } }] },
+        { "step": 13, "setValues": [{ "index": 0, "input": { "value": "Node 8's left search produced null.\n\nlowestCommonAncestor(root.right, first, second) will search its null right child." } }] },
+        { "step": 14, "setValues": [{ "index": 0, "input": { "value": "The recursive call reached null.\n\nreturn root will yield null." } }] },
+        { "step": 15, "setValues": [{ "index": 0, "input": { "value": "Both searches from node 8 produced null.\n\nreturn left != null ? left : right will yield null." } }] },
+        { "step": 16, "setValues": [{ "index": 0, "input": { "value": "Both searches from node 1 produced null.\n\nreturn left != null ? left : right will yield null." } }] },
+        { "step": 17, "setValues": [{ "index": 0, "input": { "value": "The searches from node 3 produced node 5 and null.\n\nreturn left != null ? left : right will yield node 5." } }] },
+        { "step": 18, "setValues": [{ "index": 0, "input": { "value": "Hope you learned something!" } }] }
       ]
     },
     {
       "id": "locals",
       "type": "dictionary",
       "batches": [
-        {
-          "step": 1,
+        { "step": 1, "setValues": [
+          { "index": 0, "input": { "value": "root | 3", "borderColor": "Orange" } },
+          { "index": 1, "input": { "value": "first | 5", "borderColor": "Orange" } },
+          { "index": 2, "input": { "value": "second | 2", "borderColor": "Orange" } },
+          { "index": 3, "input": { "value": "left | _pending", "borderColor": "Orange" } }
+        ] },
+        { "step": 2,
           "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 3",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 1,
-              "input": {
-                "value": "first | 5",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 2,
-              "input": {
-                "value": "second | 0",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | _pending",
-                "borderColor": "Orange"
-              }
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "deletes": [
-            {
-              "index": 3,
-              "now": true
-            }
+            { "index": 0, "input": { "value": "root | 5", "borderColor": "Orange" } },
+            { "index": 1, "input": { "borderColor": "" } },
+            { "index": 2, "input": { "borderColor": "" } }
           ],
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 5",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 1,
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 2,
-              "input": {
-                "borderColor": ""
-              }
-            }
-          ]
+          "deletes": [{ "index": 3, "now": true }]
         },
-        {
-          "step": 3,
+        { "step": 3, "setValues": [
+          { "index": 0, "input": { "value": "root | 3", "borderColor": "Orange" } },
+          { "index": 3, "input": { "value": "left | 5", "borderColor": "Orange" } },
+          { "index": 4, "input": { "value": "right | _pending", "borderColor": "Orange" } }
+        ] },
+        { "step": 4,
           "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 3",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | 5",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 4,
-              "input": {
-                "value": "right | _pending",
-                "borderColor": "Orange"
-              }
-            }
-          ]
-        },
-        {
-          "step": 4,
-          "deletes": [
-            {
-              "index": 4,
-              "now": true
-            }
+            { "index": 0, "input": { "value": "root | 1", "borderColor": "Orange" } },
+            { "index": 3, "input": { "value": "left | _pending", "borderColor": "Orange" } }
           ],
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 1",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | _pending",
-                "borderColor": "Orange"
-              }
-            }
-          ]
+          "deletes": [{ "index": 4, "now": true }]
         },
-        {
-          "step": 5,
-          "deletes": [
-            {
-              "index": 3,
-              "now": true
-            }
+        { "step": 5, "setValues": [
+          { "index": 0, "input": { "value": "root | 0", "borderColor": "Orange" } },
+          { "index": 3, "input": { "borderColor": "" } }
+        ] },
+        { "step": 6,
+          "setValues": [{ "index": 0, "input": { "value": "root | null", "borderColor": "Orange" } }],
+          "deletes": [{ "index": 3, "now": true }]
+        },
+        { "step": 7, "setValues": [
+          { "index": 0, "input": { "value": "root | 0", "borderColor": "Orange" } },
+          { "index": 3, "input": { "value": "left | null", "borderColor": "Orange" } },
+          { "index": 4, "input": { "value": "right | _pending", "borderColor": "Orange" } }
+        ] },
+        { "step": 8,
+          "setValues": [{ "index": 0, "input": { "value": "root | null", "borderColor": "Orange" } }],
+          "deletes": [{ "index": 4, "now": true }, { "index": 3, "now": true }]
+        },
+        { "step": 9, "setValues": [
+          { "index": 0, "input": { "value": "root | 0", "borderColor": "Orange" } },
+          { "index": 3, "input": { "value": "left | null", "borderColor": "Orange" } },
+          { "index": 4, "input": { "value": "right | null", "borderColor": "Orange" } }
+        ] },
+        { "step": 10, "setValues": [
+          { "index": 0, "input": { "value": "root | 1", "borderColor": "Orange" } },
+          { "index": 3, "input": { "borderColor": "" } },
+          { "index": 4, "input": { "value": "right | _pending", "borderColor": "Orange" } }
+        ] },
+        { "step": 11,
+          "setValues": [
+            { "index": 0, "input": { "value": "root | 8", "borderColor": "Orange" } },
+            { "index": 3, "input": { "value": "left | _pending", "borderColor": "Orange" } }
           ],
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 0",
-                "borderColor": "Orange"
-              }
-            }
-          ]
+          "deletes": [{ "index": 4, "now": true }]
         },
-        {
-          "step": 6,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 1",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | 0",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 4,
-              "input": {
-                "value": "right | _pending",
-                "borderColor": "Orange"
-              }
-            }
-          ]
+        { "step": 12,
+          "setValues": [{ "index": 0, "input": { "value": "root | null", "borderColor": "Orange" } }],
+          "deletes": [{ "index": 3, "now": true }]
         },
-        {
-          "step": 7,
-          "deletes": [
-            {
-              "index": 4,
-              "now": true
-            }
-          ],
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 8",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | _pending",
-                "borderColor": "Orange"
-              }
-            }
-          ]
+        { "step": 13, "setValues": [
+          { "index": 0, "input": { "value": "root | 8", "borderColor": "Orange" } },
+          { "index": 3, "input": { "value": "left | null", "borderColor": "Orange" } },
+          { "index": 4, "input": { "value": "right | _pending", "borderColor": "Orange" } }
+        ] },
+        { "step": 14,
+          "setValues": [{ "index": 0, "input": { "value": "root | null", "borderColor": "Orange" } }],
+          "deletes": [{ "index": 4, "now": true }, { "index": 3, "now": true }]
         },
-        {
-          "step": 8,
-          "deletes": [
-            {
-              "index": 3,
-              "now": true
-            }
-          ],
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | null",
-                "borderColor": "Orange"
-              }
-            }
-          ]
-        },
-        {
-          "step": 9,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 8",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | null",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 4,
-              "input": {
-                "value": "right | _pending",
-                "borderColor": "Orange"
-              }
-            }
-          ]
-        },
-        {
-          "step": 10,
-          "deletes": [
-            {
-              "index": 4,
-              "now": true
-            },
-            {
-              "index": 3,
-              "now": true
-            }
-          ],
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | null",
-                "borderColor": "Orange"
-              }
-            }
-          ]
-        },
-        {
-          "step": 11,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 8",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | null",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 4,
-              "input": {
-                "value": "right | null",
-                "borderColor": "Orange"
-              }
-            }
-          ]
-        },
-        {
-          "step": 12,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 1",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | 0",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 4,
-              "input": {
-                "borderColor": ""
-              }
-            }
-          ]
-        },
-        {
-          "step": 13,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 3",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "left | 5",
-                "borderColor": "Orange"
-              }
-            },
-            {
-              "index": 4,
-              "input": {
-                "value": "right | 0",
-                "borderColor": "Orange"
-              }
-            }
-          ]
-        },
-        {
-          "step": 14,
-          "deletes": [
-            {
-              "index": 4,
-              "now": true
-            },
-            {
-              "index": 3,
-              "now": true
-            },
-            {
-              "index": 2,
-              "now": true
-            },
-            {
-              "index": 1,
-              "now": true
-            },
-            {
-              "index": 0,
-              "now": true
-            }
-          ]
-        }
+        { "step": 15, "setValues": [
+          { "index": 0, "input": { "value": "root | 8", "borderColor": "Orange" } },
+          { "index": 3, "input": { "value": "left | null", "borderColor": "Orange" } },
+          { "index": 4, "input": { "value": "right | null", "borderColor": "Orange" } }
+        ] },
+        { "step": 16, "setValues": [
+          { "index": 0, "input": { "value": "root | 1", "borderColor": "Orange" } },
+          { "index": 3, "input": { "borderColor": "" } },
+          { "index": 4, "input": { "borderColor": "" } }
+        ] },
+        { "step": 17, "setValues": [
+          { "index": 0, "input": { "value": "root | 3", "borderColor": "Orange" } },
+          { "index": 3, "input": { "value": "left | 5", "borderColor": "Orange" } }
+        ] },
+        { "step": 18, "deletes": [
+          { "index": 4, "now": true },
+          { "index": 3, "now": true },
+          { "index": 2, "now": true },
+          { "index": 1, "now": true },
+          { "index": 0, "now": true }
+        ] }
       ]
     },
     {
@@ -846,668 +255,269 @@
         {
           "step": 0,
           "graphNodes": [
-            {
-              "id": "n3",
-              "value": "3",
-              "column": 3,
-              "row": 0,
-              "backgroundColor": "MidnightBlue"
-            },
-            {
-              "id": "n5",
-              "value": "5",
-              "column": 1,
-              "row": 1,
-              "backgroundColor": "DarkGreen",
-              "borderColor": "Lime"
-            },
-            {
-              "id": "n1",
-              "value": "1",
-              "column": 5,
-              "row": 1,
-              "backgroundColor": "Maroon"
-            },
-            {
-              "id": "n6",
-              "value": "6",
-              "column": 0,
-              "row": 2,
-              "backgroundColor": "SaddleBrown"
-            },
-            {
-              "id": "n2",
-              "value": "2",
-              "column": 2,
-              "row": 2,
-              "backgroundColor": "Indigo"
-            },
-            {
-              "id": "n0",
-              "value": "0",
-              "column": 4,
-              "row": 2,
-              "backgroundColor": "Teal",
-              "borderColor": "Lime"
-            },
-            {
-              "id": "n8",
-              "value": "8",
-              "column": 6,
-              "row": 2,
-              "backgroundColor": "DarkSlateGray"
-            }
+            { "id": "n3", "row": 0, "column": 3, "value": "3", "backgroundColor": "DarkBlue", "textColor": "White" },
+            { "id": "n5", "row": 1, "column": 1.5, "value": "5", "backgroundColor": "DarkGreen", "textColor": "White", "borderColor": "Lime" },
+            { "id": "n1", "row": 1, "column": 4.5, "value": "1", "backgroundColor": "DarkRed", "textColor": "White" },
+            { "id": "n6", "row": 2, "column": 0.5, "value": "6", "backgroundColor": "Indigo", "textColor": "White" },
+            { "id": "n2", "row": 2, "column": 2.5, "value": "2", "backgroundColor": "Teal", "textColor": "White", "borderColor": "Lime" },
+            { "id": "n0", "row": 2, "column": 3.5, "value": "0", "backgroundColor": "SaddleBrown", "textColor": "White" },
+            { "id": "n8", "row": 2, "column": 5.5, "value": "8", "backgroundColor": "DarkSlateGray", "textColor": "White" }
           ],
           "graphEdges": [
-            {
-              "id": "e5",
-              "from": "n5",
-              "to": "n3",
-              "arrow": "prev",
-              "fromAnchor": "upperRight",
-              "toAnchor": "lowerLeft"
-            },
-            {
-              "id": "e1",
-              "from": "n1",
-              "to": "n3",
-              "arrow": "prev",
-              "fromAnchor": "upperLeft",
-              "toAnchor": "lowerRight"
-            },
-            {
-              "id": "e6",
-              "from": "n6",
-              "to": "n5",
-              "arrow": "prev",
-              "fromAnchor": "top",
-              "toAnchor": "lowerLeft"
-            },
-            {
-              "id": "e2",
-              "from": "n2",
-              "to": "n5",
-              "arrow": "prev",
-              "fromAnchor": "top",
-              "toAnchor": "lowerRight"
-            },
-            {
-              "id": "e0",
-              "from": "n0",
-              "to": "n1",
-              "arrow": "prev",
-              "fromAnchor": "top",
-              "toAnchor": "lowerLeft"
-            },
-            {
-              "id": "e8",
-              "from": "n8",
-              "to": "n1",
-              "arrow": "prev",
-              "fromAnchor": "top",
-              "toAnchor": "lowerRight"
-            }
+            { "id": "e5", "from": "n5", "to": "n3", "fromAnchor": "top", "toAnchor": "lowerLeft", "arrow": "prev" },
+            { "id": "e1", "from": "n1", "to": "n3", "fromAnchor": "top", "toAnchor": "lowerRight", "arrow": "prev" },
+            { "id": "e6", "from": "n6", "to": "n5", "fromAnchor": "top", "toAnchor": "lowerLeft", "arrow": "prev" },
+            { "id": "e2", "from": "n2", "to": "n5", "fromAnchor": "top", "toAnchor": "lowerRight", "arrow": "prev" },
+            { "id": "e0", "from": "n0", "to": "n1", "fromAnchor": "top", "toAnchor": "lowerLeft", "arrow": "prev" },
+            { "id": "e8", "from": "n8", "to": "n1", "fromAnchor": "top", "toAnchor": "lowerRight", "arrow": "prev" }
           ]
         },
-        {
-          "step": 1,
+        { "step": 1, "graphNodes": [{ "id": "n3", "row": 0, "column": 3, "borderColor": "Orange" }] },
+        { "step": 2,
           "graphNodes": [
-            {
-              "id": "n3",
-              "borderColor": "Orange"
-            }
-          ]
+            { "id": "n3", "row": 0, "column": 3, "borderColor": "Pink" },
+            { "id": "n5", "row": 1, "column": 1.5, "borderColor": "Orange" }
+          ],
+          "graphEdges": [{ "id": "e5", "from": "n5", "to": "n3", "color": "Orange" }]
         },
-        {
-          "step": 2,
+        { "step": 3,
           "graphNodes": [
-            {
-              "id": "n3",
-              "borderColor": "Pink"
-            },
-            {
-              "id": "n5",
-              "borderColor": "Orange"
-            }
+            { "id": "n3", "row": 0, "column": 3, "borderColor": "Orange" },
+            { "id": "n5", "row": 1, "column": 1.5, "borderColor": "Lime" }
+          ],
+          "graphEdges": [{ "id": "e5", "from": "n5", "to": "n3", "color": "" }]
+        },
+        { "step": 4,
+          "graphNodes": [
+            { "id": "n3", "row": 0, "column": 3, "borderColor": "Pink" },
+            { "id": "n1", "row": 1, "column": 4.5, "borderColor": "Orange" }
+          ],
+          "graphEdges": [{ "id": "e1", "from": "n1", "to": "n3", "color": "Orange" }]
+        },
+        { "step": 5,
+          "graphNodes": [
+            { "id": "n1", "row": 1, "column": 4.5, "borderColor": "Pink" },
+            { "id": "n0", "row": 2, "column": 3.5, "borderColor": "Orange" }
           ],
           "graphEdges": [
-            {
-              "id": "e5",
-              "color": "Pink"
-            }
+            { "id": "e1", "from": "n1", "to": "n3", "color": "Pink" },
+            { "id": "e0", "from": "n0", "to": "n1", "color": "Orange" }
           ]
         },
-        {
-          "step": 3,
+        { "step": 6,
+          "graphNodes": [{ "id": "n0", "row": 2, "column": 3.5, "borderColor": "Pink" }],
+          "graphEdges": [{ "id": "e0", "from": "n0", "to": "n1", "color": "Pink" }]
+        },
+        { "step": 7, "graphNodes": [{ "id": "n0", "row": 2, "column": 3.5, "borderColor": "Orange" }] },
+        { "step": 8, "graphNodes": [{ "id": "n0", "row": 2, "column": 3.5, "borderColor": "Pink" }] },
+        { "step": 9, "graphNodes": [{ "id": "n0", "row": 2, "column": 3.5, "borderColor": "Orange" }] },
+        { "step": 10,
           "graphNodes": [
-            {
-              "id": "n3",
-              "borderColor": "Orange"
-            },
-            {
-              "id": "n5",
-              "borderColor": "Lime"
-            }
+            { "id": "n0", "row": 2, "column": 3.5, "borderColor": "" },
+            { "id": "n1", "row": 1, "column": 4.5, "borderColor": "Orange" }
           ],
-          "graphEdges": [
-            {
-              "id": "e5",
-              "color": ""
-            }
-          ]
+          "graphEdges": [{ "id": "e0", "from": "n0", "to": "n1", "color": "" }]
         },
-        {
-          "step": 4,
+        { "step": 11,
           "graphNodes": [
-            {
-              "id": "n3",
-              "borderColor": "Pink"
-            },
-            {
-              "id": "n1",
-              "borderColor": "Orange"
-            }
+            { "id": "n1", "row": 1, "column": 4.5, "borderColor": "Pink" },
+            { "id": "n8", "row": 2, "column": 5.5, "borderColor": "Orange" }
           ],
-          "graphEdges": [
-            {
-              "id": "e1",
-              "color": "Pink"
-            }
-          ]
+          "graphEdges": [{ "id": "e8", "from": "n8", "to": "n1", "color": "Orange" }]
         },
-        {
-          "step": 5,
+        { "step": 12,
+          "graphNodes": [{ "id": "n8", "row": 2, "column": 5.5, "borderColor": "Pink" }],
+          "graphEdges": [{ "id": "e8", "from": "n8", "to": "n1", "color": "Pink" }]
+        },
+        { "step": 13, "graphNodes": [{ "id": "n8", "row": 2, "column": 5.5, "borderColor": "Orange" }] },
+        { "step": 14, "graphNodes": [{ "id": "n8", "row": 2, "column": 5.5, "borderColor": "Pink" }] },
+        { "step": 15, "graphNodes": [{ "id": "n8", "row": 2, "column": 5.5, "borderColor": "Orange" }] },
+        { "step": 16,
           "graphNodes": [
-            {
-              "id": "n1",
-              "borderColor": "Pink"
-            },
-            {
-              "id": "n0",
-              "borderColor": "Orange"
-            }
+            { "id": "n8", "row": 2, "column": 5.5, "borderColor": "" },
+            { "id": "n1", "row": 1, "column": 4.5, "borderColor": "Orange" }
           ],
-          "graphEdges": [
-            {
-              "id": "e0",
-              "color": "Pink"
-            }
-          ]
+          "graphEdges": [{ "id": "e8", "from": "n8", "to": "n1", "color": "" }]
         },
-        {
-          "step": 6,
+        { "step": 17,
           "graphNodes": [
-            {
-              "id": "n1",
-              "borderColor": "Orange"
-            },
-            {
-              "id": "n0",
-              "borderColor": "Lime"
-            }
+            { "id": "n1", "row": 1, "column": 4.5, "borderColor": "" },
+            { "id": "n3", "row": 0, "column": 3, "borderColor": "Orange" }
           ],
-          "graphEdges": [
-            {
-              "id": "e0",
-              "color": ""
-            }
-          ]
+          "graphEdges": [{ "id": "e1", "from": "n1", "to": "n3", "color": "" }]
         },
-        {
-          "step": 7,
-          "graphNodes": [
-            {
-              "id": "n1",
-              "borderColor": "Pink"
-            },
-            {
-              "id": "n8",
-              "borderColor": "Orange"
-            }
-          ],
-          "graphEdges": [
-            {
-              "id": "e8",
-              "color": "Pink"
-            }
-          ]
-        },
-        {
-          "step": 8,
-          "graphNodes": [
-            {
-              "id": "n8",
-              "borderColor": "Pink"
-            }
-          ]
-        },
-        {
-          "step": 9,
-          "graphNodes": [
-            {
-              "id": "n8",
-              "borderColor": "Orange"
-            }
-          ]
-        },
-        {
-          "step": 10,
-          "graphNodes": [
-            {
-              "id": "n8",
-              "borderColor": "Pink"
-            }
-          ]
-        },
-        {
-          "step": 11,
-          "graphNodes": [
-            {
-              "id": "n8",
-              "borderColor": "Orange"
-            }
-          ]
-        },
-        {
-          "step": 12,
-          "graphNodes": [
-            {
-              "id": "n8",
-              "borderColor": ""
-            },
-            {
-              "id": "n1",
-              "borderColor": "Orange"
-            }
-          ],
-          "graphEdges": [
-            {
-              "id": "e8",
-              "color": ""
-            }
-          ]
-        },
-        {
-          "step": 13,
-          "graphNodes": [
-            {
-              "id": "n1",
-              "borderColor": ""
-            },
-            {
-              "id": "n3",
-              "borderColor": "Orange"
-            }
-          ],
-          "graphEdges": [
-            {
-              "id": "e1",
-              "color": ""
-            }
-          ]
-        },
-        {
-          "step": 14,
-          "graphNodes": [
-            {
-              "id": "n3",
-              "borderColor": ""
-            }
-          ]
-        }
+        { "step": 18, "graphNodes": [{ "id": "n3", "row": 0, "column": 3, "borderColor": "" }] }
       ]
     },
     {
       "id": "callStack",
       "type": "stack",
-      "render": {
-        "visible": false
-      },
-      "renderBatches": [
-        {
-          "step": 1,
-          "render": {
-            "visible": true
-          }
-        }
-      ],
+      "initialItemCount": 1,
+      "render": { "visible": false },
+      "renderBatches": [{ "step": 1, "render": { "visible": true } }],
       "batches": [
-        {
-          "step": 1,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 3\nleft | _pending\nright | _pending",
-                "backgroundColor": "MidnightBlue",
-                "borderColor": "Orange"
-              }
-            }
-          ],
-          "tailInserts": [
-            {
-              "input": {
-                "value": "root | 5\nleft | _pending\nright | _pending",
-                "backgroundColor": "DarkGreen"
-              }
-            }
-          ]
+        { "step": 1,
+          "setValues": [{ "index": 0, "input": {
+            "value": "root | 3\nleft | _pending\nright | _pending",
+            "backgroundColor": "DarkBlue", "textColor": "White", "borderColor": "Orange"
+          } }],
+          "tailInserts": [{ "input": {
+            "value": "root | 5\nleft | _pending\nright | _pending",
+            "backgroundColor": "DarkGreen", "textColor": "White"
+          } }]
         },
-        {
-          "step": 2,
-          "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 1,
-              "input": {
-                "value": "root | 5\nleft | _pending\nright | _pending\n**Return:** 5",
-                "backgroundColor": "DarkGreen",
-                "borderColor": "Orange",
-                "itemOffset": 80
-              }
-            }
-          ],
-          "tailTakes": {
-            "count": 1
-          }
+        { "step": 2,
+          "setValues": [{ "index": 0, "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | 5\nleft | _pending\nright | _pending\n**Return:** 5",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
         },
-        {
-          "step": 3,
-          "setTailValues": [
-            {
-              "target": "outgoing",
-              "input": {
-                "borderColor": ""
-              }
-            }
-          ],
+        { "step": 3,
           "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 3\nleft | 5\nright | _pending",
-                "backgroundColor": "MidnightBlue",
-                "borderColor": "Orange"
-              }
-            }
+            { "index": 0, "target": "outgoing", "input": { "borderColor": "" } },
+            { "index": 0, "input": {
+              "value": "root | 3\nleft | 5\nright | _pending", "borderColor": "Orange"
+            } }
           ],
-          "tailInserts": [
-            {
-              "input": {
-                "value": "root | 1\nleft | _pending\nright | _pending",
-                "backgroundColor": "Maroon"
-              }
-            }
-          ]
+          "tailInserts": [{ "input": {
+            "value": "root | 1\nleft | _pending\nright | _pending",
+            "backgroundColor": "DarkRed", "textColor": "White"
+          } }]
         },
-        {
-          "step": 4,
+        { "step": 4,
           "setValues": [
-            {
-              "index": 0,
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 1,
-              "input": {
-                "borderColor": "Orange"
-              }
-            }
+            { "index": 0, "input": { "borderColor": "" } },
+            { "index": 1, "input": { "borderColor": "Orange" } }
           ],
-          "tailInserts": [
-            {
-              "input": {
-                "value": "root | 0\nleft | _pending\nright | _pending",
-                "backgroundColor": "Teal"
-              }
-            }
-          ]
+          "tailInserts": [{ "input": {
+            "value": "root | 0\nleft | _pending\nright | _pending",
+            "backgroundColor": "SaddleBrown", "textColor": "White"
+          } }]
         },
-        {
-          "step": 5,
+        { "step": 5,
           "setValues": [
-            {
-              "index": 1,
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 2,
-              "input": {
-                "value": "root | 0\nleft | _pending\nright | _pending\n**Return:** 0",
-                "backgroundColor": "Teal",
-                "borderColor": "Orange",
-                "itemOffset": 80
-              }
-            }
+            { "index": 1, "input": { "borderColor": "" } },
+            { "index": 2, "input": { "borderColor": "Orange" } }
           ],
-          "tailTakes": {
-            "count": 1
-          }
+          "tailInserts": [{ "input": {
+            "value": "root | null\nleft | _pending\nright | _pending",
+            "backgroundColor": "DimGray", "textColor": "White"
+          } }]
         },
-        {
-          "step": 6,
-          "setTailValues": [
-            {
-              "target": "outgoing",
-              "input": {
-                "borderColor": ""
-              }
-            }
-          ],
+        { "step": 6,
+          "setValues": [{ "index": 2, "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | null\nleft | _pending\nright | _pending\n**Return:** null",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
+        },
+        { "step": 7,
           "setValues": [
-            {
-              "index": 1,
-              "input": {
-                "value": "root | 1\nleft | 0\nright | _pending",
-                "backgroundColor": "Maroon",
-                "borderColor": "Orange"
-              }
-            }
+            { "index": 0, "target": "outgoing", "input": { "borderColor": "" } },
+            { "index": 2, "input": {
+              "value": "root | 0\nleft | null\nright | _pending", "borderColor": "Orange"
+            } }
           ],
-          "tailInserts": [
-            {
-              "input": {
-                "value": "root | 8\nleft | _pending\nright | _pending",
-                "backgroundColor": "DarkSlateGray"
-              }
-            }
-          ]
+          "tailInserts": [{ "input": {
+            "value": "root | null\nleft | _pending\nright | _pending",
+            "backgroundColor": "DimGray", "textColor": "White"
+          } }]
         },
-        {
-          "step": 7,
+        { "step": 8,
+          "setValues": [{ "index": 2, "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | null\nleft | _pending\nright | _pending\n**Return:** null",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
+        },
+        { "step": 9,
+          "setValues": [{ "index": 0, "target": "outgoing", "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | 0\nleft | null\nright | null\n**Return:** null",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
+        },
+        { "step": 10,
           "setValues": [
-            {
-              "index": 1,
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 2,
-              "input": {
-                "borderColor": "Orange"
-              }
-            }
+            { "index": 0, "target": "outgoing", "input": { "borderColor": "" } },
+            { "index": 1, "input": {
+              "value": "root | 1\nleft | null\nright | _pending", "borderColor": "Orange"
+            } }
           ],
-          "tailInserts": [
-            {
-              "input": {
-                "value": "root | null\nleft | _pending\nright | _pending",
-                "backgroundColor": "SaddleBrown"
-              }
-            }
-          ]
+          "tailInserts": [{ "input": {
+            "value": "root | 8\nleft | _pending\nright | _pending",
+            "backgroundColor": "DarkSlateGray", "textColor": "White"
+          } }]
         },
-        {
-          "step": 8,
+        { "step": 11,
           "setValues": [
-            {
-              "index": 2,
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "root | null\nleft | _pending\nright | _pending\n**Return:** null",
-                "backgroundColor": "SaddleBrown",
-                "borderColor": "Orange",
-                "itemOffset": 80
-              }
-            }
+            { "index": 1, "input": { "borderColor": "" } },
+            { "index": 2, "input": { "borderColor": "Orange" } }
           ],
-          "tailTakes": {
-            "count": 1
-          }
+          "tailInserts": [{ "input": {
+            "value": "root | null\nleft | _pending\nright | _pending",
+            "backgroundColor": "DimGray", "textColor": "White"
+          } }]
         },
-        {
-          "step": 9,
-          "setTailValues": [
-            {
-              "target": "outgoing",
-              "input": {
-                "borderColor": ""
-              }
-            }
-          ],
+        { "step": 12,
+          "setValues": [{ "index": 2, "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | null\nleft | _pending\nright | _pending\n**Return:** null",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
+        },
+        { "step": 13,
           "setValues": [
-            {
-              "index": 2,
-              "input": {
-                "value": "root | 8\nleft | null\nright | _pending",
-                "backgroundColor": "DarkSlateGray",
-                "borderColor": "Orange"
-              }
-            }
+            { "index": 0, "target": "outgoing", "input": { "borderColor": "" } },
+            { "index": 2, "input": {
+              "value": "root | 8\nleft | null\nright | _pending", "borderColor": "Orange"
+            } }
           ],
-          "tailInserts": [
-            {
-              "input": {
-                "value": "root | null\nleft | _pending\nright | _pending",
-                "backgroundColor": "Indigo"
-              }
-            }
-          ]
+          "tailInserts": [{ "input": {
+            "value": "root | null\nleft | _pending\nright | _pending",
+            "backgroundColor": "DimGray", "textColor": "White"
+          } }]
         },
-        {
-          "step": 10,
-          "setValues": [
-            {
-              "index": 2,
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 3,
-              "input": {
-                "value": "root | null\nleft | _pending\nright | _pending\n**Return:** null",
-                "backgroundColor": "Indigo",
-                "borderColor": "Orange",
-                "itemOffset": 80
-              }
-            }
-          ],
-          "tailTakes": {
-            "count": 1
-          }
+        { "step": 14,
+          "setValues": [{ "index": 2, "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | null\nleft | _pending\nright | _pending\n**Return:** null",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
         },
-        {
-          "step": 11,
-          "setValues": [
-            {
-              "index": 3,
-              "target": "outgoing",
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 2,
-              "input": {
-                "value": "root | 8\nleft | null\nright | null\n**Return:** null",
-                "backgroundColor": "DarkSlateGray",
-                "borderColor": "Orange",
-                "itemOffset": 80
-              }
-            }
-          ],
-          "tailTakes": {
-            "count": 1
-          }
+        { "step": 15,
+          "setValues": [{ "index": 0, "target": "outgoing", "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | 8\nleft | null\nright | null\n**Return:** null",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
         },
-        {
-          "step": 12,
-          "setValues": [
-            {
-              "index": 2,
-              "target": "outgoing",
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 1,
-              "input": {
-                "value": "root | 1\nleft | 0\nright | null\n**Return:** 0",
-                "backgroundColor": "Maroon",
-                "borderColor": "Orange",
-                "itemOffset": 80
-              }
-            }
-          ],
-          "tailTakes": {
-            "count": 1
-          }
+        { "step": 16,
+          "setValues": [{ "index": 0, "target": "outgoing", "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | 1\nleft | null\nright | null\n**Return:** null",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
         },
-        {
-          "step": 13,
-          "setValues": [
-            {
-              "index": 1,
-              "target": "outgoing",
-              "input": {
-                "borderColor": ""
-              }
-            },
-            {
-              "index": 0,
-              "input": {
-                "value": "root | 3\nleft | 5\nright | 0\n**Return:** 3",
-                "backgroundColor": "MidnightBlue",
-                "borderColor": "Orange",
-                "itemOffset": 80
-              }
-            }
-          ],
-          "tailTakes": {
-            "count": 1
-          }
+        { "step": 17,
+          "setValues": [{ "index": 0, "target": "outgoing", "input": { "borderColor": "" } }],
+          "setTailValues": [{ "input": {
+            "value": "root | 3\nleft | 5\nright | null\n**Return:** 5",
+            "borderColor": "Orange", "itemOffset": 90
+          } }],
+          "tailTakes": { "count": 1 }
         },
-        {
-          "step": 14,
-          "setValues": [
-            {
-              "index": 0,
-              "target": "outgoing",
-              "input": {
-                "borderColor": ""
-              }
-            }
-          ]
-        },
-        {
-          "step": 15
+        { "step": 18,
+          "setValues": [{ "index": 0, "target": "outgoing", "input": { "borderColor": "" } }]
         }
       ]
     }

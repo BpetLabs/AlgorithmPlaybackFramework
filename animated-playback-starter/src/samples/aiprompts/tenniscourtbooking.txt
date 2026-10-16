@@ -2,6 +2,8 @@
 // Copy and Paste the below prompt into your favorite Code AI.
 // Tested with Codex, GPT-5.6 Sol Medium, runs approx 5-10 minutes. 
 
+----------------------------- COPY TO STOP ---------------------------------
+
 lets create a new playback
 
 Playback Name:
@@ -23,14 +25,17 @@ Pause at :
 - Each call to heappop and heappush and return.
 
 Input: 
-- Pick 7 values that return at least 3 courts - use values 7-20 representing hours.
+- Pick 7 values that return at least 3 courts - use values 7-20 representing hours in starting order but not end ordered.
 
 Rules:
+
+Verify:
+- Report any assumptions made, contradictions, or rules that need additional clarity.
+
+----------------------------- STOP HERE - Run this in a separate instance ---------------------------------
 
 After completion:
 
 - Replay the canonical trace and audit every applicable skill rule and prompt request.
 - Independently compare expected and resulting state at every step.
-- Provide evidence for each review category; fix and re-audit discrepancies.
-- Do not treat authored batches or successful compilation as verification.
-- Report any assumptions made, contradictions, or rules that need additional clarity.
+- Provide evidence for each review category; report fix and re-audit discrepancies.

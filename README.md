@@ -4,6 +4,9 @@ A React framework for building step-by-step algorithm visualizations with code
 highlights, animated data structures, narration, state history, and playback
 controls.
 
+## About Me
+Former Microsoft Senior Backend Developer of 18 years. <a href="https://www.linkedin.com/in/brian-peterson-a1bb197/">LinkedIn</a>
+
 ## Choose a Starting Point
 
 - To generate a playback page from source code with an AI coding agent, use the

@@ -326,8 +326,9 @@ Arranges child lists recursively. Jagged parents render bordered child slots, wh
 
 - Declares ordered child control IDs through `children`.
 - Uses stable child IDs independently of their current indices.
-- Supports shared child defaults through `childDefaults`.
-- Always fits every jagged level to its child content.
+- Declares every value-bearing leaf node as type `array`; `jaggedArray` nodes are structural containers.
+- Uses the ordinary array sizing options for every leaf array.
+- Fits every jagged parent recursively to its measured children.
 - Use it for jagged arrays, adjacency lists, and nested collections.
 
 Child controls are declared separately and are not rendered as independent top-level controls:
@@ -338,13 +339,13 @@ Child controls are declared separately and are not rendered as independent top-l
     "id": "matrix",
     "type": "jaggedArray",
     "orientation": "vertical",
-    "childGap": 5,
-    "childWidth": 40,
-    "childHeight": 40,
+    "defaultItemOffset": 40,
+    "itemGap": 1,
+    "itemCrossAxisGap": 1,
+    "arrayGap": 5,
+    "fitContent": true,
+    "emptyItemText": "0",
     "children": ["matrix-0", "matrix-1"],
-    "childDefaults": {
-      "emptyItemText": "0"
-    },
     "batches": []
   },
   {
@@ -385,11 +386,13 @@ Jagged-parent insertions attach a complete declared subtree by ID. Deletions det
 }
 ```
 
-An empty leaf is a declared `array` with `initialItemCount: 0`. Every inserted `jaggedArray` child must declare a complete descendant path ending in at least one leaf array. A child ID can belong to only one jagged parent. The legacy `<parent-id>-<index>` convention remains supported when `children` is omitted.
+Every `jaggedArray` definition must declare `children` explicitly. The array order defines the initial child order; child IDs do not need to follow a naming convention. Use `children: []` for an initially empty root that receives children through batches. An empty leaf is still an `array` and may omit `initialItemCount` or set it to `0`. Every inserted `jaggedArray` child must declare a complete descendant path ending in at least one leaf array. A child ID can belong to only one jagged parent.
 
-`childDefaults` supplies shared array options and optional render settings. Set `orientation` only on the root jagged array, using `"horizontal"` or `"vertical"`. It determines the starting direction, and every descendant level alternates automatically. Descendant controls and `childDefaults` cannot set `orientation`.
+Set `orientation` only on the root jagged array. It describes the direction of every leaf array. Jagged-parent orientations are derived by alternating upward from the leaves. Every branch must therefore have the same nesting depth. Descendant controls cannot override orientation, sizing, or `render.layout`.
 
-`childWidth` and `childHeight` set the leaf item size. `childGap` adds equal padding on every side between a parent slot and its child. Each parent slot and jagged container is sized recursively from those values and the occupied child content; explicit child layout dimensions and `fitContent` are not used. An empty jagged parent has a minimum size of `childWidth + 2 × childGap` by `childHeight + 2 × childGap`.
+The jagged control's page-layout width and height configure each leaf array rather than the final root dimensions. Leaves use the normal array options: `defaultItemOffset` sets the default main-axis slot size, `itemGap` and `itemCrossAxisGap` inset items, and `fitContent` derives the leaf main-axis size from its occupied slots.
+
+After measuring the leaves, the renderer works upward. `arrayGap` adds padding on every side between a parent slot and its child array. A parent's main-axis size is the sum of its child slots, and its cross-axis size is the largest child plus the surrounding gap. This repeats until the final root width and height are known.
 
 Leaf arrays in a jagged tree support the set family normally and support inserts, updates, deletes, and takes when every structural operation specifies `"now": true`. Jagged parents support immediate inserts with `childId`, immediate recursive deletes by index, and appearance-only set actions on parent slots (for example, `borderColor` and `borderWidth`). A parent slot border highlight replaces the referenced child's actual renderer-frame border instead of drawing an inset overlay. Parent set actions cannot store displayed values or replace `childId`. Animated structural mutations (`now` omitted or `animateNow`) are rejected throughout the jagged-array tree because nested mutation animations are unsupported.
 
@@ -406,7 +409,7 @@ Items in arrays, stacks, dictionaries, text controls, grids, jagged arrays, and 
 | `borderWidth` | Highlight border thickness in pixels. It is visible only when `borderColor` is set. | All item-based controls |
 | `leftAlignedValue` | Auxiliary text displayed in the left region. | Arrays, jagged arrays, stacks, and graph nodes |
 | `rightAlignedValue` | Auxiliary text displayed in the right region. | Arrays, jagged arrays, stacks, and graph nodes |
-| `itemOffset` | Overrides the item's slot size along the control's main axis. Will grow or shrink the control. | Arrays, jagged arrays, stacks, and dictionaries |
+| `itemOffset` | Overrides the item's slot size along the control's main axis. It grows or shrinks the control. | Arrays, jagged-array leaf items, stacks, and dictionaries |
 | `shake` | Starts or stops a manual shake effect when set to `true` or `false`. | Arrays, jagged arrays, stacks, dictionaries, and text controls |
 
 Colors accept normal CSS color values, including named colors, hexadecimal values, `rgb()`/`rgba()`, and CSS variables.
@@ -495,18 +498,17 @@ Set these layout options at the top level of a control in JSON or assign them in
 
 | Option | Effect |
 | --- | --- |
-| `orientation` | Uses `"horizontal"` or `"vertical"` layout. Arrays and root jagged arrays support both; jagged descendants alternate automatically and stacks remain vertical. |
-| `childGap` | Jagged arrays: padding on every side between a parent slot and its fitted child. |
-| `itemWidth`, `itemHeight` | Overrides `itemWidth` and `itemHeight`. Arrays, jagged arrays, stacks, and dictionaries are not supported |
-| `childWidth`, `childHeight` | Jagged arrays: rendered width and height of leaf items used for recursive sizing. |
-| `defaultItemOffset` | Default slot size and distance between consecutive item positions. |
+| `orientation` | Uses `"horizontal"` or `"vertical"` layout. Arrays default to horizontal. On a jagged root it describes leaf direction, defaults to vertical, and determines every parent direction by alternating upward. Stacks remain vertical. |
+| `arrayGap` | Jagged arrays only: padding on every side between a parent slot and its fitted child array. |
+| `itemWidth`, `itemHeight` | Unsupported for arrays, jagged arrays, stacks, and dictionaries. |
+| `defaultItemOffset` | Default slot size and distance between consecutive item positions. On jagged arrays it applies to leaf items. |
 | `itemGap` | Inset on both sides of an item along the main axis. |
 | `itemCrossAxisGap` | Inset on both sides of an item across the main axis. |
 | `preInsertGap` | Additional distance between an indexed insert/update pre-state and the control. |
 | `itemLabels` | Labels displayed beside array and jagged arrays slots. |
 | `showCellBorders` | Shows or hides structural slot borders. |
 | `emptyItemText` | Configured value displayed in array slots without item text, such as `"0"`. |
-| `fitContent` | Sets an array, stack, or dictionary's main-axis size to its occupied content size while keeping its title at the original layout height. Jagged arrays always fit recursively in both dimensions. |
+| `fitContent` | Sets an array, stack, or dictionary's main-axis size to its occupied content size. On jagged arrays it fits each leaf's main axis before every parent is fitted recursively. |
 
 ## Initial state and playback steps
 
