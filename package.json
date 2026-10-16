@@ -34,12 +34,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bpet-dev/AlgorithmPlaybackFramework.git"
+    "url": "git+https://github.com/BpetLabs/AlgorithmPlaybackFramework.git"
   },
   "bugs": {
-    "url": "https://github.com/bpet-dev/AlgorithmPlaybackFramework/issues"
+    "url": "https://github.com/BpetLabs/AlgorithmPlaybackFramework/issues"
   },
-  "homepage": "https://github.com/bpet-dev/AlgorithmPlaybackFramework#readme",
+  "homepage": "https://github.com/BpetLabs/AlgorithmPlaybackFramework#readme",
   "engines": {
     "node": ">=22"
   },
