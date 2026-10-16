@@ -25,8 +25,8 @@ const sliderLayout = { top: 70, left: 550, width: 400, height: 50 };
 // Coordinates are relative to the full playback canvas.
 const defaultControlLayouts: Record<string, ControlRenderLayout> = {
   code: { top: 100, left: 20, width: 480, height: 750 },
-  playbyplay: { top: 650, left: 520, width: 700, height: 200 },
-  locals: { top: 650, left: 1240, width: 240, height: 200 },
+  playbyplay: { top: 650, left: 520, width: 690, height: 200 },
+  locals: { top: 650, left: 1230, width: 250, height: 200 },
 };
 
 // Coordinates are relative to visualizationArea.

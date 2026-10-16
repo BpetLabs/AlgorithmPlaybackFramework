@@ -1,7 +1,4 @@
-import {
-  ArrayOrientation,
-  ArrayRendererOptions,
-} from "../common/models/arrayControl";
+import { ArrayRendererOptions } from "../common/models/arrayControl";
 import { ControlItem } from "../common/models/controlItem";
 import {
   Snapshot,
@@ -27,11 +24,6 @@ function mergeRenderConfig(
       ...(override?.layout ?? {}),
     },
   };
-}
-
-interface ChildDefaults extends Omit<ArrayRendererOptions, "orientation"> {
-  orientation?: never;
-  render?: ControlRenderConfig;
 }
 
 const jaggedSetActions = new Set([
@@ -179,7 +171,6 @@ export interface ControlDefinition<T extends ControlItem = ControlItem>
   initialItemDefaults?: Partial<T>;
   batches?: (Batch<T> & { render?: ControlRenderConfig })[];
   children?: string[];
-  childDefaults?: ChildDefaults;
 }
 
 function getRendererOptions(
@@ -188,12 +179,12 @@ function getRendererOptions(
 ): ArrayRendererOptions & GridRendererOptions & GraphRendererOptions {
   return {
     orientation:
-      type === "array" || type === "jaggedArray"
-        ? control.orientation ?? "horizontal"
-        : control.orientation,
-    childGap: control.childGap,
-    childWidth: control.childWidth,
-    childHeight: control.childHeight,
+      type === "jaggedArray"
+        ? control.orientation ?? "vertical"
+        : type === "array"
+          ? control.orientation ?? "horizontal"
+          : control.orientation,
+    arrayGap: control.arrayGap,
     defaultItemOffset: control.defaultItemOffset,
     itemGap: control.itemGap,
     itemCrossAxisGap: control.itemCrossAxisGap,
@@ -334,23 +325,12 @@ function validateCompleteJaggedSubtree<T extends ControlItem>(
 }
 
 function buildJaggedChildDefinition<T extends ControlItem>(
-  parent: ControlDefinition<T>,
-  index: number,
   explicitChild: ControlDefinition<T>
 ): ControlDefinition<T> {
-  const defaults = parent.childDefaults ?? {};
-  const parentOrientation: ArrayOrientation =
-    parent.orientation ?? "horizontal";
-  const childOrientation: ArrayOrientation =
-    parentOrientation === "horizontal" ? "vertical" : "horizontal";
-
   return {
-    ...defaults,
     ...explicitChild,
     id: explicitChild.id,
     type: explicitChild.type ?? "array",
-    orientation: childOrientation,
-    render: mergeRenderConfig(defaults.render, explicitChild?.render),
   };
 }
 
@@ -376,11 +356,9 @@ export function loadControls<T extends ControlItem = ControlItem>(
     }
     const type = control.type ?? "array";
     validateBlockedItemDimensions(control, type, control.id);
-    if (type === "jaggedArray" && control.childDefaults) {
-      validateBlockedItemDimensions(
-        control.childDefaults,
-        "array",
-        `${control.id}.childDefaults`
+    if (type !== "jaggedArray" && control.arrayGap !== undefined) {
+      throw new Error(
+        `Control "${control.id}" cannot set arrayGap for type "${type}".`
       );
     }
     if (
@@ -393,12 +371,9 @@ export function loadControls<T extends ControlItem = ControlItem>(
         `Jagged array "${control.id}" orientation must be "horizontal" or "vertical".`
       );
     }
-    if (
-      control.type === "jaggedArray" &&
-      control.childDefaults?.orientation !== undefined
-    ) {
+    if (type === "jaggedArray" && !Array.isArray(control.children)) {
       throw new Error(
-        `Jagged array "${control.id}" childDefaults cannot set orientation because descendants alternate automatically.`
+        `Jagged array "${control.id}" must declare an explicit children array.`
       );
     }
     controlIds.add(control.id);
@@ -421,21 +396,10 @@ export function loadControls<T extends ControlItem = ControlItem>(
   resolvedControls
     .filter((control) => control.type === "jaggedArray")
     .forEach((parent) => {
-      const legacyChildren = (() => {
-        if (parent.children !== undefined) return [];
-        const prefix = `${parent.id}-`;
-        return resolvedControls
-          .filter((candidate) => candidate.id.startsWith(prefix))
-          .flatMap((candidate) => {
-            const suffix = candidate.id.slice(prefix.length);
-            if (!/^(0|[1-9]\d*)$/.test(suffix)) return [];
-            return [{ id: candidate.id, index: Number(suffix) }];
-          })
-          .sort((a, b) => a.index - b.index);
-      })();
-      const initialReferences = parent.children !== undefined
-        ? parent.children.map((id, index) => ({ id, index }))
-        : legacyChildren;
+      const initialReferences = parent.children!.map((id, index) => ({
+        id,
+        index,
+      }));
       const dynamicReferences = parent.batches?.flatMap((batch) => [
         ...(batch.inserts ?? []).map((operation) => ({
           id: operation.childId,
@@ -480,7 +444,30 @@ export function loadControls<T extends ControlItem = ControlItem>(
       children.forEach((child) => {
         if (child.definition.orientation !== undefined) {
           throw new Error(
-            `Control "${child.definition.id}" cannot set orientation because jagged-array descendants alternate automatically.`
+            `Control "${child.definition.id}" cannot set orientation because the jagged-array root defines the leaf orientation.`
+          );
+        }
+        const overriddenLayoutProperty = [
+          "itemWidth",
+          "itemHeight",
+          "itemGap",
+          "itemCrossAxisGap",
+          "arrayGap",
+          "defaultItemOffset",
+          "fitContent",
+        ].find((property) =>
+          child.definition[
+            property as keyof ControlDefinition<T>
+          ] !== undefined
+        );
+        if (overriddenLayoutProperty) {
+          throw new Error(
+            `Control "${child.definition.id}" cannot set ${overriddenLayoutProperty} because jagged-array layout is inherited from the root.`
+          );
+        }
+        if (child.definition.render?.layout !== undefined) {
+          throw new Error(
+            `Control "${child.definition.id}" cannot set render.layout because jagged-array layout is inherited from the root.`
           );
         }
         if (
@@ -522,20 +509,11 @@ export function loadControls<T extends ControlItem = ControlItem>(
     const initialChildren = children
       .filter((child) => child.initiallyAttached)
       .sort((a, b) => a.index - b.index);
-    const initialChildIds = control.children !== undefined
-      ? initialChildren.map((child) => child.definition.id)
-      : Array.from(
-          {
-            length: initialChildren.length
-              ? initialChildren[initialChildren.length - 1].index + 1
-              : 0,
-          },
-          (_, index) =>
-            initialChildren.find((child) => child.index === index)?.definition.id ?? ""
-        );
+    const initialChildIds = initialChildren.map(
+      (child) => child.definition.id
+    );
     if (
       type === "jaggedArray" &&
-      control.children !== undefined &&
       control.initialItemCount !== undefined &&
       control.initialItemCount !== initialChildIds.length
     ) {
@@ -547,14 +525,7 @@ export function loadControls<T extends ControlItem = ControlItem>(
       type === "jaggedArray"
         ? {
             ...control,
-            initialItemCount: control.children !== undefined
-              ? initialChildIds.length
-              : Math.max(
-                  control.initialItemCount ?? 0,
-                  initialChildren.length
-                    ? initialChildren[initialChildren.length - 1].index + 1
-                    : 0
-                ),
+            initialItemCount: initialChildIds.length,
           }
         : control;
     if (type === "jaggedArray") {
@@ -584,8 +555,6 @@ export function loadControls<T extends ControlItem = ControlItem>(
     const nextAncestors = new Set(ancestors).add(control.id);
     loaded.childControls = children.map(({ index, definition }) => {
       const childDefinition = buildJaggedChildDefinition(
-        control,
-        index,
         definition
       );
       return buildControlTree(

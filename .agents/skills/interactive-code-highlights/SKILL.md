@@ -18,8 +18,8 @@ Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 
 ## Background meanings
 
-- Clear: a line executed, was evaluated, or was structurally traversed during the current transition and has no stronger current semantic state.
-- Highlight.Pause: the current paused statement. It has not executed yet and wins over every other background.
+- Clear: a line executed, was evaluated, or was structurally traversed during the current transition and has no stronger current semantic state. For represented multiline calls, evaluated continuation lines may also remain Clear as persistent call-site context while the first line is Branch or ReturnLocation.
+- Highlight.Pause: the physical source line containing the current trigger. The triggered operation itself has not executed yet, but prerequisite evaluation within the enclosing statement may already have executed. Pause wins over every other background on that line.
 - Highlight.Branch: a visible call site whose represented child method is active.
 - Highlight.Return: an explicit return statement that executed during the transition.
 - Highlight.ReturnLocation: the visible call site where execution resumed after a represented child method returned.
@@ -32,8 +32,8 @@ Do not assign more than one background to a line. Use its latest applicable even
 
 For new playbacks and trace changes, construct frames for the complete trace. For localized edits, construct only the affected transitions plus the preceding and following frame boundaries needed to preserve state continuity.
 
-1. Identify the previous and current pauses. Advancing executes the previously paused statement.
-   - In the destination frame, every line of that previously paused statement is Clear because it executed, unless the same source line later receives a stronger state during the transition. Leaving its loop, branch, method, or scope does not make the executed statement Unused.
+1. Identify the previous and current pauses. Advancing executes the operation represented by the previously paused trigger.
+   - In the destination frame, the previous trigger line and every other line evaluated or structurally traversed during that execution are Clear unless they later receive a stronger state during the transition. Leaving a loop, branch, method, or scope does not make an executed line Unused.
 2. Replay the exact dynamic path in order, including repeated source lines, loop back edges, recursive activations, calls, returns, conditions, and structural transfers.
 3. Record, per visible line and activation:
    - executed, evaluated, or structurally traversed;
@@ -50,11 +50,15 @@ Never infer execution from lexical position. A line above or below the pause can
 - Prefer CSS named colors over hexadecimal, RGB, RGBA, HSL, or HSLA values unless the Highlight enum colors are explicitly specified.
 
 ## When to pause
-- Use the pause statements supplied by the user.
-- Interpret call-based pause requests as dynamic call events. If one source statement contains multiple selected calls, including nested calls, pause separately before each call in language evaluation order. Do not coalesce them into one pause merely because they share a line.
-- Count pauses by runtime occurrences of the selected pause triggers. Multiple control mutations caused by one trigger occurrence remain on that occurrence's pause.
-- Consecutive call pauses may therefore keep `Highlight.Pause` on the same source line. Use the trace, narration, and affected controls to distinguish which call is pending at each step.
-- Count every dynamic pause event, including multiple events on the same source line, when applying the 50-step limit.
+- Use the pause triggers supplied by the user.
+- Assign each trigger to the physical source line where its syntax begins.
+- Create one pause for each executed physical source line containing one or more selected triggers. During one execution of that line, coalesce all selected triggers assigned to it into that single pause.
+- Selected triggers on different physical lines produce separate pauses, even when they belong to the same enclosing statement.
+- Repeated executions of the same source line produce separate pauses.
+- Apply Highlight.Pause only to the physical trigger line, not to the complete enclosing multiline statement.
+- Classify every other physical line in a multiline statement from runtime evaluation order. Lines already evaluated or structurally traversed before the trigger are Clear; lines not yet reached are Highlight.Unused. This includes argument expressions, chained expressions, continuation syntax, and closing delimiters. Lexical position does not determine their state.
+- For a call trigger, the invocation occurs after evaluating its receiver and arguments. Assigning Pause to the physical line where the call syntax begins does not move the runtime trigger ahead of continuation lines evaluated as part of those prerequisites.
+- Count every dynamic paused-line occurrence when applying the 50-step limit.
 - When creating or changing pause locations and the user has not specified them, ask which statements should pause.
 - If the total pause steps would be over 50, immediately stop processing and inform user of total pauses that would implemented and ask the user for permission. Do not do this if the total existing pause steps do not change or reduces even if over 50.
 - Preserve existing pause locations unless the user requests changes.
@@ -82,6 +86,8 @@ Never infer execution from lexical position. A line above or below the pause can
 
 ## Calls and returns
 - While a represented child call is active, mark its visible parent call line as Highlight.Branch. A method call is represented only when its implementation appears in the provided code and its child frame is animated. Never infer or visualize a hidden implementation with Highlight.Branch.
+- For a represented multiline call, apply Pause, Branch, or ReturnLocation only to the physical line where the call begins.
+- Recompute every other physical line in that call independently on every frame. Any argument, chained expression, continuation line, or closing delimiter evaluated or traversed before the call trigger must be Clear while the first line is Pause, Branch, or ReturnLocation. This is persistent call-site context and overrides the general rule that otherwise-untouched lines become Highlight.Unused. If such a line was Highlight.Unused in the preceding frame, emit an explicit clear; never preserve that stale background merely because the first line still represents the call. A later event or stronger semantic on a continuation line—including its own Pause—still wins.
 - On method entry, begin the callee portion of the path at the method's first visible line while preserving the caller location with Highlight.Branch. Apply the same rule to recursive activations; do not reset the shared source range.
 - A visible method that begins and finishes between pauses may receive a Pink border without receiving Branch or ReturnLocation. Those call-site highlights require an animated child frame that remains represented across a pause.
 - When execution returns from a represented child-method frame, replace that child method's visible caller call-site highlight with Highlight.ReturnLocation; do not leave it as Highlight.Branch or Highlight.Pause. A paused call whose implementation is not present in the provided code—including built-in, library, external, and omitted helper calls—clears like an ordinary statement after it executes and receives neither Highlight.Branch nor Highlight.ReturnLocation.

@@ -49,4 +49,4 @@
 
 ## Tests
 
-- Only add tests that protect meaningful behavior, conditional branches, edge cases; avoid tests that merely restate static output, configuration, or implementation details.
+- Only add tests that protect meaningful behavior, conditional branches, edge cases; avoid tests that merely restate static output, configuration, or implementation details. For example, do not add tests that verify default values or similar configuration tests.

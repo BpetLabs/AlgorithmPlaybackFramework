@@ -114,8 +114,6 @@ export function InteractiveControlRenderer({
     );
     resolvedWidth = fitted.width;
     resolvedHeight = fitted.height;
-    props.divWidth = fitted.width;
-    props.divHeight = fitted.height;
   } else if (type === RendererType.Array || usesVerticalItemSizing) {
     const hasCustomItemOffsets = snapshot.items.some(
       (item) => typeof item.itemOffset === "number"

@@ -25,15 +25,15 @@ const sliderLayout = { top: 70, left: 550, width: 400, height: 50 };
 // Coordinates are relative to the full playback canvas.
 const defaultControlLayouts: Record<string, ControlRenderLayout> = {
   code: { top: 100, left: 20, width: 480, height: 750 },
-  playbyplay: { top: 650, left: 520, width: 700, height: 200 },
-  locals: { top: 650, left: 1240, width: 240, height: 200 },
+  playbyplay: { top: 650, left: 520, width: 690, height: 200 },
+  locals: { top: 650, left: 1230, width: 250, height: 200 },
 };
 
 // Coordinates are relative to visualizationArea.
 const visualizationControlLayouts: Record<string, ControlRenderLayout> = {
-  bookings: { top: 55, left: 40, width: 350, height: 90 },
-  assignedCourts: { top: 260, left: 55, width: 280, height: 40 },
-  minHeap: { top: 145, left: 735, width: 100, height: 150 },
+  bookings: { top: 55, left: 25, width: 40, height: 40 },
+  assignedCourts: { top: 260, left: 25, width: 280, height: 40 },
+  minHeap: { top: 245, left: 760, width: 100, height: 120 },
 };
 
 const defaultControlTitles: Record<string, string> = {
@@ -45,7 +45,7 @@ const defaultControlTitles: Record<string, string> = {
 const visualizationControlTitles: Record<string, string> = {
   bookings: "Bookings (start, end)",
   assignedCourts: "Assigned Courts",
-  minHeap: "Available Next (end, court)",
+  minHeap: "Min Heap (end, court)",
 };
 
 const defaultControlIds = new Set(["code", "playbyplay", "locals"]);
@@ -122,13 +122,14 @@ export default function PlaybackPage() {
                   defaultHeaderPosition={control.id === "bookings" ? "top" : "bottom"}
                   configureProps={(id, props) => {
                     if (id === "bookings") {
-                      props.childWidth = 40;
-                      props.childHeight = 40;
-                      props.childGap = 5;
+                      props.defaultItemOffset = 40;
+                      props.arrayGap = 5;
+                      props.fitContent = true;
                     } else if (id === "assignedCourts") {
                       props.defaultItemOffset = 40;
+                      props.fitContent = true;
                     } else if (id === "minHeap") {
-                      props.defaultItemOffset = 50;
+                      props.defaultItemOffset = 40;
                       props.fitContent = true;
                     }
                   }}

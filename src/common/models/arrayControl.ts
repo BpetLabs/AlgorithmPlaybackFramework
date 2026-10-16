@@ -2,9 +2,7 @@ export type ArrayOrientation = "horizontal" | "vertical";
 
 export interface ArrayRendererOptions {
   orientation?: ArrayOrientation;
-  childGap?: number;
-  childWidth?: number;
-  childHeight?: number;
+  arrayGap?: number;
   defaultItemOffset?: number;
   itemGap?: number;
   itemCrossAxisGap?: number;

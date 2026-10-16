@@ -29,9 +29,7 @@ export type BaseRendererProps = {
 
 export type AnimatedRendererProps = BaseRendererProps & {
   disableAnimations: boolean;
-  childGap?: number;
-  childWidth?: number;
-  childHeight?: number;
+  arrayGap?: number;
   defaultItemOffset?: number;
   itemGap?: number;
   itemCrossAxisGap?: number;
@@ -76,7 +74,6 @@ const makeJaggedArrayRenderer = () =>
   makeRenderer<
     AnimatedRendererProps & {
       childArrays?: React.ComponentProps<typeof JaggedArrayRenderer>["childArrays"];
-      childDefaults?: React.ComponentProps<typeof JaggedArrayRenderer>["childDefaults"];
       emptyItemText?: string;
     }
   >(

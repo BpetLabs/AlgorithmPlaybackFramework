@@ -25,14 +25,14 @@ const sliderLayout = { top: 70, left: 550, width: 400, height: 50 };
 // Coordinates are relative to the full playback canvas.
 const defaultControlLayouts: Record<string, ControlRenderLayout> = {
   code: { top: 100, left: 20, width: 480, height: 750 },
-  playbyplay: { top: 650, left: 520, width: 700, height: 200 },
-  locals: { top: 650, left: 1240, width: 240, height: 200 },
+  playbyplay: { top: 650, left: 520, width: 690, height: 200 },
+  locals: { top: 650, left: 1230, width: 250, height: 200 },
 };
 
 // Coordinates are relative to visualizationArea.
 const visualizationControlLayouts: Record<string, ControlRenderLayout> = {
-  tree: { top: 95, left: 55, width: 420, height: 220 },
-  callStack: { top: 80, left: 700, width: 180, height: 300 },
+  tree: { top: 45, left: 25, width: 600, height: 300 },
+  callStack: { top: 125, left: 780, width: 150, height: 300 },
 };
 
 const defaultControlTitles: Record<string, string> = {
@@ -82,7 +82,7 @@ export default function PlaybackPage() {
           <header className="playback-header">
             <h1>Lowest Common Ancestor</h1>
             <p className="playback-description">
-              Follow recursive calls to find the lowest node shared by two targets.
+              Trace recursive subtree searches to find the lowest shared ancestor.
             </p>
           </header>
 
@@ -117,20 +117,20 @@ export default function PlaybackPage() {
                   disableAnimations={disableAnimations}
                   layout={visualizationControlLayouts[control.id]}
                   defaultHeaderTitle={visualizationControlTitles[control.id]}
-                  defaultHeaderPosition={control.id === "callStack" ? "bottom" : "top"}
+                  defaultHeaderPosition={control.id === "tree" ? "top" : "bottom"}
                   configureProps={(id, props) => {
                     if (id === "tree") {
                       props.containerClassName = "bg-transparent";
                       props.graphLayout = {
                         columns: 7,
                         rows: 3,
-                        paddingX: 0.05,
-                        paddingY: 0.08,
-                        colGap: 0.03,
-                        rowGap: 0.15,
+                        paddingX: 0.0167,
+                        paddingY: 0.0667,
+                        colGap: 0.0862,
+                        rowGap: 0.2692,
                       };
                     } else if (id === "callStack") {
-                      props.defaultItemOffset = 60;
+                      props.defaultItemOffset = 70;
                       props.fitContent = true;
                     }
                   }}

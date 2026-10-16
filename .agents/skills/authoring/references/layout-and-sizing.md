@@ -22,7 +22,7 @@ Add every control's layout and title.
 
 Configure renderer properties for each newly added control in an explicit branch for its control ID. Do not use one catch-all branch to apply item sizing or renderer behavior to multiple visualization controls, even when they currently share a type. Leave template-provided renderer branches unchanged.
 
-For each newly added item-based control, set `defaultItemOffset` explicitly in that control's ID branch to the documented preferred value. Resolve an unlisted value from the existing page, established project configuration, or renderer default; inspect renderer source only when it remains unresolved or may have changed. Jagged arrays use explicit `childGap`, `childWidth`, and `childHeight` instead because their slot sizes are derived recursively.
+For each newly added item-based control, set `defaultItemOffset` explicitly in that control's ID branch to the documented preferred value. Resolve an unlisted value from the existing page, established project configuration, or renderer default; inspect renderer source only when it remains unresolved or may have changed. For jagged arrays, the offset applies to leaf items and `arrayGap` separates nested array frames.
 
 For example:
 
@@ -62,7 +62,14 @@ Determine the largest content size each affected control reaches across the trac
 - Without `fitContent`, an array, stack, or dictionary keeps its configured static size. Use that size as its trace-wide maximum, and ensure its main-axis dimension ends after a complete slot.
 - With `fitContent`, calculate the occupied main-axis extent at every step and use the largest extent as the control's maximum size. The rendered control still ends at the current last occupied slot at each step.
 - To calculate a step's occupied extent, resolve each logical slot to its `itemOffset`, or to `defaultItemOffset` when omitted, and sum the offsets in visual order. Treat linked outgoing and incoming replacement items as one slot and use the larger offset while both render.
-- Width is the main axis for horizontal arrays, which extend right. Height is the main axis for vertical arrays, which extend down, and for bottom-anchored stacks and dictionaries, which extend up. Jagged arrays fit recursively in both axes; text controls retain renderer-specific sizing.
+- Width is the main axis for horizontal arrays, which extend right. Height is the main axis for vertical arrays, which extend down, and for bottom-anchored stacks and dictionaries, which extend up. Jagged leaves follow the same rule, after which their parents fit recursively in both axes; text controls retain renderer-specific sizing.
+
+For a jagged array, calculate each step from the leaves upward:
+
+1. Resolve every leaf as an ordinary array using the root jagged control's `orientation`, `defaultItemOffset`, and `fitContent` and control width and height.
+2. Add `arrayGap` on both sides of each child. At each parent level, sum child slots along its main axis and use the largest child along its cross axis.
+3. Alternate orientation upward at every parent level. All branches must have equal nesting depth.
+4. Use the final calculated root dimensions—not the configured leaf dimensions—for containment, title placement, clearance, and trace-wide effective-boundary checks.
 
 After determining the maximum content size, expand it to the trace-wide effective boundary. Do not place controls using the content rectangle alone.
 
@@ -115,18 +122,19 @@ Placement preferences never override containment or clearance. If controls canno
 ## Control defaults and preferences
 
 Use these preferences for newly added controls unless traced content or effective-boundary requirements make an adjustment necessary. They do not authorize changes to template-provided controls.
+- Do not set `itemGap` and `itemCrossAxisGap` unless requested.
 
 For every newly added control, apply and audit both preference categories from the table:
 
 1. **Preferred control dimensions:** derive both axes and configure the resulting layout width and height.
 2. **Preferred item sizing:** configure the listed item offset or item dimensions.
 
-Neither category substitutes for the other. Setting `defaultItemOffset`, `childWidth`, `childHeight`, or node size does not satisfy the preferred control dimensions, and setting the layout width and height does not satisfy the preferred item sizing. When an override is necessary, evaluate and document the control-dimension and item-sizing deviations separately.
+Neither category substitutes for the other. Setting `defaultItemOffset` or node size does not satisfy the preferred control dimensions, and setting the layout width and height does not satisfy the preferred item sizing. For jagged arrays, layout dimensions configure the leaves while the root boundary is calculated recursively. When an override is necessary, evaluate and document the control-dimension and item-sizing deviations separately.
 
 | Control | `defaultHeaderPosition` | Preferred placement | Preferred control width | Preferred control height | Preferred item sizing | Minimum item sizing |
 | --- | --- | --- | --- | --- | --- | --- |
 | Array | `"bottom"` | Top-left; multiple arrays vertically on the left | Sum of the maximum traced slot offsets for a horizontal array, with one resolved item offset as the minimum; 40 px for a vertical array | 40 px for a horizontal array; sum of the maximum traced slot offsets for a vertical array, with one resolved item offset as the minimum | `defaultItemOffset: 40` px | `defaultItemOffset: 25` px |
-| Jagged array root | `"top"` | Top-left | Recursively derived from traced children, `childWidth`, and `childGap` | Recursively derived from traced children, `childHeight`, and `childGap` | `childWidth: 40`, `childHeight: 40`, `childGap: 5` px | `childWidth: 25`, `childHeight: 25` px |
+| Jagged array root | `"top"` | Top-left | Leaf width: 40 px; effective root width recursively derived from traced children and `arrayGap` | Leaf height: 40 px; effective root height recursively derived from traced children and `arrayGap` | `defaultItemOffset: 40`, `arrayGap: 5` px | `defaultItemOffset: 25` px |
 | Stack | `"bottom"` | Right of existing controls, bottom-anchored | 100 px | Maximum of one slot or the maximum traced item count, multiplied by the resolved item offset | `defaultItemOffset: 40` px | `defaultItemOffset: 25` px |
 | Dictionary | `"top"` | Right of existing controls | 240 px | 200 px | `defaultItemOffset: 25` px | `defaultItemOffset: 25` px |
 | Grid | `"top"` | Horizontally and vertically centered | Columns multiplied by 40 px | Rows multiplied by 40 px | Cell width and height: 40 px; `defaultItemOffset: 40` px | Cell width and height: 25 px |
@@ -146,11 +154,9 @@ Use `emptyItemText: "0"` for numeric arrays, jagged-array leaves, and grids when
 - Choose between a grid and jagged array from both the conceptual shape and how the algorithm uses the data; do not choose from the source type alone.
 - Prefer a grid when the domain is a fixed rectangular set of coordinate-addressed cells and the algorithm primarily reads, writes, highlights, or traverses cells by row and column.
 - Keep a jagged array when rows are independently meaningful, row lengths vary, rows are inserted, deleted, replaced, or reordered, or nested-array identity must be represented. An explicit user request for an array or jagged-array control takes precedence.
-
-- Set `orientation` only on the root; prefer `"horizontal"` unless the user requests `"vertical"`.
-- Set `childGap: 5` unless the user requests another value.
-- Do not set `defaultItemOffset`, `itemGap`, `itemCrossAxisGap`, or `fitContent`; the renderer derives parent slots and container size recursively from `childGap`, `childWidth`, and `childHeight`.
-- Do not configure `orientation` on descendants or in `childDefaults`; each level alternates automatically from the root orientation.
+- Set leaf `orientation` to `vertical` for two dimensions and `horizontal` for three and so on.
+- Set `arrayGap: 5` unless requested. Use `fitContent: true` when leaf counts vary or the layout's main-axis dimension represents one preferred item rather than a fixed leaf extent.
+- Configure the root's page-layout width and height as leaf-array dimensions. Calculate the effective jagged-root dimensions bottom-up across the entire trace before placing adjacent controls.
 
 ### Stacks
 

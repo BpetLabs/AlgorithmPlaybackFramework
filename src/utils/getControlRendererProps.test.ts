@@ -87,6 +87,7 @@ describe("getControlRendererProps", () => {
         index: 1,
         parentItemId: "parent-item-1",
         snapshot: childSnapshot,
+        minimumSlotCount: 0,
         options: { itemCrossAxisGap: 3 },
         render: { title: "Current" },
       },
