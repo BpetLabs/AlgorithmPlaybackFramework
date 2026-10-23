@@ -152,7 +152,10 @@ describe("loadControls", () => {
             step: 1,
             inserts: [{ index: 1, childId: "group-b", now: true }],
           },
-          { step: 2, deletes: [{ index: 1, now: true }] },
+          {
+            step: 2,
+            deletes: [{ index: 1, collapse: true, now: true }],
+          },
         ],
       },
       { id: "row-a", type: "array", initialItemCount: 0 },
