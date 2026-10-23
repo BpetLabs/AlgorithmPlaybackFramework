@@ -55,6 +55,26 @@ const renderJagged = (
 );
 
 describe("JaggedArrayRenderer", () => {
+  it("reverses child-array placement without changing item order", () => {
+    const markup = renderJagged([
+      child({
+        snapshot: {
+          id: "matrix-0",
+          type: "array",
+          step: 2,
+          items: childItems(2),
+        },
+      }),
+    ], 2, {
+      divWidth: 80,
+      reverseDirection: true,
+    });
+
+    expect(markup).toContain("top:0;left:50px");
+    expect(markup).toContain("top:0;left:20px");
+    expect(markup.indexOf("Child 0")).toBeLessThan(markup.indexOf("Child 1"));
+  });
+
   it("renders a current child at its fitted dimensions", () => {
     const markup = renderJagged([child()]);
 

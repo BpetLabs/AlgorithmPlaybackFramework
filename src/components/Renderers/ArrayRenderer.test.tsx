@@ -13,6 +13,39 @@ vi.mock("../../hooks/useCollapsedItems", () => ({
 import { ArrayRenderer } from "./ArrayRenderer";
 
 describe("ArrayRenderer", () => {
+  it.each([
+    ["vertical", false, "top:0;left:0", "top:40px;left:0"],
+    ["vertical", true, "top:80px;left:0", "top:40px;left:0"],
+    ["horizontal", false, "top:0;left:0", "top:0;left:40px"],
+    ["horizontal", true, "top:0;left:80px", "top:0;left:40px"],
+  ] as const)("lays out %s array items with reverseDirection=%s", (orientation, reverseDirection, first, second) => {
+    const snapshot: Snapshot<any> = {
+      id: "array",
+      type: "array",
+      step: 0,
+      items: ["A", "B"].map((value) => ({
+        id: value,
+        value,
+        state: ControlItemState.Initial,
+      })),
+    };
+
+    const markup = renderToStaticMarkup(
+      <ArrayRenderer
+        snapshot={snapshot}
+        divWidth={120}
+        divHeight={120}
+        orientation={orientation}
+        reverseDirection={reverseDirection}
+        disableAnimations
+        renderContent={(item) => <span>{item.value}</span>}
+      />
+    );
+
+    expect(markup).toContain(first);
+    expect(markup).toContain(second);
+  });
+
   it("matches the control, item widths, and grid cells to every current offset", () => {
     const snapshot: Snapshot<any> = {
       id: "array",

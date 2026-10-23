@@ -11,7 +11,8 @@ export function useAnimateMoveIntoPlace(
   itemWidth: number,
   disableAnimations: boolean,
   controls: AnimationController,
-  leftRight: boolean) {
+  leftRight: boolean,
+  reverseDirection = false) {
 
   const isInserted = item.state === ControlItemState.Inserted;
   const isInitial = item.state === ControlItemState.Initial;
@@ -43,19 +44,19 @@ export function useAnimateMoveIntoPlace(
         }
       } else if (item.previousState === ControlItemState.PreHead) {
         if (leftRight) {
-          startX = -itemWidth;
+          startX = reverseDirection ? itemWidth : -itemWidth;
           startY = 0;
         } else {
           startX = 0;
-          startY = itemHeight;
+          startY = reverseDirection ? -itemHeight : itemHeight;
         }
       } else if (item.previousState === ControlItemState.PreTail) {
         if (leftRight) {
-          startX = itemWidth;
+          startX = reverseDirection ? -itemWidth : itemWidth;
           startY = 0;
         } else {
           startX = 0;
-          startY = -itemHeight;
+          startY = reverseDirection ? itemHeight : -itemHeight;
         }
       }
 
@@ -81,5 +82,5 @@ export function useAnimateMoveIntoPlace(
       cancelled = true;
       controls.stop();
     };
-  }, [isInserted, isInitial, item.previousState, leftRight, itemHeight, itemWidth, controls, disableAnimations]);
+  }, [isInserted, isInitial, item.previousState, leftRight, reverseDirection, itemHeight, itemWidth, controls, disableAnimations]);
 }

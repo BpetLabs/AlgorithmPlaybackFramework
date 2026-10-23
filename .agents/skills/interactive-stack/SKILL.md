@@ -18,15 +18,18 @@ Determine the represented data structure and its visual orientation; do not choo
 
 ## Head and tail placement
 
-For the vertical stack renderer, index 0 and the head are at the bottom; the tail is at the top.
+The stack renderer is vertical and defaults to bottom-up. Set `reverseDirection: true` to render it top-down. Logical indices remain zero-based and unchanged.
 
-- Vertical stack: use `tailInserts` to push at the top and `tailTakes` to pop from the top.
-- Vertical FIFO queue: use `tailInserts` to enqueue at the top and `headTakes` to dequeue from the bottom.
+- With `bottom-up`, index 0 and the head are at the bottom; the tail is at the top.
+- With `top-down`, index 0 and the head are at the top; the tail is at the bottom.
+
+- Vertical stack: use `tailInserts` to push at the tail and `tailTakes` to pop from the tail.
+- Vertical FIFO queue: use `tailInserts` to enqueue at the tail and `headTakes` to dequeue from the head.
 
 For a horizontal control, index 0 and the head are at the left; the tail is at the right.
 
 - Horizontal FIFO queue: use `headInserts` to enqueue at the left and `tailDeletes` to dequeue from the right.
-- For a horizontal stack, add and remove at whichever end is designated as the top. Use matching head operations for a left-side top or matching tail operations for a right-side top.
+- Horizontal stacks are unsupported; use an array for a horizontal linear control.
 
 ## Call-stack frames
 

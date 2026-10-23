@@ -18,15 +18,15 @@ Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 
 ## Background meanings
 
-- Clear: a line executed, was evaluated, or was structurally traversed during the current transition and has no stronger current semantic state. For represented multiline calls, evaluated continuation lines may also remain Clear as persistent call-site context while the first line is Branch or ReturnLocation.
-- Highlight.Pause: the physical source line containing the current trigger. The triggered operation itself has not executed yet, but prerequisite evaluation within the enclosing statement may already have executed. Pause wins over every other background on that line.
-- Highlight.Branch: a visible call site whose represented child method is active.
-- Highlight.Return: an explicit return statement that executed during the transition.
-- Highlight.ReturnLocation: the visible call site where execution resumed after a represented child method returned.
+- Clear: a line executed, was evaluated, or was structurally traversed during the current transition and has no stronger current semantic state.
+- Highlight.Pause: every physical source line in the complete statement containing the current trigger. The triggered operation itself has not executed yet, but prerequisite evaluation within the statement may already have executed. Pause wins over every other background across the complete statement.
+- Highlight.Branch: every physical source line in a complete visible call statement whose represented child method is active.
+- Highlight.Return: every physical source line in a complete explicit return statement that executed during the transition.
+- Highlight.ReturnLocation: every physical source line in the complete visible call statement where execution resumed after a represented child method returned.
 - Highlight.False: only the executable interior of a conditional branch, arm, or loop body skipped because its condition evaluated false during the current transition.
 - Highlight.Unused: a line in a relevant visible method scope that did not participate in the current transition and has no current persistent semantic state. This includes blank or whitespace-only lines when control flow did not cross them.
 
-Do not assign more than one background to a line. Use its latest applicable event in the transition, followed by current call-stack semantics.
+Do not assign more than one background to a line. Use its latest applicable event in the transition, followed by current call-stack semantics. Treat each Pause, Branch, Return, or ReturnLocation statement span as one atomic visual state: apply its background to every line in that span in the same batch.
 
 ## Construct each frame
 
@@ -55,9 +55,8 @@ Never infer execution from lexical position. A line above or below the pause can
 - Create one pause for each executed physical source line containing one or more selected triggers. During one execution of that line, coalesce all selected triggers assigned to it into that single pause.
 - Selected triggers on different physical lines produce separate pauses, even when they belong to the same enclosing statement.
 - Repeated executions of the same source line produce separate pauses.
-- Apply Highlight.Pause only to the physical trigger line, not to the complete enclosing multiline statement.
-- Classify every other physical line in a multiline statement from runtime evaluation order. Lines already evaluated or structurally traversed before the trigger are Clear; lines not yet reached are Highlight.Unused. This includes argument expressions, chained expressions, continuation syntax, and closing delimiters. Lexical position does not determine their state.
-- For a call trigger, the invocation occurs after evaluating its receiver and arguments. Assigning Pause to the physical line where the call syntax begins does not move the runtime trigger ahead of continuation lines evaluated as part of those prerequisites.
+- Apply Highlight.Pause to every physical line in the complete statement containing the trigger, including continuation syntax and closing delimiters. Do not expand the highlight into an enclosing block or adjacent statement.
+- For a call trigger, the invocation still occurs after evaluating its receiver and arguments. Statement-wide Pause is a parallel visual state only; it does not change trigger placement, pause count, or runtime evaluation order.
 - Count every dynamic paused-line occurrence when applying the 50-step limit.
 - When creating or changing pause locations and the user has not specified them, ask which statements should pause.
 - If the total pause steps would be over 50, immediately stop processing and inform user of total pauses that would implemented and ask the user for permission. Do not do this if the total existing pause steps do not change or reduces even if over 50.
@@ -85,9 +84,10 @@ Never infer execution from lexical position. A line above or below the pause can
 - Before a case label participates in the active switch selection, keep that label and its body Highlight.Unused.
 
 ## Calls and returns
-- While a represented child call is active, mark its visible parent call line as Highlight.Branch. A method call is represented only when its implementation appears in the provided code and its child frame is animated. Never infer or visualize a hidden implementation with Highlight.Branch.
-- For a represented multiline call, apply Pause, Branch, or ReturnLocation only to the physical line where the call begins.
-- Recompute every other physical line in that call independently on every frame. Any argument, chained expression, continuation line, or closing delimiter evaluated or traversed before the call trigger must be Clear while the first line is Pause, Branch, or ReturnLocation. This is persistent call-site context and overrides the general rule that otherwise-untouched lines become Highlight.Unused. If such a line was Highlight.Unused in the preceding frame, emit an explicit clear; never preserve that stale background merely because the first line still represents the call. A later event or stronger semantic on a continuation line—including its own Pause—still wins.
+- While a represented child call is active, mark every physical line in its complete visible parent call statement as Highlight.Branch. A method call is represented only when its implementation appears in the provided code and its child frame is animated. Never infer or visualize a hidden implementation with Highlight.Branch.
+- For a represented multiline call, apply Pause, Branch, or ReturnLocation to the full statement span, including argument lines, chained-expression lines, continuation syntax, and closing delimiters. Recompute the span as one semantic unit on every frame so stale per-line backgrounds cannot remain within it.
+- Apply Highlight.Return to the full physical span of a multiline explicit return statement, including its expression, continuation syntax, and terminator.
+- Emit every line affected by the same statement-wide Pause, Branch, Return, or ReturnLocation change in one code-control batch on the same global step. Use one contiguous range when possible or comma-separated ranges when required; never serialize the lines into separate playback actions or steps.
 - On method entry, begin the callee portion of the path at the method's first visible line while preserving the caller location with Highlight.Branch. Apply the same rule to recursive activations; do not reset the shared source range.
 - A visible method that begins and finishes between pauses may receive a Pink border without receiving Branch or ReturnLocation. Those call-site highlights require an animated child frame that remains represented across a pause.
 - When execution returns from a represented child-method frame, replace that child method's visible caller call-site highlight with Highlight.ReturnLocation; do not leave it as Highlight.Branch or Highlight.Pause. A paused call whose implementation is not present in the provided code—including built-in, library, external, and omitted helper calls—clears like an ordinary statement after it executes and receives neither Highlight.Branch nor Highlight.ReturnLocation.

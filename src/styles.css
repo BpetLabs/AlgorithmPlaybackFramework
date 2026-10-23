@@ -20,16 +20,12 @@
   --apf-slider-gap: 1rem;
   --apf-slider-width: 24rem;
   --apf-slider-max-width: 60vw;
-}
-
-/* Static-text code highlight defaults. Public overrides inherit from ancestors. */
-[data-apf-renderer="static-text"] {
-  --_apf-highlight-return: var(--apf-highlight-return, rgba(90, 160, 90, 0.3));
-  --_apf-highlight-unused: var(--apf-highlight-unused, rgba(128, 128, 128, 0.2));
-  --_apf-highlight-return-location: var(--apf-highlight-return-location, rgba(200, 200, 200, 0.35));
-  --_apf-highlight-false: var(--apf-highlight-false, rgba(175, 0, 0, 0.1));
-  --_apf-highlight-branch: var(--apf-highlight-branch, rgba(255, 220, 0, 0.25));
-  --_apf-highlight-pause: var(--apf-highlight-pause, rgba(255, 165, 0, 0.6));
+  --apf-highlight-return: rgba(90, 160, 90, 0.3);
+  --apf-highlight-unused: rgba(128, 128, 128, 0.2);
+  --apf-highlight-return-location: rgba(200, 200, 200, 0.35);
+  --apf-highlight-false: rgba(220, 20, 20, 0.2);
+  --apf-highlight-branch: rgba(255, 220, 0, 0.25);
+  --apf-highlight-pause: rgba(255, 165, 0, 0.6);
 }
 
 /* Framework utilities are scoped so they do not alter the host application. */

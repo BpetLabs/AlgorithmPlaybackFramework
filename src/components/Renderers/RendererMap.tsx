@@ -38,6 +38,7 @@ export type AnimatedRendererProps = BaseRendererProps & {
   preInsertGap?: number;
   splitColumnWidths?: number[];
   orientation?: ArrayOrientation;
+  reverseDirection?: boolean;
   showCellBorders?: boolean;
   fitContent?: boolean;
   itemLabels?: string[];

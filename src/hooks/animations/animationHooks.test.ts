@@ -82,6 +82,25 @@ describe("animation state hooks", () => {
     expect(effects.warpIn).not.toHaveBeenCalled();
   });
 
+  it("reverses head and tail animation origins when requested", () => {
+    renderHook(() => useAnimatePreInsert(
+      item(ControlItemState.PreTail),
+      0,
+      20,
+      30,
+      false,
+      controls,
+      false,
+      undefined,
+      true
+    ));
+
+    expect(controls.set).toHaveBeenCalledWith(expect.objectContaining({
+      x: 0,
+      y: 20,
+    }));
+  });
+
   it("moves inserted items from their previous transition origin", () => {
     renderHook(() => useAnimateMoveIntoPlace(
       item(ControlItemState.Inserted, { previousState: ControlItemState.PreHead }),

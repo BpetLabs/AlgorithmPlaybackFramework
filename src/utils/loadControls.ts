@@ -12,6 +12,14 @@ import { GridRendererOptions } from "../common/models/gridControl";
 import { GraphRendererOptions } from "../common/models/graph";
 import { resolveHighlightAliases } from "./resolveHighlightAliases";
 
+const defaultCollapseByType: Partial<Record<string, boolean>> = {
+  array: false,
+  jaggedArray: false,
+  stack: true,
+  dictionary: false,
+  text: false,
+};
+
 function mergeRenderConfig(
   base: ControlRenderConfig | undefined,
   override: ControlRenderConfig | undefined
@@ -164,6 +172,7 @@ export interface ControlDefinition<T extends ControlItem = ControlItem>
   extends ArrayRendererOptions, GridRendererOptions, GraphRendererOptions {
   id: string;
   type?: string;
+  defaultCollapse?: boolean;
   staticValue?: string;
   render?: ControlRenderConfig;
   renderBatches?: ControlRenderBatch[];
@@ -171,6 +180,10 @@ export interface ControlDefinition<T extends ControlItem = ControlItem>
   initialItemDefaults?: Partial<T>;
   batches?: (Batch<T> & { render?: ControlRenderConfig })[];
   children?: string[];
+}
+
+export interface LoadControlsOptions<T extends ControlItem = ControlItem> {
+  configureControl?: (control: ControlDefinition<T>) => void;
 }
 
 function getRendererOptions(
@@ -184,6 +197,7 @@ function getRendererOptions(
         : type === "array"
           ? control.orientation ?? "horizontal"
           : control.orientation,
+    reverseDirection: control.reverseDirection,
     arrayGap: control.arrayGap,
     defaultItemOffset: control.defaultItemOffset,
     itemGap: control.itemGap,
@@ -221,7 +235,8 @@ function buildLoadedControl<T extends ControlItem>(
     control.id,
     type,
     control.initialItemCount,
-    control.initialItemDefaults
+    control.initialItemDefaults,
+    control.defaultCollapse ?? defaultCollapseByType[type]
   );
   const batches = control.batches?.map((batch) =>
     type === "jaggedArray"
@@ -335,13 +350,21 @@ function buildJaggedChildDefinition<T extends ControlItem>(
 }
 
 export function loadControls<T extends ControlItem = ControlItem>(
-  controlsFromJson: ControlDefinition<T>[]
+  controlsFromJson: ControlDefinition<T>[],
+  options: LoadControlsOptions<T> = {}
 ): LoadedControl<T>[] {
-  const resolvedControls = resolveHighlightAliases(controlsFromJson);
-
-  if (!Array.isArray(resolvedControls)) {
+  if (!Array.isArray(controlsFromJson)) {
     throw new Error("Controls must be provided as an array.");
   }
+  const configuredControls = options.configureControl
+    ? controlsFromJson.map((control) => {
+        if (!control || typeof control !== "object") return control;
+        const configuredControl = { ...control };
+        options.configureControl?.(configuredControl);
+        return configuredControl;
+      })
+    : controlsFromJson;
+  const resolvedControls = resolveHighlightAliases(configuredControls);
 
   const controlIds = new Set<string>();
   resolvedControls.forEach((control, index) => {
@@ -355,6 +378,42 @@ export function loadControls<T extends ControlItem = ControlItem>(
       throw new Error(`Duplicate control id "${control.id}".`);
     }
     const type = control.type ?? "array";
+    if (
+      control.defaultCollapse !== undefined &&
+      typeof control.defaultCollapse !== "boolean"
+    ) {
+      throw new Error(
+        `Control "${control.id}" defaultCollapse must be a boolean.`
+      );
+    }
+    if (
+      control.reverseDirection !== undefined &&
+      typeof control.reverseDirection !== "boolean"
+    ) {
+      throw new Error(
+        `Control "${control.id}" reverseDirection must be a boolean.`
+      );
+    }
+    if (
+      control.reverseDirection !== undefined &&
+      type !== "array" &&
+      type !== "jaggedArray" &&
+      type !== "stack"
+    ) {
+      throw new Error(
+        `Control "${control.id}" cannot set reverseDirection for type "${type}".`
+      );
+    }
+    if (
+      (type === "array" || type === "stack") &&
+      control.orientation !== undefined &&
+      control.orientation !== "horizontal" &&
+      control.orientation !== "vertical"
+    ) {
+      throw new Error(
+        `Control "${control.id}" orientation must be "horizontal" or "vertical".`
+      );
+    }
     validateBlockedItemDimensions(control, type, control.id);
     if (type !== "jaggedArray" && control.arrayGap !== undefined) {
       throw new Error(
@@ -455,6 +514,7 @@ export function loadControls<T extends ControlItem = ControlItem>(
           "arrayGap",
           "defaultItemOffset",
           "fitContent",
+          "reverseDirection",
         ].find((property) =>
           child.definition[
             property as keyof ControlDefinition<T>

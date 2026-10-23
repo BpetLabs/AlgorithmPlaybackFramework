@@ -11,7 +11,8 @@ export function useAnimatePreRemove(
   itemWidth: number, 
   disableAnimations: boolean, 
   controls: AnimationController,
-  leftRight: boolean = false) {
+  leftRight: boolean = false,
+  reverseDirection = false) {
 
   const isPreRemoveUpdate = item.state === ControlItemState.PreRemoveUpdate;
 
@@ -30,11 +31,19 @@ export function useAnimatePreRemove(
     skippedInsertStartX = leftRight ? 0 : -itemWidth * 1.05;
     skippedInsertStartY = leftRight ? -itemHeight * 1.3 : 0;
   } else if (item.previousState === ControlItemState.PreHead) {
-    skippedInsertStartX = leftRight ? -itemWidth : 0;
-    skippedInsertStartY = leftRight ? 0 : itemHeight;
+    skippedInsertStartX = leftRight
+      ? reverseDirection ? itemWidth : -itemWidth
+      : 0;
+    skippedInsertStartY = leftRight
+      ? 0
+      : reverseDirection ? -itemHeight : itemHeight;
   } else if (item.previousState === ControlItemState.PreTail) {
-    skippedInsertStartX = leftRight ? itemWidth : 0;
-    skippedInsertStartY = leftRight ? 0 : -itemHeight;
+    skippedInsertStartX = leftRight
+      ? reverseDirection ? -itemWidth : itemWidth
+      : 0;
+    skippedInsertStartY = leftRight
+      ? 0
+      : reverseDirection ? itemHeight : -itemHeight;
   }
 
   useIsomorphicLayoutEffect(() => {
@@ -98,6 +107,7 @@ export function useAnimatePreRemove(
     controls,
     isPreRemoveUpdate,
     leftRight,
+    reverseDirection,
     shouldFinishSkippedInsert,
     skippedInsertStartX,
     skippedInsertStartY,

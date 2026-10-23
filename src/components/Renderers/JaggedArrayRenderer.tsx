@@ -353,6 +353,7 @@ export function JaggedArrayRenderer({
   emptyItemText,
   itemLabels,
   orientation = "vertical",
+  reverseDirection = false,
   showCellBorders = true,
   renderContent,
   borderWidth,
@@ -445,6 +446,7 @@ export function JaggedArrayRenderer({
       showCellBorders:
         child.options.showCellBorders ?? showCellBorders,
       orientation: measuredChild.orientation,
+      reverseDirection,
       renderContent,
       borderWidth: childRender.borderWidth,
       containerStyle: item.borderColor?.trim()
@@ -480,6 +482,7 @@ export function JaggedArrayRenderer({
               divHeight={sizing.leafHeight}
               divWidth={sizing.leafWidth}
               orientation={orientation}
+              reverseDirection={reverseDirection}
               currentStep={currentStep}
               navigationDisableAnimations={navigationDisableAnimations}
             />
@@ -536,6 +539,7 @@ export function JaggedArrayRenderer({
       showCellBorders={showCellBorders}
       showItemHighlights={false}
       orientation={measured.orientation}
+      reverseDirection={reverseDirection}
       renderContent={renderJaggedItem}
       borderWidth={borderWidth}
       containerClassName={containerClassName}

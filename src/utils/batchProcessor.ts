@@ -180,6 +180,7 @@ export class BatchProcessor<T extends ControlItem> {
   private snapshots: Snapshot<T>[] = [];
   private batchSteps = new Set<number>();
   private uniqueIdCounter = 0;
+  private defaultCollapse: boolean | undefined;
 
   private validateGridBatch(batch: Batch<T>): void {
     if (this.type !== "grid") return;
@@ -239,13 +240,16 @@ export class BatchProcessor<T extends ControlItem> {
     private id: string,
     private type: string,
     initialItemCount = 0,
-    initialItemDefaults: Partial<T> = {}
+    initialItemDefaults: Partial<T> = {},
+    defaultCollapse?: boolean
   ) {
     if (!Number.isInteger(initialItemCount) || initialItemCount < 0) {
       throw new Error(
         `Control "${this.id}" initialItemCount must be a non-negative integer.`
       );
     }
+
+    this.defaultCollapse = defaultCollapse;
 
     const items: T[] = Array.from({ length: initialItemCount }, () => ({
       id: this.createId("item"),
@@ -380,6 +384,7 @@ export class BatchProcessor<T extends ControlItem> {
       node: T,
       operation: BatchTiming & { collapse?: boolean }
     ) => {
+      const collapse = operation.collapse ?? this.defaultCollapse;
       const previousStateAlreadySet = prevStateAlreadySet.has(node.id);
       if (!previousStateAlreadySet) node.previousState = node.state;
       node.linkId = node.linkId ?? node.id;
@@ -389,11 +394,15 @@ export class BatchProcessor<T extends ControlItem> {
       if (operation.animateNow && !previousStateAlreadySet) {
         node.previousState = preRemoveStateByKey[key];
       }
-      node.collapse = operation.collapse;
+      node.collapse = collapse;
 
       if (operation.now) {
-        const index = snapshot.findIndex((item) => item.id === node.id);
-        if (index !== -1) snapshot.splice(index, 1);
+        if (collapse === false) {
+          node.state = ControlItemState.Empty;
+        } else {
+          const index = snapshot.findIndex((item) => item.id === node.id);
+          if (index !== -1) snapshot.splice(index, 1);
+        }
       }
     };
 

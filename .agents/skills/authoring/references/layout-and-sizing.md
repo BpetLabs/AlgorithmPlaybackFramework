@@ -62,7 +62,7 @@ Determine the largest content size each affected control reaches across the trac
 - Without `fitContent`, an array, stack, or dictionary keeps its configured static size. Use that size as its trace-wide maximum, and ensure its main-axis dimension ends after a complete slot.
 - With `fitContent`, calculate the occupied main-axis extent at every step and use the largest extent as the control's maximum size. The rendered control still ends at the current last occupied slot at each step.
 - To calculate a step's occupied extent, resolve each logical slot to its `itemOffset`, or to `defaultItemOffset` when omitted, and sum the offsets in visual order. Treat linked outgoing and incoming replacement items as one slot and use the larger offset while both render.
-- Width is the main axis for horizontal arrays, which extend right. Height is the main axis for vertical arrays, which extend down, and for bottom-anchored stacks and dictionaries, which extend up. Jagged leaves follow the same rule, after which their parents fit recursively in both axes; text controls retain renderer-specific sizing.
+- Width is the main axis for horizontal arrays, and height is the main axis for vertical arrays, stacks, and dictionaries. `reverseDirection` changes the visual growth edge without changing logical indices or the required extent. Jagged leaves follow the same rule, after which their parents fit recursively in both axes; text controls retain renderer-specific sizing.
 
 For a jagged array, calculate each step from the leaves upward:
 

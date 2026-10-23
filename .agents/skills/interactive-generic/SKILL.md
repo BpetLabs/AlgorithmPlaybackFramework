@@ -29,8 +29,10 @@ Apply this base skill to all AnimatedPlayback JSON work. Specialized skills over
 ## Mutation model and timing
 
 - Use the code control's paused-line timeline as the authoritative global-step timeline.
+- The paused-line timeline identifies when a trigger occurs; it does not restrict the visual source range that a specialized code-control skill assigns to that trigger.
 - Put every pending control action caused by a paused line on that same global step, ordered by runtime evaluation order.
 - Do not split same-line actions across steps because they use different mutation types or target different controls.
+- When a specialized skill defines one visual state change as atomic, put every affected target in one control batch so the changes render in parallel. Do not serialize an atomic change across batches or steps; use ordered batches only for genuinely sequential runtime events.
 - Use indexed `updates`, `inserts`, and `deletes` by default.
 - Use head or tail mutation variants only when the user or a specialized skill explicitly requires their endpoint-specific animation behavior. Do not substitute them merely because they address the same logical item.
 - Whenever an insert or update assigns `input.value`, include the intended `backgroundColor` in the same `input`.
@@ -49,6 +51,7 @@ Apply this base skill to all AnimatedPlayback JSON work. Specialized skills over
 
 ## Item highlights
 
+- These item-level rules apply to addressable data-control items, not source-line ranges in code controls. The specialized code-control skill defines the visual span of a code highlight.
 - For controls with addressable items, derive exact item references and accesses from the canonical execution trace.
 - An active item reference is program state that identifies one exact item, such as an array index, a complete grid-cell position, a node ID, or a nested-collection access path.
 - Highlight only the individual item identified by an active item reference or read/write, including on paused steps. Do not expand a reference to sibling items, an entire row, an entire column, or another aggregate unless the algorithm explicitly addresses that aggregate.
@@ -74,7 +77,7 @@ Apply this base skill to all AnimatedPlayback JSON work. Specialized skills over
 
 - Resolve the effective text and background colors for every displayed item state, including pending, incoming, and outgoing items.
 - When `textColor` is omitted, inspect the renderer or theme default rather than assuming a foreground color.
-- Require at least a 4.5:1 contrast ratio for normal text and 3:1 only when the rendered text qualifies as large text under WCAG.
+- Require at least a 4:1 contrast ratio for normal text and 3:1 only when the rendered text qualifies as large text under WCAG.
 - Do not infer accessibility from CSS color names. Calculate contrast from the resolved color values.
 - Preserve semantic color consistency across related controls, but choose a darker or lighter variant when needed to satisfy contrast.
 

@@ -12,7 +12,8 @@ export function useAnimatePreInsert(
   disableAnimations: boolean,
   controls: AnimationController,
   leftRight: boolean,
-  preInsertGap?: number) {
+  preInsertGap?: number,
+  reverseDirection = false) {
 
   const isPreInsert = item.state === ControlItemState.PreInsert;
   const isPreUpdate = item.state === ControlItemState.PreUpdate;
@@ -43,6 +44,13 @@ export function useAnimatePreInsert(
       scaleYInsert = 0;
       scaleXHeadTail = 0;
       scaleYHeadTail = 1;
+  }
+
+  if (reverseDirection) {
+    xPreHead = -xPreHead || 0;
+    yPreHead = -yPreHead || 0;
+    xPreTail = -xPreTail || 0;
+    yPreTail = -yPreTail || 0;
   }
 
   const zIndex = collapsedIndex * itemHeight + 1;

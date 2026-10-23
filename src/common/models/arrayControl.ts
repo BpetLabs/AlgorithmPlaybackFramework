@@ -2,6 +2,7 @@ export type ArrayOrientation = "horizontal" | "vertical";
 
 export interface ArrayRendererOptions {
   orientation?: ArrayOrientation;
+  reverseDirection?: boolean;
   arrayGap?: number;
   defaultItemOffset?: number;
   itemGap?: number;

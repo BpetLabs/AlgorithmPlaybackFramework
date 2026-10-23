@@ -15,6 +15,12 @@ Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 
 ## Standalone arrays
 
+### Orientation and direction
+
+- Set `orientation` to `horizontal` or `vertical`; the default is `horizontal`.
+- Set `reverseDirection: true` to reverse only the visual order. Logical indices remain zero-based and unchanged.
+- A horizontal array normally runs left-to-right and reverses to right-to-left. A vertical array normally runs top-to-bottom and reverses to bottom-to-top.
+
 ### Values and mutations
 
 - Store displayed values directly in the array's items.
@@ -41,6 +47,7 @@ Apply [interactive-generic](../interactive-generic/SKILL.md) first.
 ### Mutation timing
 
 - Every mutation action on a container or leaf within a jagged tree requires `now: true`; `animateNow` is unsupported.
+- `SetValues` is always immediate and should not contain `now: true`.
 - When a paused statement performs a mutation, apply it on the following global step. The paused step must retain the pre-execution state.
 
 ## Highlights for standalone and jagged arrays
