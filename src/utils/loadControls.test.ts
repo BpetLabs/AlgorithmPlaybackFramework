@@ -141,7 +141,7 @@ describe("loadControls", () => {
     expect(matrix.snapshots[3].items[0].borderColor).toBe("Pink");
   });
 
-  it("inserts and recursively removes an ID-referenced child subtree", () => {
+  it("inserts a child subtree and preserves its slot when removed", () => {
     const [matrix] = loadControls([
       {
         id: "matrix",
@@ -152,10 +152,7 @@ describe("loadControls", () => {
             step: 1,
             inserts: [{ index: 1, childId: "group-b", now: true }],
           },
-          {
-            step: 2,
-            deletes: [{ index: 1, collapse: true, now: true }],
-          },
+          { step: 2, deletes: [{ index: 1, now: true }] },
         ],
       },
       { id: "row-a", type: "array", initialItemCount: 0 },
@@ -169,7 +166,11 @@ describe("loadControls", () => {
 
     expect(matrix.snapshots.find((snapshot) => snapshot.step === 1)?.items)
       .toEqual(expect.arrayContaining([expect.objectContaining({ childId: "group-b" })]));
-    expect(matrix.snapshots.at(-1)?.items).toHaveLength(1);
+    expect(matrix.snapshots.at(-1)?.items).toHaveLength(2);
+    expect(matrix.snapshots.at(-1)?.items[1]).toMatchObject({
+      state: ControlItemState.Empty,
+      collapse: false,
+    });
   });
 
   it("rejects parent inserts without a complete referenced subtree", () => {
