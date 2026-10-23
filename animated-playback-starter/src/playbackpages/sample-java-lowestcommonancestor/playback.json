@@ -9,51 +9,47 @@
         { "step": 1, "highlightLines": [
           { "range": "18-44", "borderColor": "Orange" },
           { "range": "24", "backgroundColor": "Highlight.False" },
-          { "range": "27", "backgroundColor": "Highlight.Pause" },
+          { "range": "27-31", "backgroundColor": "Highlight.Pause" },
           { "range": "32-44", "backgroundColor": "Highlight.Unused" }
         ] },
         { "step": 2, "highlightLines": [
           { "range": "24", "backgroundColor": "Highlight.Pause" },
           { "range": "25-26", "backgroundColor": "Highlight.Unused" },
-          { "range": "27", "backgroundColor": "Highlight.Branch" }
+          { "range": "27-31", "backgroundColor": "Highlight.Branch" }
         ] },
-        { "step": 3,
-          "clearHighlights": [{ "range": "33-36", "backgroundColor": true }],
-          "highlightLines": [
-            { "range": "18-23", "backgroundColor": "Highlight.Unused" },
-            { "range": "24", "backgroundColor": "Highlight.Return" },
-            { "range": "27", "backgroundColor": "Highlight.ReturnLocation" },
-            { "range": "32", "backgroundColor": "Highlight.Pause" }
-          ]
+        { "step": 3, "highlightLines": [
+          { "range": "18-23", "backgroundColor": "Highlight.Unused" },
+          { "range": "24", "backgroundColor": "Highlight.Return" },
+          { "range": "27-31", "backgroundColor": "Highlight.ReturnLocation" },
+          { "range": "32-36", "backgroundColor": "Highlight.Pause" }
+        ]
         },
         { "step": 4,
           "clearHighlights": [{ "range": "18-23,25-26", "backgroundColor": true }],
           "highlightLines": [
             { "range": "24", "backgroundColor": "Highlight.False" },
-            { "range": "27", "backgroundColor": "Highlight.Pause" },
-            { "range": "32", "backgroundColor": "Highlight.Branch" }
+            { "range": "27-31", "backgroundColor": "Highlight.Pause" },
+            { "range": "32-36", "backgroundColor": "Highlight.Branch" }
           ]
         },
         { "step": 6, "highlightLines": [
           { "range": "24", "backgroundColor": "Highlight.Pause" },
           { "range": "25-26", "backgroundColor": "Highlight.Unused" },
-          { "range": "27", "backgroundColor": "Highlight.Branch" }
+          { "range": "27-31", "backgroundColor": "Highlight.Branch" }
         ] },
-        { "step": 7,
-          "clearHighlights": [{ "range": "33-36", "backgroundColor": true }],
-          "highlightLines": [
-            { "range": "18-23", "backgroundColor": "Highlight.Unused" },
-            { "range": "24", "backgroundColor": "Highlight.Return" },
-            { "range": "27", "backgroundColor": "Highlight.ReturnLocation" },
-            { "range": "32", "backgroundColor": "Highlight.Pause" }
-          ]
+        { "step": 7, "highlightLines": [
+          { "range": "18-23", "backgroundColor": "Highlight.Unused" },
+          { "range": "24", "backgroundColor": "Highlight.Return" },
+          { "range": "27-31", "backgroundColor": "Highlight.ReturnLocation" },
+          { "range": "32-36", "backgroundColor": "Highlight.Pause" }
+        ]
         },
         { "step": 8,
           "clearHighlights": [{ "range": "18-23", "backgroundColor": true }],
           "highlightLines": [
             { "range": "24", "backgroundColor": "Highlight.Pause" },
             { "range": "27-31", "backgroundColor": "Highlight.Unused" },
-            { "range": "32", "backgroundColor": "Highlight.Branch" }
+            { "range": "32-36", "backgroundColor": "Highlight.Branch" }
           ]
         },
         { "step": 9,
@@ -61,50 +57,46 @@
           "highlightLines": [
             { "range": "18-23", "backgroundColor": "Highlight.Unused" },
             { "range": "24", "backgroundColor": "Highlight.Return" },
-            { "range": "32", "backgroundColor": "Highlight.ReturnLocation" },
+            { "range": "32-36", "backgroundColor": "Highlight.ReturnLocation" },
             { "range": "40", "backgroundColor": "Highlight.False" },
             { "range": "43", "backgroundColor": "Highlight.Pause" }
           ]
         },
-        { "step": 10,
-          "clearHighlights": [{ "range": "28-31", "backgroundColor": true }],
-          "highlightLines": [
-            { "range": "24", "backgroundColor": "Highlight.Unused" },
-            { "range": "27", "backgroundColor": "Highlight.ReturnLocation" },
-            { "range": "32", "backgroundColor": "Highlight.Pause" },
-            { "range": "37-42", "backgroundColor": "Highlight.Unused" },
-            { "range": "43", "backgroundColor": "Highlight.Return" }
-          ]
+        { "step": 10, "highlightLines": [
+          { "range": "24", "backgroundColor": "Highlight.Unused" },
+          { "range": "27-31", "backgroundColor": "Highlight.ReturnLocation" },
+          { "range": "32-36", "backgroundColor": "Highlight.Pause" },
+          { "range": "37-42", "backgroundColor": "Highlight.Unused" },
+          { "range": "43", "backgroundColor": "Highlight.Return" }
+        ]
         },
         { "step": 11,
           "clearHighlights": [{ "range": "18-23,25-26", "backgroundColor": true }],
           "highlightLines": [
             { "range": "24", "backgroundColor": "Highlight.False" },
-            { "range": "27", "backgroundColor": "Highlight.Pause" },
-            { "range": "32", "backgroundColor": "Highlight.Branch" },
+            { "range": "27-31", "backgroundColor": "Highlight.Pause" },
+            { "range": "32-36", "backgroundColor": "Highlight.Branch" },
             { "range": "43", "backgroundColor": "Highlight.Unused" }
           ]
         },
         { "step": 12, "highlightLines": [
           { "range": "24", "backgroundColor": "Highlight.Pause" },
           { "range": "25-26", "backgroundColor": "Highlight.Unused" },
-          { "range": "27", "backgroundColor": "Highlight.Branch" }
+          { "range": "27-31", "backgroundColor": "Highlight.Branch" }
         ] },
-        { "step": 13,
-          "clearHighlights": [{ "range": "33-36", "backgroundColor": true }],
-          "highlightLines": [
-            { "range": "18-23", "backgroundColor": "Highlight.Unused" },
-            { "range": "24", "backgroundColor": "Highlight.Return" },
-            { "range": "27", "backgroundColor": "Highlight.ReturnLocation" },
-            { "range": "32", "backgroundColor": "Highlight.Pause" }
-          ]
+        { "step": 13, "highlightLines": [
+          { "range": "18-23", "backgroundColor": "Highlight.Unused" },
+          { "range": "24", "backgroundColor": "Highlight.Return" },
+          { "range": "27-31", "backgroundColor": "Highlight.ReturnLocation" },
+          { "range": "32-36", "backgroundColor": "Highlight.Pause" }
+        ]
         },
         { "step": 14,
           "clearHighlights": [{ "range": "18-23", "backgroundColor": true }],
           "highlightLines": [
             { "range": "24", "backgroundColor": "Highlight.Pause" },
             { "range": "27-31", "backgroundColor": "Highlight.Unused" },
-            { "range": "32", "backgroundColor": "Highlight.Branch" }
+            { "range": "32-36", "backgroundColor": "Highlight.Branch" }
           ]
         },
         { "step": 15,
@@ -112,7 +104,7 @@
           "highlightLines": [
             { "range": "18-23", "backgroundColor": "Highlight.Unused" },
             { "range": "24", "backgroundColor": "Highlight.Return" },
-            { "range": "32", "backgroundColor": "Highlight.ReturnLocation" },
+            { "range": "32-36", "backgroundColor": "Highlight.ReturnLocation" },
             { "range": "40", "backgroundColor": "Highlight.False" },
             { "range": "43", "backgroundColor": "Highlight.Pause" }
           ]

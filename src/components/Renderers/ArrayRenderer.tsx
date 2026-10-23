@@ -32,6 +32,7 @@ interface ArrayRendererProps extends RendererProps {
   emptyItemText?: string
   itemLabels?: string[];
   orientation?: ArrayOrientation;
+  reverseDirection?: boolean;
   showCellBorders?: boolean;
   showItemHighlights?: boolean;
   resolveItemSize?: (
@@ -57,6 +58,7 @@ export function ArrayRenderer({
   emptyItemText,
   itemLabels = [],
   orientation = "horizontal",
+  reverseDirection = false,
   showCellBorders = true,
   showItemHighlights = true,
   resolveItemSize,
@@ -151,17 +153,23 @@ export function ArrayRenderer({
                   : "left-0 right-0 border-t border-gray-600"
                 : ""
             }`}
-            style={{
-              ...(isHorizontal
-                ? {
-                    left: `${cell.offset}px`,
-                    width: `${cell.size}px`,
-                  }
-                : {
-                    top: `${cell.offset}px`,
-                    height: `${cell.size}px`,
-                  }),
-            }}
+            style={isHorizontal
+              ? {
+                  left: `${
+                    reverseDirection
+                      ? resolvedMainAxisSize - cell.offset - cell.size
+                      : cell.offset
+                  }px`,
+                  width: `${cell.size}px`,
+                }
+              : {
+                  top: `${
+                    reverseDirection
+                      ? resolvedMainAxisSize - cell.offset - cell.size
+                      : cell.offset
+                  }px`,
+                  height: `${cell.size}px`,
+                }}
           >
             {`${emptyItemText ?? ""}`}
           </div>
@@ -180,13 +188,19 @@ export function ArrayRenderer({
               isHorizontal
                 ? {
                     top: "100%",
-                    left: cell.offset + cell.size / 2,
+                    left:
+                      (reverseDirection
+                        ? resolvedMainAxisSize - cell.offset - cell.size
+                        : cell.offset) + cell.size / 2,
                     marginTop: 6,
                     transform: "translateX(-50%)",
                     whiteSpace: "nowrap",
                   }
                 : {
-                    top: cell.offset + cell.size / 2,
+                    top:
+                      (reverseDirection
+                        ? resolvedMainAxisSize - cell.offset - cell.size
+                        : cell.offset) + cell.size / 2,
                     left: -8,
                     transform: "translate(-100%, -50%)",
                     whiteSpace: "nowrap",
@@ -235,7 +249,9 @@ export function ArrayRenderer({
               isSlotOwner={isSlotOwner}
               orientation={orientation}
               mainOffset={
-                offset + resolvedItemGap
+                (reverseDirection
+                  ? resolvedMainAxisSize - offset - slotMainSize
+                  : offset) + resolvedItemGap
               }
               crossOffset={resolvedCrossAxisGap}
               preInsertGap={preInsertGap}
@@ -245,6 +261,7 @@ export function ArrayRenderer({
               borderWidth={borderWidth}
               showHighlight={showItemHighlights}
               renderContent={renderContent}
+              reverseDirection={reverseDirection}
             />
           );
         })}

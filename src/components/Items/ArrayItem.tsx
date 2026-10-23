@@ -33,6 +33,7 @@ export interface ArrayItemProps {
     item: ControlItem,
     options?: { index?: number; isSlotOwner?: boolean }
   ) => React.ReactNode;
+  reverseDirection?: boolean;
 }
 
 export default function ArrayItem({
@@ -53,6 +54,7 @@ export default function ArrayItem({
   borderWidth,
   showHighlight = true,
   renderContent,
+  reverseDirection = false,
 }: ArrayItemProps) {
   const { motionStyle, controller: controls } = useAnimationController({
     opacity: item.state !== ControlItemState.Empty ? 1 : 0,
@@ -82,9 +84,9 @@ export default function ArrayItem({
     });
   }, [controls, shouldSnapInPlace, item.state, zIndex]);
 
-  useAnimatePreInsert(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, isHorizontal, preInsertGap);
-  useAnimateMoveIntoPlace(item, slotHeight, collapsedIndex, slotWidth, disableAnimations, controls, isHorizontal);
-  useAnimatePreRemove(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, isHorizontal);
+  useAnimatePreInsert(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, isHorizontal, preInsertGap, reverseDirection);
+  useAnimateMoveIntoPlace(item, slotHeight, collapsedIndex, slotWidth, disableAnimations, controls, isHorizontal, reverseDirection);
+  useAnimatePreRemove(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, isHorizontal, reverseDirection);
   useAnimateRemoving(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, isHorizontal, onCollapse);
   useAnimateShake(item, controls, disableAnimations);
   const highlightOverlayStyle = showHighlight

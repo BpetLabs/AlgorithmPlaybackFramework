@@ -30,6 +30,7 @@ export interface StackItemProps {
     options?: { splitColumnWidths?: number[] }
   ) => React.ReactNode;
   splitColumnWidths?: number[];
+  reverseDirection?: boolean;
 }
 
 export default function StackItem({
@@ -41,13 +42,14 @@ export default function StackItem({
   collapsedIndex,
   bottomOffset,
   topOffset,
-  leftOffset = 0,
+  leftOffset,
   preInsertGap,
   onCollapse,
   disableAnimations,
   borderWidth,
   renderContent,
   splitColumnWidths,
+  reverseDirection = false,
 }: StackItemProps) {
   const { motionStyle, controller: controls } = useAnimationController({
     opacity: item.state !== ControlItemState.Empty ? 1 : 0,
@@ -76,9 +78,9 @@ export default function StackItem({
     });
   }, [controls, shouldSnapInPlace, item.state, zIndex]);
 
-  useAnimatePreInsert(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, false, preInsertGap);
-  useAnimateMoveIntoPlace(item, slotHeight, collapsedIndex, slotWidth, disableAnimations, controls, false);
-  useAnimatePreRemove(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls);
+  useAnimatePreInsert(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, false, preInsertGap, reverseDirection);
+  useAnimateMoveIntoPlace(item, slotHeight, collapsedIndex, slotWidth, disableAnimations, controls, false, reverseDirection);
+  useAnimatePreRemove(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, false, reverseDirection);
   useAnimateRemoving(item, collapsedIndex, slotHeight, slotWidth, disableAnimations, controls, false, onCollapse);
   useAnimateShake(item, controls, disableAnimations);
   const highlightOverlayStyle = buildHighlightOverlayStyle(item, { borderWidth, borderRadius: 8 });

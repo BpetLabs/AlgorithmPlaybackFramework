@@ -1,8 +1,29 @@
 import { describe, expect, it } from "vitest";
+import { ControlItemState } from "../common/models/controlItem";
 import { Highlight } from "../common/models/highlightLine";
 import { loadControls } from "./loadControls";
 
 describe("loadControls", () => {
+  it("loads reverseDirection for arrays and stacks", () => {
+    const controls = loadControls([
+      { id: "array", type: "array", reverseDirection: true },
+      { id: "stack", type: "stack", reverseDirection: true },
+    ]);
+
+    expect(controls[0].rendererOptions?.reverseDirection).toBe(true);
+    expect(controls[0].rendererOptions?.orientation).toBe("horizontal");
+    expect(controls[1].rendererOptions?.reverseDirection).toBe(true);
+  });
+
+  it("rejects invalid and unsupported reverseDirection values", () => {
+    expect(() => loadControls([
+      { id: "invalid", type: "stack", reverseDirection: "yes" as never },
+    ])).toThrow("reverseDirection must be a boolean");
+    expect(() => loadControls([
+      { id: "grid", type: "grid", reverseDirection: true },
+    ])).toThrow('cannot set reverseDirection for type "grid"');
+  });
+
   it("attaches explicitly declared jagged children", () => {
     const controls = loadControls([
       {
@@ -406,6 +427,91 @@ describe("loadControls", () => {
       title: "Updated",
       layout: { top: 10, width: 200, height: 50 },
     });
+  });
+
+  it("uses defaultCollapse for removals and allows operation overrides", () => {
+    const [collapsing, preserved] = loadControls([
+      {
+        id: "collapsing",
+        type: "array",
+        defaultCollapse: true,
+        initialItemCount: 1,
+        batches: [
+          { step: 1, deletes: [{ index: 0 }] },
+          { step: 2 },
+          { step: 3 },
+        ],
+      },
+      {
+        id: "preserved",
+        type: "array",
+        defaultCollapse: true,
+        initialItemCount: 1,
+        batches: [
+          { step: 1, deletes: [{ index: 0, collapse: false }] },
+          { step: 2 },
+          { step: 3 },
+        ],
+      },
+    ]);
+
+    expect(collapsing.snapshots[3].items).toEqual([]);
+    expect(preserved.snapshots[3].items[0]).toMatchObject({
+      state: ControlItemState.Empty,
+      collapse: false,
+    });
+  });
+
+  it("resolves array and stack collapse defaults before batch processing", () => {
+    const controls = loadControls([
+      {
+        id: "array",
+        type: "array",
+        initialItemCount: 1,
+        batches: [
+          { step: 1, deletes: [{ index: 0 }] },
+          { step: 2 },
+          { step: 3 },
+        ],
+      },
+      {
+        id: "stack",
+        type: "stack",
+        initialItemCount: 1,
+        batches: [
+          { step: 1, tailTakes: { count: 1 } },
+          { step: 2 },
+          { step: 3 },
+        ],
+      },
+    ]);
+
+    expect(controls[0].snapshots[3].items[0]).toMatchObject({
+      state: ControlItemState.Empty,
+      collapse: false,
+    });
+    expect(controls[1].snapshots[3].items).toEqual([]);
+  });
+
+  it("configures defaultCollapse before snapshots are built", () => {
+    const definitions = [{
+      id: "items",
+      type: "array",
+      initialItemCount: 1,
+      batches: [
+        { step: 1, deletes: [{ index: 0 }] },
+        { step: 2 },
+        { step: 3 },
+      ],
+    }];
+    const [control] = loadControls(definitions, {
+      configureControl: (definition) => {
+        definition.defaultCollapse = true;
+      },
+    });
+
+    expect(control.snapshots[3].items).toEqual([]);
+    expect(definitions[0]).not.toHaveProperty("defaultCollapse");
   });
 
   it("rejects non-array input", () => {

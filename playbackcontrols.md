@@ -19,6 +19,7 @@ Controls are the visual panels in an AnimatedPlayback. Each control has a unique
 - [Generic properties](#generic-properties)
 - [Basic rich text](#basic-rich-text)
 - [Item slots and grid lines](#item-slots-and-grid-lines)
+  - [Removal collapse defaults](#removal-collapse-defaults)
 - [Initial state and playback steps](#initial-state-and-playback-steps)
 - [Mutation animations](#mutation-animations)
   - [Insert](#insert)
@@ -126,15 +127,17 @@ Displays an indexed, one-dimensional collection.
 - Can represent an array, list, deque, or queue.
 - Supports labels, empty-cell text, cell borders, spacing, and content-sized layouts.
 - Items are positioned from the start of the selected orientation.
+- Items display index 0 on the left when horizontal and at the top when vertical by default. Set `reverseDirection`: true to reverse the visual order without changing logical indices.
+- Removals preserve their slots by default (`defaultCollapse: false`).
 
 ### `stack`
 
 Displays a vertical stack.
 
 - Always vertical.
-- Items are positioned from the bottom upward.
-- Use it for a call stack or another structure where bottom-up presentation is important.
-- Supports split-column content, which is useful for call-frame details.
+- Items are positioned from the bottom upward by default.
+- Items display index 0 on the bottom by default. Set `reverseDirection`: true to reverse the visual order without changing logical indices.
+- Removals collapse their slots by default (`defaultCollapse: true`).
 
 ### `dictionary`
 
@@ -143,6 +146,7 @@ Displays key/value or multi-column rows. It uses the stack layout but renders ea
 - Intended for local variables and lookup tables.
 - Supports custom percentage-based column widths with `splitColumnWidths`.
 - Hides the stack cell borders by default and draws borders around each row's columns.
+- Removals preserve their slots by default (`defaultCollapse: false`).
 
 Example item value:
 
@@ -330,6 +334,7 @@ Arranges child lists recursively. Jagged parents render bordered child slots, wh
 - Uses the ordinary array sizing options for every leaf array.
 - Fits every jagged parent recursively to its measured children.
 - Use it for jagged arrays, adjacency lists, and nested collections.
+- Removals preserve their slots by default (`defaultCollapse: false`).
 
 Child controls are declared separately and are not rendered as independent top-level controls:
 
@@ -498,7 +503,8 @@ Set these layout options at the top level of a control in JSON or assign them in
 
 | Option | Effect |
 | --- | --- |
-| `orientation` | Uses `"horizontal"` or `"vertical"` layout. Arrays default to horizontal. On a jagged root it describes leaf direction, defaults to vertical, and determines every parent direction by alternating upward. Stacks remain vertical. |
+| `orientation` | Uses `"horizontal"` or `"vertical"` layout. On a jagged root it describes leaf direction, defaults to vertical, and determines every parent direction by alternating upward. Stacks remain vertical. |
+| `reverseDirection` | Reverses the visual item order without changing logical indices. Horizontal arrays change from left-to-right to right-to-left, vertical arrays change from top-to-bottom to bottom-to-top, and stacks change from bottom-to-top to top-to-bottom. Defaults to `false`. |
 | `arrayGap` | Jagged arrays only: padding on every side between a parent slot and its fitted child array. |
 | `itemWidth`, `itemHeight` | Unsupported for arrays, jagged arrays, stacks, and dictionaries. |
 | `defaultItemOffset` | Default slot size and distance between consecutive item positions. On jagged arrays it applies to leaf items. |
@@ -509,6 +515,34 @@ Set these layout options at the top level of a control in JSON or assign them in
 | `showCellBorders` | Shows or hides structural slot borders. |
 | `emptyItemText` | Configured value displayed in array slots without item text, such as `"0"`. |
 | `fitContent` | Sets an array, stack, or dictionary's main-axis size to its occupied content size. On jagged arrays it fits each leaf's main axis before every parent is fitted recursively. |
+
+### Removal collapse defaults
+
+`defaultCollapse` is a top-level, load-time control property rather than a renderer prop. Set `defaultCollapse` to override the control-type default:
+
+```json
+{
+  "id": "queue",
+  "type": "array",
+  "defaultCollapse": true,
+  "initialItemCount": 4,
+  "batches": []
+}
+```
+
+Or use the `configureControl` option of `loadControls`:
+
+```ts
+const controls = loadControls(definitions, {
+  configureControl: (control) => {
+    if (control.id === "queue") {
+      control.defaultCollapse = true;
+    }
+  },
+});
+```
+
+An individual delete or take operation can override the control default with its own `collapse` value.
 
 ## Initial state and playback steps
 
@@ -636,9 +670,7 @@ Use `deletes`, `headDeletes`, or `tailDeletes`.
 
 1. The target item shakes in the pre-delete state to show that it is about to be removed.
 2. On the control's next batch, it moves out, falls, rotates, and disappears.
-3. Remaining items close the gap by default. Horizontal arrays collapse left, top-down vertical arrays collapse up, and bottom-up stacks collapse down.
-
-Set `collapse: false` on the delete operation to leave an empty slot. A later removal with `collapse: true` can remove that empty slot and close the gap.
+3. If the effective `collapse` value is `true`, remaining items close the gap. If it is `false`, the removed item becomes an empty slot.
 
 The target index must exist. An invalid delete index throws an error while loading the playback.
 
@@ -646,7 +678,7 @@ Indexed delete:
 
 ```json
 "deletes": [
-  { "index": 1 }
+  { "index": 1, "collapse": true }
 ]
 ```
 
@@ -664,7 +696,7 @@ Use `takes`, `headTakes`, or `tailTakes` when the removed value is being consume
 
 1. The target item shakes in the pre-take state.
 2. On the control's next batch, the item fades away in place.
-3. Remaining items close the gap by default. Set `collapse: false` to preserve the slot.
+3. The effective `collapse` value follows the same defaults and overrides as delete operations
 
 The target index must exist. An invalid take index throws an error while loading the playback.
 

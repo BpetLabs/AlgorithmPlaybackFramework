@@ -28,6 +28,7 @@ interface StackRendererProps extends RendererProps {
   preInsertGap?: number;
   splitColumnWidths?: number[];
   showCellBorders?: boolean;
+  reverseDirection?: boolean;
 }
 
 export function StackRenderer({
@@ -44,12 +45,14 @@ export function StackRenderer({
   preInsertGap,
   splitColumnWidths,
   showCellBorders = snapshot.type !== "dictionary",
+  reverseDirection = false,
   renderContent,
   borderWidth,
   containerClassName,
   containerStyle,
 }: StackRendererProps) {
   const snapshotItems = snapshot.items;
+  const isTopDown = reverseDirection;
   const usesConfigurableItemSizing = snapshot.type !== "text";
   if (usesConfigurableItemSizing) {
     rejectItemDimensions(itemWidth, itemHeight, snapshot.type);
@@ -68,20 +71,15 @@ export function StackRenderer({
   );
   const renderedContentExtent = getFittedRenderExtent(renderItems);
   const shouldFitContent = fitContent && usesConfigurableItemSizing;
-  const resolvedDivHeight = shouldFitContent
+  const resolvedMainAxisSize = shouldFitContent
     ? renderedContentExtent || resolvedDefaultItemOffset
     : divHeight;
+  const resolvedDivHeight = resolvedMainAxisSize;
   const resolvedItemGap = Math.max(itemGap, 0);
   const resolvedCrossAxisGap = Math.max(itemCrossAxisGap, 0);
-  const baseItemWidth = divWidth;
-  const resolvedItemWidth = Math.max(
-    baseItemWidth - resolvedCrossAxisGap * 2,
-    0
-  );
-  const itemLeftOffset = resolvedCrossAxisGap;
   const gridCells = buildGridCells(
     renderItems,
-    resolvedDivHeight,
+    resolvedMainAxisSize,
     resolvedDefaultItemOffset
   );
   const slotSizeByOffset = new Map(
@@ -95,7 +93,14 @@ export function StackRenderer({
         width: divWidth,
         height: resolvedDivHeight,
         position: shouldFitContent ? "absolute" : "relative",
-        bottom: shouldFitContent ? 0 : undefined,
+        top:
+          shouldFitContent && isTopDown
+            ? 0
+            : undefined,
+        bottom:
+          shouldFitContent && !isTopDown
+            ? 0
+            : undefined,
         ...containerStyle,
       }}
       className={resolveContainerClassName(
@@ -112,7 +117,8 @@ export function StackRenderer({
               showCellBorders ? "border-b border-gray-600" : ""
             }`}
             style={{
-              bottom: cell.offset,
+              top: isTopDown ? cell.offset : undefined,
+              bottom: isTopDown ? undefined : cell.offset,
               height: cell.size,
             }}
           />
@@ -121,24 +127,34 @@ export function StackRenderer({
       <div className="relative flex-grow flex items-center justify-center">
         {renderItems.map(({ item, collapsedIndex, offset, itemOffset }) => {
           const slotHeight = slotSizeByOffset.get(offset) ?? itemOffset;
-          const baseItemHeight = slotHeight;
+          const mainItemSize = Math.max(
+            slotHeight - resolvedItemGap * 2,
+            0
+          );
+          const crossItemSize = Math.max(
+            divWidth - resolvedCrossAxisGap * 2,
+            0
+          );
+          const mainOffset = offset + resolvedItemGap;
 
           return (
             <StackItem
               key={item.id}
               item={item}
-              itemHeight={Math.max(
-                baseItemHeight - resolvedItemGap * 2,
-                0
-              )}
-              itemWidth={resolvedItemWidth}
+              itemHeight={mainItemSize}
+              itemWidth={crossItemSize}
               slotHeight={slotHeight}
               slotWidth={divWidth}
               collapsedIndex={collapsedIndex}
-              bottomOffset={
-                offset + resolvedItemGap
+              topOffset={
+                isTopDown ? mainOffset : undefined
               }
-              leftOffset={itemLeftOffset}
+              bottomOffset={
+                isTopDown ? undefined : mainOffset
+              }
+              leftOffset={
+                resolvedCrossAxisGap
+              }
               preInsertGap={preInsertGap}
               onCollapse={collapse}
               disableAnimations={disableAnimations}
@@ -146,6 +162,7 @@ export function StackRenderer({
               borderWidth={borderWidth}
               renderContent={renderContent}
               splitColumnWidths={splitColumnWidths}
+              reverseDirection={reverseDirection}
             />
           );
         })}

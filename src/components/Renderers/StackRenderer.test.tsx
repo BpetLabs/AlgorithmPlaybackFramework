@@ -13,6 +13,36 @@ vi.mock("../../hooks/useCollapsedItems", () => ({
 import { StackRenderer } from "./StackRenderer";
 
 describe("StackRenderer", () => {
+  it.each([
+    [true, "top:0;left:0", "top:40px;left:0"],
+    [false, "bottom:0;left:0", "bottom:40px;left:0"],
+  ] as const)("lays out stack items with reverseDirection=%s", (reverseDirection, first, second) => {
+    const snapshot: Snapshot<any> = {
+      id: "stack",
+      type: "stack",
+      step: 0,
+      items: ["A", "B"].map((value) => ({
+        id: value,
+        value,
+        state: ControlItemState.Initial,
+      })),
+    };
+
+    const markup = renderToStaticMarkup(
+      <StackRenderer
+        snapshot={snapshot}
+        divWidth={120}
+        divHeight={120}
+        reverseDirection={reverseDirection}
+        disableAnimations
+        renderContent={(item) => <span>{item.value}</span>}
+      />
+    );
+
+    expect(markup).toContain(first);
+    expect(markup).toContain(second);
+  });
+
   it("shrinks a fitted stack after a larger slot collapses", () => {
     const snapshot: Snapshot<any> = {
       id: "stack",

@@ -490,4 +490,32 @@ describe("InteractiveControlRenderer", () => {
     expect(markup).toContain("height:60px");
     expect(markup).toContain("position:absolute;top:-50px");
   });
+
+  it("preserves the starting edge when fitting directed controls", () => {
+    const stackSnapshot = { ...snapshot, type: "stack" };
+    const topDown = renderControl(
+      control({
+        type: "stack",
+        snapshots: [stackSnapshot],
+        rendererOptions: {
+          reverseDirection: true,
+          fitContent: true,
+          defaultItemOffset: 30,
+        },
+      }),
+      { items: stackSnapshot }
+    );
+    const rightLeft = renderControl(
+      control({
+        rendererOptions: {
+          reverseDirection: true,
+          fitContent: true,
+          defaultItemOffset: 30,
+        },
+      })
+    );
+
+    expect(topDown).toContain("top:10px;left:20px;width:300px;height:60px");
+    expect(rightLeft).toContain("top:10px;left:260px;width:60px;height:80px");
+  });
 });

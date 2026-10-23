@@ -569,22 +569,29 @@ describe("BatchProcessor", () => {
     ]);
   });
 
-  it("removes now operations immediately and preserves non-collapsing slots as empty", () => {
-    const immediate = new BatchProcessor("immediate", "array", 2);
+  it("preserves removal slots when configured not to collapse", () => {
+    const immediate = new BatchProcessor("immediate", "array", 2, {}, false);
     immediate.applyBatch({ step: 1, deletes: [{ index: 0, now: true }] });
-    expect(immediate.getHistory()[1].items).toHaveLength(1);
+    expect(immediate.getHistory()[1].items).toHaveLength(2);
+    expect(immediate.getHistory()[1].items[0]).toMatchObject({
+      state: ControlItemState.Empty,
+      collapse: false,
+    });
 
-    const persistent = new BatchProcessor("persistent", "array", 1);
-    persistent.applyBatch({ step: 1, deletes: [{ index: 0, collapse: false }] });
+    const persistent = new BatchProcessor("persistent", "array", 1, {}, false);
+    persistent.applyBatch({ step: 1, deletes: [{ index: 0 }] });
     persistent.applyBatch({ step: 2 });
     persistent.applyBatch({ step: 3 });
-    expect(persistent.getHistory()[3].items[0].state).toBe(ControlItemState.Empty);
+    expect(persistent.getHistory()[3].items[0]).toMatchObject({
+      state: ControlItemState.Empty,
+      collapse: false,
+    });
   });
 
-  it("advances a collapsing delete through each removal state", () => {
+  it("collapses an array removal when explicitly requested", () => {
     const processor = new BatchProcessor("items", "array", 1, { value: "old" });
 
-    processor.applyBatch({ step: 1, deletes: [{ index: 0 }] });
+    processor.applyBatch({ step: 1, deletes: [{ index: 0, collapse: true }] });
     processor.applyBatch({ step: 2 });
     processor.applyBatch({ step: 3 });
 
@@ -592,7 +599,7 @@ describe("BatchProcessor", () => {
     expect(history[1].items[0]).toMatchObject({
       value: "old",
       state: ControlItemState.PreRemoveInsert,
-      collapse: undefined,
+      collapse: true,
     });
     expect(history[2].items[0]).toMatchObject({
       state: ControlItemState.RemovingInsert,
@@ -667,7 +674,7 @@ describe("BatchProcessor", () => {
         { index: 0, input: { value: "first" } },
         { index: 1, input: { value: "second" } },
       ],
-      deletes: [{ index: 0 }],
+      deletes: [{ index: 0, collapse: true }],
     });
     processor.applyBatch({
       step: 2,

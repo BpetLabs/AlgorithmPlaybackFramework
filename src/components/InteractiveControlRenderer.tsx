@@ -28,7 +28,7 @@ import { requirePositiveDimension } from "./Renderers/utils/dimensions";
 
 const CONTROL_TITLE_OFFSET = 30;
 const CONTROL_TITLE_GAP = 10;
-const VERTICAL_ITEM_SIZING_TYPES = new Set<RendererType>([
+const STACK_RENDERER_TYPES = new Set<RendererType>([
   RendererType.Stack,
   RendererType.Dictionary,
 ]);
@@ -103,10 +103,14 @@ export function InteractiveControlRenderer({
   let resolvedWidth = width;
   let resolvedHeight = height;
   let resolvedTop = top;
+  let resolvedLeft = left;
 
-  const isVerticalArray =
-    type === RendererType.Array && props.orientation === "vertical";
-  const usesVerticalItemSizing = VERTICAL_ITEM_SIZING_TYPES.has(type);
+  const isArray = type === RendererType.Array;
+  const isStackRenderer = STACK_RENDERER_TYPES.has(type);
+  const itemOrientation = isArray && props.orientation !== "vertical"
+    ? "horizontal"
+    : "vertical";
+  const reverseDirection = props.reverseDirection === true;
 
   if (type === RendererType.JaggedArray) {
     const fitted = getJaggedArrayDimensions(
@@ -114,7 +118,7 @@ export function InteractiveControlRenderer({
     );
     resolvedWidth = fitted.width;
     resolvedHeight = fitted.height;
-  } else if (type === RendererType.Array || usesVerticalItemSizing) {
+  } else if (isArray || isStackRenderer) {
     const hasCustomItemOffsets = snapshot.items.some(
       (item) => typeof item.itemOffset === "number"
     );
@@ -153,16 +157,21 @@ export function InteractiveControlRenderer({
       }
       const mainAxisSize = contentExtent || defaultItemOffset;
 
-      if (usesVerticalItemSizing) {
-        resolvedHeight = mainAxisSize;
-        resolvedTop = top + height - mainAxisSize;
-        props.divHeight = mainAxisSize;
-      } else if (isVerticalArray) {
+      if (itemOrientation === "vertical") {
         resolvedHeight = mainAxisSize;
         props.divHeight = mainAxisSize;
+        const startsAtBottom = isStackRenderer
+          ? !reverseDirection
+          : reverseDirection;
+        if (startsAtBottom) {
+          resolvedTop = top + height - mainAxisSize;
+        }
       } else {
         resolvedWidth = mainAxisSize;
         props.divWidth = mainAxisSize;
+        if (reverseDirection) {
+          resolvedLeft = left + width - mainAxisSize;
+        }
       }
     }
   }
@@ -183,7 +192,7 @@ export function InteractiveControlRenderer({
       style={{
         position: "absolute",
         top: resolvedTop,
-        left,
+        left: resolvedLeft,
         width: resolvedWidth,
         height: resolvedHeight,
       }}
