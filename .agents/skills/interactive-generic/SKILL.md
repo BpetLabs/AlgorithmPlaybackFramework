@@ -39,7 +39,7 @@ Apply this base skill to all AnimatedPlayback JSON work. Specialized skills over
 - For initial state, use `setValues` as needed to address the intended item.
 - The current pause trigger has not executed. Put its pending pre-animation action on that paused step for inserts, deletes, replacements, takes, and graph-node deletes.
 - Complete all pending actions from that paused step on the next global step. Add an empty completion batch for each affected control that has no other action there; if the pending actions occur on the final step, add one final empty global step.
-- Use `now: true` only when a mutation completes during an unpaused transition and is not the current pause trigger.
+- Use `animateNow: true` if there is an animation or `now: true` only when a mutation completes during an unpaused transition and is not the current pause trigger.
 
 ## Targeting current and outgoing nodes
 
