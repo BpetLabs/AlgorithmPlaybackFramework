@@ -84,18 +84,12 @@ export function ArrayRenderer({
     disableAnimations,
     resolvedDefaultItemOffset
   );
-  const hasCustomItemOffsets = snapshotItems.some(
-    (item) => typeof item.itemOffset === "number"
-  );
-  const shouldFitMainAxis =
-    fitContent ||
-    hasCustomItemOffsets;
   const renderedContentExtent = getFittedRenderExtent(
     renderItems,
     fitContent ? 0 : minimumSlotCount,
     minimumSlotOffset ?? resolvedDefaultItemOffset
   );
-  const resolvedMainAxisSize = shouldFitMainAxis
+  const resolvedMainAxisSize = fitContent === true
     ? renderedContentExtent || resolvedDefaultItemOffset
     : isHorizontal
       ? divWidth

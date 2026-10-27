@@ -412,7 +412,7 @@ Items in arrays, stacks, dictionaries, text controls, grids, jagged arrays, and 
 | `borderWidth` | Highlight border thickness in pixels. It is visible only when `borderColor` is set. | All item-based controls |
 | `leftAlignedValue` | Auxiliary text displayed in the left region. | Arrays, jagged arrays, stacks, and graph nodes |
 | `rightAlignedValue` | Auxiliary text displayed in the right region. | Arrays, jagged arrays, stacks, and graph nodes |
-| `itemOffset` | Overrides the item's slot size along the control's main axis. It grows or shrinks the control. | Arrays, jagged-array leaf items, stacks, and dictionaries |
+| `itemOffset` | Overrides the item's slot size along the control's main axis. Controls retain their configured dimensions unless `fitContent` is `true`. | Arrays, jagged-array leaf items, stacks, and dictionaries |
 | `shake` | Starts or stops a manual shake effect when set to `true` or `false`. | Arrays, jagged arrays, stacks, dictionaries, and text controls |
 
 Colors accept normal CSS color values, including named colors, hexadecimal values, `rgb()`/`rgba()`, and CSS variables.

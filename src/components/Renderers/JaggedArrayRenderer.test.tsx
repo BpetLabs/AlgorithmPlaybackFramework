@@ -192,7 +192,7 @@ describe("JaggedArrayRenderer", () => {
     expect(markup).toContain("width:24px;height:12px");
   });
 
-  it("uses itemOffset alone to resize jagged leaf layout", () => {
+  it.each([undefined, false, true])("only fits jagged leaves when fitContent is true (received %s)", (fitContent) => {
     const dimensionsForOffset = (itemOffset: number) =>
       getJaggedArrayDimensions({
         snapshot: parentSnapshot,
@@ -214,11 +214,11 @@ describe("JaggedArrayRenderer", () => {
         orientation: "vertical",
         arrayGap: 5,
         defaultItemOffset: 20,
-        fitContent: true,
+        fitContent,
       });
 
-    expect(dimensionsForOffset(10)).toEqual({ width: 40, height: 20 });
-    expect(dimensionsForOffset(60)).toEqual({ width: 40, height: 70 });
+    expect(dimensionsForOffset(10)).toEqual({ width: 40, height: fitContent === true ? 20 : 30 });
+    expect(dimensionsForOffset(60)).toEqual({ width: 40, height: fitContent === true ? 70 : 30 });
   });
 
   it("hides stale removing children by disabling their animations", () => {

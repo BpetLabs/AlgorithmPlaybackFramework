@@ -174,22 +174,13 @@ function measureJaggedArray(
       leafOrientation === "horizontal"
         ? sizing.leafWidth
         : sizing.leafHeight;
-    const hasCustomItemOffsets = child.snapshot.items.some(
-      (item) => typeof item.itemOffset === "number"
-    );
     const fittedMainSize = contentExtent(
       child.snapshot,
       sizing.defaultItemOffset,
       childDisableAnimations
     );
-    const minimumMainSize = sizing.fitContent
-      ? 0
-      : Math.max(
-          child.minimumSlotCount ?? 0,
-          1
-        ) * sizing.defaultItemOffset;
-    const mainSize = sizing.fitContent || hasCustomItemOffsets
-      ? Math.max(fittedMainSize, minimumMainSize)
+    const mainSize = sizing.fitContent === true
+      ? fittedMainSize
       : configuredMainSize;
     const measuredChild = {
       child,

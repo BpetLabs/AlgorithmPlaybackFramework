@@ -180,7 +180,7 @@ describe("InteractiveControlRenderer", () => {
     ];
     const currentControl = control({
       snapshots,
-      rendererOptions: { itemCrossAxisGap: 25 },
+      rendererOptions: { itemCrossAxisGap: 25, fitContent: true },
     });
     const renderStep = (step: number) => renderControl(
       currentControl,
@@ -195,7 +195,28 @@ describe("InteractiveControlRenderer", () => {
       renderStep(3).match(/width:30px;height:30px;background-color/g)
     ).toHaveLength(2);
     expect(renderStep(4)).toContain("width:30px");
-    expect(renderStep(5)).toContain("width:60px");
+    expect(renderStep(5)).toContain("width:20px");
+  });
+
+  describe.each(["horizontal", "vertical"] as const)("%s array with custom item offsets", (orientation) => {
+    it.each([undefined, false, true])("only fits when fitContent is true (received %s)", (fitContent) => {
+      const arraySnapshot = {
+        ...snapshot,
+        items: [{ id: "resized", state: ControlItemState.Initial, itemOffset: 30 }],
+      };
+      const markup = renderControl(control({
+        snapshots: [arraySnapshot],
+        rendererOptions: { orientation, fitContent },
+      }), { items: arraySnapshot });
+      const width = fitContent === true && orientation === "horizontal" ? 30 : 300;
+      const height = fitContent === true && orientation === "vertical" ? 30 : 80;
+
+      expect(markup).toContain(`top:10px;left:20px;width:${width}px;height:${height}px`);
+      expect(markup).toContain(`width:${width}px;height:${height}px;position:relative`);
+      expect(markup).toContain(orientation === "horizontal"
+        ? "width:30px;height:80px;background-color"
+        : "width:300px;height:30px;background-color");
+    });
   });
 
   it("keeps the larger outgoing stack slot until a smaller update moves into place", () => {
@@ -234,6 +255,7 @@ describe("InteractiveControlRenderer", () => {
     const currentControl = control({
       type: "stack",
       snapshots: [transitioningSnapshot, completedSnapshot],
+      rendererOptions: { fitContent: true },
     });
 
     const transitionMarkup = renderControl(
@@ -290,6 +312,7 @@ describe("InteractiveControlRenderer", () => {
     const currentControl = control({
       type: "stack",
       snapshots: [transitioningSnapshot],
+      rendererOptions: { fitContent: true },
     });
 
     const markup = renderControl(
@@ -301,6 +324,39 @@ describe("InteractiveControlRenderer", () => {
     expect(markup).toContain("top:-190px;left:20px;width:300px;height:280px");
     expect(markup.match(/height:140px;background-color/g)).toHaveLength(2);
     expect(markup).toContain("bottom:210px;left:0");
+  });
+
+  describe.each(["stack", "dictionary"])("%s with custom item offsets", (type) => {
+    it.each([undefined, false, true])("only fits when fitContent is true (received %s)", (fitContent) => {
+      const stagedSnapshot = {
+        ...snapshot,
+        type,
+        items: [
+          { id: "bottom", state: ControlItemState.Initial },
+          { id: "pending", state: ControlItemState.PreInsert, itemOffset: 100 },
+        ],
+      };
+      const completedSnapshot = {
+        ...stagedSnapshot,
+        items: stagedSnapshot.items.map((item) => ({ ...item, state: ControlItemState.Initial })),
+      };
+      const currentControl = control({
+        type,
+        snapshots: [stagedSnapshot, completedSnapshot],
+        rendererOptions: { defaultItemOffset: 20, fitContent },
+      });
+
+      for (const currentSnapshot of [stagedSnapshot, completedSnapshot]) {
+        const markup = renderControl(currentControl, { items: currentSnapshot }, {
+          layout: { top: 10, left: 20, width: 215, height: 440 },
+        });
+        const height = fitContent === true
+          ? currentSnapshot === stagedSnapshot ? 20 : 120
+          : 440;
+        expect(markup).toContain(`top:${450 - height}px;left:20px;width:215px;height:${height}px`);
+        expect(markup).toContain(`width:215px;height:${height}px;position:`);
+      }
+    });
   });
 
   it("does not include a staged tail insert in fitted stack height", () => {

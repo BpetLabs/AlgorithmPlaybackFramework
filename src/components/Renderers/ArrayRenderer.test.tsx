@@ -65,6 +65,7 @@ describe("ArrayRenderer", () => {
         divHeight={60}
         defaultItemOffset={60}
         disableAnimations={false}
+        fitContent
         minimumSlotCount={4}
       />
     );
@@ -118,14 +119,15 @@ describe("ArrayRenderer", () => {
         divHeight={60}
         defaultItemOffset={40}
         disableAnimations={false}
+        fitContent
         minimumSlotCount={4}
         minimumSlotOffset={60}
       />
     );
 
-    expect(markup).toContain("width:300px;height:60px;position:relative");
+    expect(markup).toContain("width:240px;height:60px;position:relative");
     expect(markup).toContain("top:0;left:180px");
-    expect(markup).toContain("left:240px;width:60px");
+    expect(markup).not.toContain("left:240px;width:60px");
     expect(markup).not.toContain("left:280px");
   });
 
