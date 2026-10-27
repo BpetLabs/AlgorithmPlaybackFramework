@@ -215,7 +215,6 @@ function getRendererOptions(
     columnDescription: control.columnDescription,
     rowLabels: control.rowLabels,
     columnLabels: control.columnLabels,
-    gridLines: control.gridLines,
   };
 }
 

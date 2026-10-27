@@ -119,14 +119,7 @@ export function InteractiveControlRenderer({
     resolvedWidth = fitted.width;
     resolvedHeight = fitted.height;
   } else if (isArray || isStackRenderer) {
-    const hasCustomItemOffsets = snapshot.items.some(
-      (item) => typeof item.itemOffset === "number"
-    );
-    const shouldFitMainAxis =
-      props.fitContent === true ||
-      hasCustomItemOffsets;
-
-    if (shouldFitMainAxis) {
+    if (props.fitContent === true) {
       const baseItemOffset =
         typeof props.defaultItemOffset === "number"
           ? requirePositiveDimension(props.defaultItemOffset, "defaultItemOffset")
@@ -138,23 +131,7 @@ export function InteractiveControlRenderer({
         Boolean(props.disableAnimations),
         defaultItemOffset
       );
-      const preserveArraySlotCapacity =
-        type === RendererType.Array && props.fitContent !== true;
-      const minimumSlotCount = preserveArraySlotCapacity
-        ? control.snapshots[0]?.items.length ?? 0
-        : 0;
-      const minimumSlotOffset = preserveArraySlotCapacity
-        ? baseItemOffset
-        : defaultItemOffset;
-      const contentExtent = getFittedRenderExtent(
-        renderItems,
-        minimumSlotCount,
-        minimumSlotOffset
-      );
-      if (type === RendererType.Array) {
-        props.minimumSlotCount = minimumSlotCount;
-        props.minimumSlotOffset = minimumSlotOffset;
-      }
+      const contentExtent = getFittedRenderExtent(renderItems);
       const mainAxisSize = contentExtent || defaultItemOffset;
 
       if (itemOrientation === "vertical") {

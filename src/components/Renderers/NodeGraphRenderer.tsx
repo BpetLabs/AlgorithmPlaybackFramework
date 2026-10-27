@@ -11,7 +11,7 @@ interface NodeGraphRendererProps extends RendererProps {
   divHeight: number;
   divWidth: number;
   graphLayout?: GraphLayout;
-  gridLines?: boolean;
+  showCellBorders?: boolean;
   disableAnimations?: boolean;
 }
 
@@ -296,7 +296,7 @@ export function NodeGraphRenderer({
   divHeight,
   divWidth,
   graphLayout,
-  gridLines,
+  showCellBorders,
   borderWidth,
   containerClassName,
   containerStyle,
@@ -351,7 +351,7 @@ export function NodeGraphRenderer({
           </marker>
         </defs>
 
-        {gridLines &&
+        {showCellBorders &&
           tracks.rows.starts.flatMap((y, row) =>
             tracks.columns.starts.map((x, column) => (
               <rect

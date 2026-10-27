@@ -201,7 +201,7 @@ configureProps={(id, props) => {
       columnSizing: { values: [1, 1, 1, 1] },
       rowSizing: { values: [1, 1, 1, 1] },
     };
-    props.gridLines = true;
+    props.showCellBorders = true;
   }
 }}
 ```
@@ -221,8 +221,6 @@ Graph layout options:
 | `colGap`, `rowGap` | Space between tracks as a fraction of the inner size. |
 | `columnSizing.values` | Relative widths of the column tracks. |
 | `rowSizing.values` | Relative heights of the row tracks. |
-
-Set `gridLines: true` on the graph control in JSON, or on its renderer props through `configureProps`, to outline every layout track cell.
 
 ```json
 {
@@ -322,7 +320,7 @@ Grid coordinates are zero-based. Each `gridItems` entry is a persistent partial 
 }
 ```
 
-The second batch clears only the highlight border; the value remains `5` and the background remains `RoyalBlue`. Grid cells support the generic `value`, background, text, and highlight-border properties. Set `showCellBorders: false` to hide the structural cell borders.
+The second batch clears only the highlight border; the value remains `5` and the background remains `RoyalBlue`. Grid cells support the generic `value`, background, text, and highlight-border properties.
 
 ### `jaggedArray`
 
@@ -414,7 +412,7 @@ Items in arrays, stacks, dictionaries, text controls, grids, jagged arrays, and 
 | `borderWidth` | Highlight border thickness in pixels. It is visible only when `borderColor` is set. | All item-based controls |
 | `leftAlignedValue` | Auxiliary text displayed in the left region. | Arrays, jagged arrays, stacks, and graph nodes |
 | `rightAlignedValue` | Auxiliary text displayed in the right region. | Arrays, jagged arrays, stacks, and graph nodes |
-| `itemOffset` | Overrides the item's slot size along the control's main axis. It grows or shrinks the control. | Arrays, jagged-array leaf items, stacks, and dictionaries |
+| `itemOffset` | Overrides the item's slot size along the control's main axis. Controls retain their configured dimensions unless `fitContent` is `true`. | Arrays, jagged-array leaf items, stacks, and dictionaries |
 | `shake` | Starts or stops a manual shake effect when set to `true` or `false`. | Arrays, jagged arrays, stacks, dictionaries, and text controls |
 
 Colors accept normal CSS color values, including named colors, hexadecimal values, `rgb()`/`rgba()`, and CSS variables.

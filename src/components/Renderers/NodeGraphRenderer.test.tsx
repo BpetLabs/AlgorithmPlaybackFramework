@@ -85,7 +85,7 @@ describe("NodeGraphRenderer", () => {
         divWidth={300}
         divHeight={120}
         graphLayout={{ columns: 3, rows: 2 }}
-        gridLines
+        showCellBorders
       />
     );
 
