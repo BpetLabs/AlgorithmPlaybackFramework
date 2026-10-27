@@ -31,7 +31,7 @@ export interface GraphLayout {
 }
 
 export interface GraphRendererOptions {
-  gridLines?: boolean;
+  showCellBorders?: boolean;
 }
 
 export interface GraphNode extends ControlItemValues {
