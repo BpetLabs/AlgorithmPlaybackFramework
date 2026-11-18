@@ -2,6 +2,10 @@
 
 Former Senior Backend Developer at Microsoft, where I spent 18 years working primarily on cloud services, supporting the cloud from the inside.
 
+I am open to work opportunities within Washington State or Remote Work. If I am not a good fit I may know others looking for work I can recommend. 
+
+Please reach out over <a href="https://www.linkedin.com/in/brian-peterson-a1bb197/">LinkedIn</a>.  
+
 ## Why This Project
 
 While extensively studying LeetCode and similar coding problems for interviews, I realized how time consuming it was becoming. I saw an opportunity to create a debugging-like experience, with blocks moving across the screen and a slider to step through the algorithm in real time across any language.
