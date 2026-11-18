@@ -4,7 +4,7 @@ A React framework for building step-by-step algorithm visualizations with code
 highlights, animated data structures, narration, state history, and playback
 controls.
 
-Feel free to reach out! [About Me](animated-playback-starter/README.md). 
+Feel free to reach out! [About Me](ABOUTME.md).
 
 
 ## Choose a Starting Point
